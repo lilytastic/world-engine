@@ -1,0 +1,11 @@
+@import '../../styles';
+
+.App {
+  text-align: center;
+}
+
+.container--main {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  padding: 20px 0;
+}
