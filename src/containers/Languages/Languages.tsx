@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import './Languages.scss';
 
 
@@ -31,15 +32,67 @@ enum Manner {
   LateralTap = 'Lateral tap'
 }
 
-const sounds: {place: Place, manner: Manner, key: string}[] = [
+const PLACES = [
+  {key: Place.Bilabial, name: 'Bilabial'},
+  {key: Place.LabioDental, name: 'Labio-dental'},
+  {key: Place.LinguoLabial, name: 'Linguo-labial'},
+  {key: Place.Dental, name: 'Dental'},
+  {key: Place.Alveolar, name: 'Alveolar'},
+  {key: Place.PostAlveolar, name: 'Post­-alveolar'},
+  {key: Place.Retroflex, name: 'Retroflex'},
+  {key: Place.Palatal, name: 'Palatal'},
+  {key: Place.Velar, name: 'Velar'},
+  {key: Place.Uvular, name: 'Uvular'},
+  {key: Place.Pharyngeal, name: 'Pharyn­geal'},
+  {key: Place.Glottal, name: 'Glottal'},
+];
+const MANNERS = [
+  {key: Manner.Nasal, name: 'Nasal'},
+  {key: Manner.Plosive, name: 'Plosive'},
+  {key: Manner.SibilantAffricate, name: 'Sibilant affricate'},
+  {key: Manner.NonSibilantAffricate, name: 'Non-sibilant affricate'},
+  {key: Manner.SibilantFricative, name: 'Sibilant fricative'},
+  {key: Manner.NonSibilantFricative, name: 'Non-sibilant fricative'},
+  {key: Manner.Approximant, name: 'Approximant'},
+  {key: Manner.Tap, name: 'Tap/Flap'},
+  {key: Manner.Trill, name: 'Trill'},
+  {key: Manner.LateralAffricate, name: 'Lateral affricate'},
+  {key: Manner.LateralFricative, name: 'Lateral fricative'},
+  {key: Manner.LateralApproximant, name: 'Lateral approximant'},
+  {key: Manner.LateralTap, name: 'Lateral tap'}
+];
+
+export interface ISound {
+  place: string;
+  manner: string;
+  key: string;
+}
+const sounds: ISound[] = [
   {
     place: Place.Bilabial,
     manner: Manner.Plosive,
     key: 'p'
+  },
+  {
+    place: Place.Bilabial,
+    manner: Manner.Plosive,
+    key: 'b'
+  },
+  {
+    place: Place.LabioDental,
+    manner: Manner.Plosive,
+    key: 'p̪'
+  },
+  {
+    place: Place.LabioDental,
+    manner: Manner.Plosive,
+    key: 'b̪'
   }
 ];
 
 export function Languages(props: {children?: any}) {
+
+  const [chosenSounds, setChosenSounds] = useState([] as ISound[])
 
   return (
     <div>
@@ -47,17 +100,23 @@ export function Languages(props: {children?: any}) {
         <thead>
           <tr>
             <th></th>
-            {Object.keys(Place).map(place => (<th key={place}>{place}</th>))}
+            {PLACES.map(place => (<th key={place.key}>{place.name}</th>))}
           </tr>
         </thead>
         <tbody>
-          {Object.keys(Manner).map(manner => (
-            <tr key={manner}>
-              <td>{manner}</td>
-              {Object.keys(Place).map(place => (
-                <td key={place}>
-                  {sounds.filter(sound => sound.manner === manner && sound.place === place).map(sound => (
-                    <button key={sound.key} className="btn btn-link">{sound.key}</button>
+          {MANNERS.map((manner) => (
+            <tr key={manner.key}>
+              <td>{manner.name}</td>
+              {PLACES.map(place => (
+                <td key={place.key}>
+                  {sounds.filter(sound => sound.manner === manner.key && sound.place === place.key).map(sound => (
+                    <button key={sound.key}
+                            onClick={() => !chosenSounds.find(x => x.key === sound.key)
+                              ? setChosenSounds([...chosenSounds, sound])
+                              : setChosenSounds([...chosenSounds.filter(x => x.key !== sound.key)])}
+                            className={`btn btn-link ${!!chosenSounds.find(x => x.key === sound.key) ? 'text-primary' : 'text-secondary'}`}>
+                      {sound.key}
+                    </button>
                   ))}
                 </td>
               ))}
@@ -65,6 +124,11 @@ export function Languages(props: {children?: any}) {
           ))}
         </tbody>
       </table>
+      
+      Current sounds:
+      <ul>
+        {chosenSounds.map(sound => <li key={sound.key}>{sound.key}</li>)}
+      </ul>
     </div>
   );
 }

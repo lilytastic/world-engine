@@ -1,1 +1,16 @@
-// 
+@import '../../styles';
+
+td, th {
+    padding: 10px;
+    border: solid 1px rgba($color-text, 0.4);
+    white-space: nowrap;
+}
+
+th, td:first-of-type {
+    font-size: 0.7em;
+    font-weight: bold;
+}
+
+th, td:not(:first-of-type) {
+    text-align: center;
+}
