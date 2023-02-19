@@ -1,3 +1,5 @@
+import './Languages.scss';
+
 
 enum Place {
   Bilabial = 'Bilabial',
@@ -55,7 +57,7 @@ export function Languages(props: {children?: any}) {
               {Object.keys(Place).map(place => (
                 <td key={place}>
                   {sounds.filter(sound => sound.manner === manner && sound.place === place).map(sound => (
-                    <button key={sound.key} className="btn-link">{sound.key}</button>
+                    <button key={sound.key} className="btn btn-link">{sound.key}</button>
                   ))}
                 </td>
               ))}
