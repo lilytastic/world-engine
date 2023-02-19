@@ -1,17 +1,17 @@
 import React from 'react';
 import './Nav.scss';
 
-import { Route, Switch, BrowserRouter, NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 
-function Nav(props: {links: {path: string, icon: string}[]}) {
+function Nav(props: {routes: {path: string, icon: string}[]}) {
   const location = useLocation();
   
   return (
-    <nav className={`nav column page--${props.links.findIndex(x => x.path === location.pathname) + 1}`}>
+    <nav className={`nav column page--${props.routes.findIndex(x => x.path === location.pathname) + 1}`}>
       <ul className="list">
-        {props.links.map((link, i) => (
-          <li className="navlink">
-            <NavLink to={link.path}><i className={`fas fa-${link.icon}`}></i></NavLink>
+        {props.routes.map((route, i) => (
+          <li key={i} className="navlink">
+            <NavLink to={route.path}><i className={`fas fa-${route.icon}`}></i></NavLink>
           </li>
         ))}
       </ul>
