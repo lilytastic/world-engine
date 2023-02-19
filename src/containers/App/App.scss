@@ -1,11 +1,16 @@
 @import '../../styles';
 
 .App {
-  text-align: center;
+  color: white;
 }
 
 .container--main {
   display: grid;
   grid-template-columns: auto 1fr;
   padding: 20px 0;
+}
+
+.main {
+  padding: 10px 50px;
+  font-size: 1.2rem;
 }

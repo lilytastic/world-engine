@@ -3,26 +3,27 @@ import './App.scss';
 
 import { Route, RouterProvider, createBrowserRouter, createRoutesFromElements } from 'react-router-dom';
 import Nav from '../Nav/Nav';
+import { Languages } from '../Languages/Languages';
 
 const ROUTES = [
-  {path: '/', icon: 'mountain', element: <Root></Root>},
-  {path: '/geography', icon: 'mountain', element: <Root></Root>},
-  {path: '/languages', icon: 'book', element: <Root>tiddy</Root>},
-  {path: '/cultures', icon: 'landmark', element: <Root></Root>},
-  {path: '/characters', icon: 'users', element: <Root></Root>},
+  {path: '/', icon: 'mountain', element: <div></div>},
+  {path: '/geography', icon: 'mountain', element: <div></div>},
+  {path: '/cultures', icon: 'landmark', element: <div></div>},
+  {path: '/languages', icon: 'book', element: <Languages />},
+  {path: '/characters', icon: 'users', element: <div></div>},
 ];
 
 function Root(props: {children?: any}) {
   return (
     <div className={`container container--main px-sm`}>
       <Nav routes={ROUTES.filter(x => x.path !== '/')} />
-      {props.children}
+      <div className="main">{props.children}</div>
     </div>
   );
 }
 
 function App() {
-  const router = createBrowserRouter(createRoutesFromElements(ROUTES.map(route => <Route {...route}></Route>)));
+  const router = createBrowserRouter(createRoutesFromElements(ROUTES.map(route => <Route {...route} element={<Root>{route.element}</Root>}></Route>)));
   return (
     <div className="App">
       <RouterProvider router={router} fallbackElement={<div />} />
