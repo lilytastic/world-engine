@@ -45,12 +45,13 @@ export function Languages(props: {children?: any}) {
       let syllable: ISyllable = {sounds: []};
       const onsetEnd = morphologyMapped.indexOf('V');
       const codaStart = morphologyMapped.lastIndexOf('V');
+
       for (let i = 0; i < morphologyMapped.length; i++) {
         const token = morphologyMapped[i];
         const isWordStart = ii === 0 && i === 0;
         const isWordClose = ii === length - 1 && i ===  morphologyMapped.length - 1;
         const isOnset = i < onsetEnd;
-        const isCoda = i > codaStart;
+        const isCoda = i >= codaStart;
         let sounds = [...language.vowels.map(x => ({...x, isVowel: true})), ...language.consonants.map(x => ({...x, isVowel: false}))];
 
         sounds = sounds.filter(sound => {
@@ -58,7 +59,7 @@ export function Languages(props: {children?: any}) {
           if (!rules) {
             if (sound.isVowel) {
               rules = {
-                positionsAllowed: [SoundPositions.Close, SoundPositions.Coda, SoundPositions.Nucleus, SoundPositions.Onset, SoundPositions.Start]
+                positionsAllowed: [SoundPositions.Close, SoundPositions.Nucleus, SoundPositions.Start]
               };                
             } else {
               rules = {
@@ -68,24 +69,34 @@ export function Languages(props: {children?: any}) {
           }
   
           if (isWordStart) {
-            return rules?.positionsAllowed.includes(SoundPositions.Start);
+            if (!rules?.positionsAllowed.includes(SoundPositions.Start)) {
+              return false;
+            }
           }
           if (isWordClose) {
-            return rules?.positionsAllowed.includes(SoundPositions.Close);
+            if (!rules?.positionsAllowed.includes(SoundPositions.Close)) {
+              return false;
+            }
           }
 
           switch (token) {
             case 'V':
               return rules?.positionsAllowed.includes(SoundPositions.Nucleus);
-            case 'C':
-              return true;
             case 'c':
               if (Math.random() * 100 < 50) {
-                return true;
+                return false;
               }
-              return false;
+              break;
+            case 'C':
+              break;
             default:
-              return true;
+              break;
+          }
+
+          if (isOnset) {
+            return rules?.positionsAllowed.includes(SoundPositions.Onset);
+          } else {
+            return rules?.positionsAllowed.includes(SoundPositions.Coda);
           }
           
         });
