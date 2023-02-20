@@ -62,15 +62,63 @@ const MANNERS = [
   {key: Manner.LateralTap, name: 'Lateral tap'}
 ];
 
+enum VowelLon {
+  Close = 'Close',
+  NearClose = 'NearClose',
+  CloseMid = 'Close-mid',
+  Mid = 'Mid',
+  OpenMid = 'Open-mid',
+  NearOpen = 'NearOpen',
+  Open = 'Open',
+}
+enum VowelLat {
+  Front = 'Front',
+  Central = 'Central',
+  Back = 'Back',
+}
+
 export interface ISound {
   key: string;
   romanization?: string;
   advanced?: boolean;
 }
+export interface IVowel extends ISound {
+  frontness: string;
+  openness: string;
+  rounded?: boolean;
+}
 export interface IConsonant extends ISound {
   place: string;
   manner: string;
 }
+const VOWELS: IVowel[] = [
+  {
+    openness: VowelLon.Open,
+    frontness: VowelLat.Front,
+    key: 'a'
+  },
+  {
+    openness: VowelLon.Open,
+    frontness: VowelLat.Front,
+    key: 'ɶ',
+    rounded: true
+  },
+  {
+    openness: VowelLon.Open,
+    frontness: VowelLat.Central,
+    key: 'ä'
+  },
+  {
+    openness: VowelLon.Close,
+    frontness: VowelLat.Front,
+    key: 'i'
+  },
+  {
+    openness: VowelLon.Close,
+    frontness: VowelLat.Front,
+    key: 'y'
+  },
+]
 const CONSONANTS: IConsonant[] = [
   {
     place: Place.Bilabial,
