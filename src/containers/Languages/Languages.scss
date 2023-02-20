@@ -1,12 +1,9 @@
 @import '../../styles';
 
-td, th {
-    padding: 10px;
-}
-
 th, td:first-of-type {
     font-size: 0.7em;
     font-weight: bold;
+    padding: 10px;
 }
 
 th, td:not(:first-of-type) {

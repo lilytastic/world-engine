@@ -63,13 +63,15 @@ const MANNERS = [
 ];
 
 export interface ISound {
-  place: string;
-  manner: string;
   key: string;
   romanization?: string;
   advanced?: boolean;
 }
-const sounds: ISound[] = [
+export interface IConsonant extends ISound {
+  place: string;
+  manner: string;
+}
+const CONSONANTS: IConsonant[] = [
   {
     place: Place.Bilabial,
     manner: Manner.Plosive,
@@ -198,32 +200,58 @@ const sounds: ISound[] = [
 
 export function Languages(props: {children?: any}) {
 
-  const [chosenSounds, setChosenSounds] = useState([] as ISound[])
+  const [setVowels, setChosenVowels] = useState([] as ISound[]);
+  const [chosenConsonants, setChosenConsonants] = useState([] as IConsonant[]);
+  const [morphology, setMorphology] = useState('CVC(C)');
 
-  function generateWord(sounds: ISound[]) {
-    if (sounds.length === 0) { return ''; }
+  function getRandomConsonant(consonants: ISound[]) {
+    return consonants[Math.floor(Math.random() * consonants.length)];
+  }
+
+  function generateWord(consonants: ISound[]) {
+    if (consonants.length === 0) { return ''; }
     let word = '';
-    let length = Math.floor(2 + Math.random() * 5)
+    let length = 1 + Math.floor(Math.random() * 3);
+    const morphologyMapped = morphology.toUpperCase().replace(/(C)/g, 'c');
 
-    for (let i = 0; i < length; i++) {
-      const sound = sounds[Math.round(Math.random() * length)];
-      if (!sound) { continue; }
-      word += sound.romanization || sound.key;
+    for (let ii = 0; ii < length; ii++) {
+      for (let i = 0; i < morphologyMapped.length; i++) {
+        const token = morphologyMapped[i];
+        const sound = getRandomConsonant(consonants);
+        switch (token) {
+          case 'V':
+            word += 'a';
+            break;
+          case 'C':
+            word += sound ? (sound.romanization || sound.key) : '';
+            break;
+          case 'c':
+            if (Math.random() < 0.5) {
+              word += sound ? (sound.romanization || sound.key) : '';
+            }
+            break;
+          default:
+            break;
+        }
+      }
     }
 
     return word;
   }
 
-  function getSampleWords(sounds: ISound[]) {
+  function getSampleWords(consonants: ISound[]) {
     let arr = [];
-    for (let i = 0; i < 3; i++) {
-      arr.push(generateWord(chosenSounds));
+    for (let i = 0; i < 10; i++) {
+      arr.push(generateWord(chosenConsonants));
     }
     return arr;
   }
 
   return (
     <div>
+      <h2>Vowels</h2>
+
+
       <h2>Pulmonic Consonants</h2>
       <table>
         <thead>
@@ -238,12 +266,12 @@ export function Languages(props: {children?: any}) {
               <td>{manner.name}</td>
               {PLACES.map(place => (
                 <td key={place.key}>
-                  {sounds.filter(sound => !sound.advanced && sound.manner === manner.key && sound.place === place.key).map(sound => (
+                  {CONSONANTS.filter(sound => !sound.advanced && sound.manner === manner.key && sound.place === place.key).map(sound => (
                     <button key={sound.key}
-                            onClick={() => !chosenSounds.find(x => x.key === sound.key)
-                              ? setChosenSounds([...chosenSounds, sound])
-                              : setChosenSounds([...chosenSounds.filter(x => x.key !== sound.key)])}
-                            className={`btn btn-link ${!!chosenSounds.find(x => x.key === sound.key) ? 'text-primary' : 'text-secondary'}`}>
+                            onClick={() => !chosenConsonants.find(x => x.key === sound.key)
+                              ? setChosenConsonants([...chosenConsonants, sound])
+                              : setChosenConsonants([...chosenConsonants.filter(x => x.key !== sound.key)])}
+                            className={`btn btn-link ${!!chosenConsonants.find(x => x.key === sound.key) ? 'text-primary' : 'text-secondary'}`}>
                       {sound.key}
                     </button>
                   ))}
@@ -255,11 +283,16 @@ export function Languages(props: {children?: any}) {
       </table>
 
       <div className="mt-4">
-        Current sounds: <i>{chosenSounds.map(sound => sound.key).join(', ')}</i>
+        Current sounds: <i>{chosenConsonants.map(sound => sound.key).join(', ')}</i>
+      </div>
+
+      <div className="mt-5">
+        <h2>Word Morphology</h2>
+        <input value={morphology} onChange={ev => setMorphology(ev.currentTarget.value)} />        
       </div>
 
       <div className="mt-4">
-        Sample words: <i>{getSampleWords(chosenSounds).join(', ')}</i>
+        Sample words: <i>{getSampleWords(chosenConsonants).join(', ')}</i>
       </div>
     </div>
   );
