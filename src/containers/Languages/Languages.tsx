@@ -35,7 +35,7 @@ enum Manner {
 const PLACES = [
   {key: Place.Bilabial, name: 'Bilabial'},
   {key: Place.LabioDental, name: 'Labio-dental'},
-  {key: Place.LinguoLabial, name: 'Linguo-labial'},
+  {key: Place.LinguoLabial, name: 'Linguo-labial', advanced: true},
   {key: Place.Dental, name: 'Dental'},
   {key: Place.Alveolar, name: 'Alveolar'},
   {key: Place.PostAlveolar, name: 'Post­-alveolar'},
@@ -49,10 +49,10 @@ const PLACES = [
 const MANNERS = [
   {key: Manner.Nasal, name: 'Nasal'},
   {key: Manner.Plosive, name: 'Plosive'},
-  {key: Manner.SibilantAffricate, name: 'Sibilant affricate'},
-  {key: Manner.NonSibilantAffricate, name: 'Non-sibilant affricate'},
+  {key: Manner.SibilantAffricate, name: 'Sibilant affricate', advanced: true},
+  {key: Manner.NonSibilantAffricate, name: 'Non-sibilant affricate', advanced: true},
   {key: Manner.SibilantFricative, name: 'Sibilant fricative'},
-  {key: Manner.NonSibilantFricative, name: 'Non-sibilant fricative'},
+  {key: Manner.NonSibilantFricative, name: 'Non-sibilant fricative', advanced: true},
   {key: Manner.Approximant, name: 'Approximant'},
   {key: Manner.Tap, name: 'Tap/Flap'},
   {key: Manner.Trill, name: 'Trill'},
@@ -66,6 +66,7 @@ export interface ISound {
   place: string;
   manner: string;
   key: string;
+  romanization?: string;
 }
 const sounds: ISound[] = [
   {
@@ -87,6 +88,50 @@ const sounds: ISound[] = [
     place: Place.LabioDental,
     manner: Manner.Plosive,
     key: 'b̪'
+  },
+  {
+    place: Place.LinguoLabial,
+    manner: Manner.Plosive,
+    key: 't̼'
+  },
+  {
+    place: Place.LinguoLabial,
+    manner: Manner.Plosive,
+    key: 'd̼'
+  },
+  {
+    place: Place.Dental,
+    manner: Manner.NonSibilantAffricate,
+    key: 't̪θ',
+    romanization: 'th'
+  },
+  {
+    place: Place.Dental,
+    manner: Manner.NonSibilantAffricate,
+    key: 'd̪ð',
+    romanization: 'th'
+  },
+  {
+    place: Place.Dental,
+    manner: Manner.NonSibilantFricative,
+    key: 'θ',
+    romanization: 'th'
+  },
+  {
+    place: Place.Dental,
+    manner: Manner.NonSibilantFricative,
+    key: 'ð',
+    romanization: 'th'
+  },
+  {
+    place: Place.Alveolar,
+    manner: Manner.SibilantFricative,
+    key: 's'
+  },
+  {
+    place: Place.Alveolar,
+    manner: Manner.SibilantFricative,
+    key: 'z'
   }
 ];
 
@@ -100,11 +145,11 @@ export function Languages(props: {children?: any}) {
         <thead>
           <tr>
             <th></th>
-            {PLACES.map(place => (<th key={place.key}>{place.name}</th>))}
+            {PLACES.filter(manner => !manner.advanced).map(place => (<th key={place.key}>{place.name}</th>))}
           </tr>
         </thead>
         <tbody>
-          {MANNERS.map((manner) => (
+          {MANNERS.filter(manner => !manner.advanced).map((manner) => (
             <tr key={manner.key}>
               <td>{manner.name}</td>
               {PLACES.map(place => (
@@ -124,11 +169,10 @@ export function Languages(props: {children?: any}) {
           ))}
         </tbody>
       </table>
-      
-      Current sounds:
-      <ul>
-        {chosenSounds.map(sound => <li key={sound.key}>{sound.key}</li>)}
-      </ul>
+
+      <div className="mt-4">
+        Current sounds: <i>{chosenSounds.map(sound => sound.key).join(', ')}</i>
+      </div>
     </div>
   );
 }
