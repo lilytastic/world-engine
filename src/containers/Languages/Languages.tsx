@@ -243,15 +243,64 @@ const CONSONANTS: IConsonant[] = [
     place: Place.Alveolar,
     manner: Manner.SibilantFricative,
     key: 'z'
-  }
+  },
+  {
+    place: Place.Velar,
+    manner: Manner.NonSibilantFricative,
+    key: 'x',
+    romanization: 'qh'
+  },
+  {
+    place: Place.Velar,
+    manner: Manner.NonSibilantFricative,
+    key: 'ɣ',
+    romanization: 'jh'
+  },
+  {
+    place: Place.Velar,
+    manner: Manner.Plosive,
+    key: 'k'
+  },
+  {
+    place: Place.Velar,
+    manner: Manner.Plosive,
+    key: 'g'
+  },
+  {
+    place: Place.Uvular,
+    manner: Manner.Plosive,
+    key: 'q'
+  },
+  {
+    place: Place.Uvular,
+    manner: Manner.Plosive,
+    key: 'ɢ'
+  },
+  {
+    place: Place.Glottal,
+    manner: Manner.Plosive,
+    key: 'ʔ'
+  },
+  {
+    place: Place.Alveolar,
+    manner: Manner.Tap,
+    key: 'ɾ',
+    romanization: 'r'
+  },
+  {
+    place: Place.Velar,
+    manner: Manner.Nasal,
+    key: 'ŋ',
+    romanization: 'ng'
+  },
 ];
 
 export function Languages(props: {children?: any}) {
 
   const [setVowels, setChosenVowels] = useState([] as ISound[]);
   const [chosenConsonants, setChosenConsonants] = useState([] as IConsonant[]);
-  const [morphology, setMorphology] = useState('CVC(C)');
-  const [phonotactics, setPhonotactics] = useState('-j = ja/je\nq + a = qha');
+  const [morphology, setMorphology] = useState('CVC');  // (C) works too
+  const [phonotactics, setPhonotactics] = useState('-j = ja/je\nq + a = qha\n~(x + x)\n~(C + ŋ)\n~(ŋ-)');
 
   function getRandomConsonant(consonants: ISound[]) {
     return consonants[Math.floor(Math.random() * consonants.length)];
