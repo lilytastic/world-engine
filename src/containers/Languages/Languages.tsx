@@ -10,10 +10,20 @@ export function Languages(props: {children?: any}) {
   const [isSelectingSounds, setIsSelectingSounds] = useState(false);
   const [isEditingPhonotactics, setIsEditingPhonotactics] = useState(false);
   
-  const [language, setLanguage] = useState(DEFAULT_LANGUAGE);
+  const storedLanguage = localStorage.getItem('_language');
+  let startingLanguage: ILanguage = DEFAULT_LANGUAGE;
+  try {
+    if (storedLanguage) {
+      startingLanguage = JSON.parse(storedLanguage);
+    }
+  } catch {
+    startingLanguage = DEFAULT_LANGUAGE;
+  }
+  
+  const [language, setLanguage] = useState(startingLanguage);
 
   useEffect(() => {
-
+    localStorage.setItem('_language', JSON.stringify(language));
   }, [language]);
 
   function getRandomVowel(vowels: IVowel[]) {
@@ -90,7 +100,7 @@ export function Languages(props: {children?: any}) {
       <SoundSelection language={language} show={isSelectingSounds} handleClose={(vowels, consonants) => {selectSounds(vowels, consonants); setIsSelectingSounds(false);}}></SoundSelection>
       <Phonotactics language={language} show={isEditingPhonotactics} handleClose={(phonotactics) => {selectPhonotactics(phonotactics); setIsEditingPhonotactics(false);}}></Phonotactics>
 
-      <h3 className='mt-0'>Vowels <button className='btn btn-link' onClick={() => setIsSelectingSounds(true)}>Edit</button></h3>
+      <h2 className='mt-0'>Vowels <button className='btn btn-link' onClick={() => setIsSelectingSounds(true)}>Edit</button></h2>
       {language.vowels.length === 0 && (<i>None yet!</i>)}
       <table>
         <thead>
@@ -115,7 +125,7 @@ export function Languages(props: {children?: any}) {
         </tbody>
       </table>
 
-      <h3>Pulmonic Consonants <button className='btn btn-link' onClick={() => setIsSelectingSounds(true)}>Edit</button></h3>
+      <h2>Pulmonic Consonants <button className='btn btn-link' onClick={() => setIsSelectingSounds(true)}>Edit</button></h2>
       {language.consonants.length === 0 && (<i>None yet!</i>)}
       <table>
         <thead>
@@ -140,10 +150,10 @@ export function Languages(props: {children?: any}) {
         </tbody>
       </table>
 
-      <h3>Phonotactics <button className='btn btn-link' onClick={() => setIsEditingPhonotactics(true)}>Edit</button></h3>
+      <h2>Phonotactics <button className='btn btn-link' onClick={() => setIsEditingPhonotactics(true)}>Edit</button></h2>
       Syllable shape: {language.phonotactics.syllableShape}
 
-      <h3>Specimens</h3>
+      <h2>Specimens</h2>
       <div>
         Sample words: <i>{getSampleWords(language).map(word => transcribeWord(word)).join(', ')}</i>
       </div>

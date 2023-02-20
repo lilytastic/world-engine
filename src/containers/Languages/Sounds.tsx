@@ -14,8 +14,6 @@ export function SoundSelection(props: {children?: any, language: ILanguage, show
   const [chosenConsonants, setChosenConsonants] = useState(props.language.consonants);
   const {show} = props;
 
-  console.log(show);
-
   return (
     <Modal show={show} fullscreen={true} onHide={() => props.handleClose?.(chosenVowels, chosenConsonants)}>
       <Modal.Header>
