@@ -214,8 +214,8 @@ export function Languages(props: {children?: any}) {
       <h2>Phonotactics <button className='btn btn-link' onClick={() => setIsEditingPhonotactics(true)}>Edit</button></h2>
       Syllable shape: [{language.phonotactics.syllableShape}]
       <ul>
-        <li>Words cannot start with {printListExclusive(listRules().filter(x => !x.rules.positionsAllowed.includes(SoundPositions.Start)).map(x => `\\${x.key}\\`))}.</li>
-        <li>Words cannot end with {printListExclusive(listRules().filter(x => !x.rules.positionsAllowed.includes(SoundPositions.Close)).map(x => `\\${x.key}\\`))}.</li>
+        <li dangerouslySetInnerHTML={{__html: `Words cannot start with ${printListExclusive(listRules().filter(x => !x.rules.positionsAllowed.includes(SoundPositions.Start)).map(x => `\\<b>${x.key}</b>\\`))}.`}}></li>
+        <li dangerouslySetInnerHTML={{__html: `Words cannot end with ${printListExclusive(listRules().filter(x => !x.rules.positionsAllowed.includes(SoundPositions.Close)).map(x => `\\<b>${x.key}</b>\\`))}.`}}></li>
       </ul>
 
       <h2>Specimens</h2>
