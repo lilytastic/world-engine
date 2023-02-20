@@ -203,6 +203,7 @@ export function Languages(props: {children?: any}) {
   const [setVowels, setChosenVowels] = useState([] as ISound[]);
   const [chosenConsonants, setChosenConsonants] = useState([] as IConsonant[]);
   const [morphology, setMorphology] = useState('CVC(C)');
+  const [phonotactics, setPhonotactics] = useState('-j = ja/je\nq + a = qha');
 
   function getRandomConsonant(consonants: ISound[]) {
     return consonants[Math.floor(Math.random() * consonants.length)];
@@ -212,7 +213,7 @@ export function Languages(props: {children?: any}) {
     if (consonants.length === 0) { return ''; }
     let word = '';
     let length = 1 + Math.floor(Math.random() * 3);
-    const morphologyMapped = morphology.toUpperCase().replace(/(C)/g, 'c');
+    const morphologyMapped = morphology.toUpperCase().replace(/"(C)"/g, 'c');
 
     for (let ii = 0; ii < length; ii++) {
       for (let i = 0; i < morphologyMapped.length; i++) {
@@ -289,6 +290,11 @@ export function Languages(props: {children?: any}) {
       <div className="mt-5">
         <h2>Word Morphology</h2>
         <input value={morphology} onChange={ev => setMorphology(ev.currentTarget.value)} />        
+      </div>
+
+      <div className="mt-5">
+        <h2>Phonotactics</h2>
+        <textarea value={phonotactics} onChange={ev => setPhonotactics(ev.currentTarget.value)} />        
       </div>
 
       <div className="mt-4">
