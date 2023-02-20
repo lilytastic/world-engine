@@ -146,6 +146,12 @@ export function Languages(props: {children?: any}) {
   }
 
   const printListExclusive = (list: any[]) => {
+    if (list.length === 1) {
+      return list[0];
+    }
+    if (list.length === 2) {
+      return list[0] + ' or ' + list[1];
+    }
     return list.slice(0, list.length - 2).join(', ') + ', or ' + list[list.length - 1];
   }
 
@@ -208,8 +214,8 @@ export function Languages(props: {children?: any}) {
       <h2>Phonotactics <button className='btn btn-link' onClick={() => setIsEditingPhonotactics(true)}>Edit</button></h2>
       Syllable shape: [{language.phonotactics.syllableShape}]
       <ul>
-        <li>Words cannot start with {printListExclusive(listRules().filter(x => x.rules.positionsAllowed.includes(SoundPositions.Start)).map(x => `\\${x.key}\\`))}.</li>
-        <li>Words cannot end with {printListExclusive(listRules().filter(x => x.rules.positionsAllowed.includes(SoundPositions.Close)).map(x => `\\${x.key}\\`))}.</li>
+        <li>Words cannot start with {printListExclusive(listRules().filter(x => !x.rules.positionsAllowed.includes(SoundPositions.Start)).map(x => `\\${x.key}\\`))}.</li>
+        <li>Words cannot end with {printListExclusive(listRules().filter(x => !x.rules.positionsAllowed.includes(SoundPositions.Close)).map(x => `\\${x.key}\\`))}.</li>
       </ul>
 
       <h2>Specimens</h2>
