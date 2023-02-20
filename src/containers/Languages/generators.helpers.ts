@@ -76,6 +76,10 @@ export function generateWord(language: ILanguage) {
           }
         }
 
+        // TODO: The H or "medial" token, usually liquids.
+        // TODO: The R for 'resonant', or 'sonorant'.
+        // TODO: < or > to include whether the next sound should either rise or fall in tone.
+
         if (token === 'V') {
           if (!rules.positionsAllowed.includes(SoundPositions.Nucleus)) {
             return false;

@@ -28,11 +28,16 @@ export interface ISyllable {
 }
 
 export interface ILanguage {
+  id: string;
+  name: string;
   vowels: IVowel[];
   consonants: IConsonant[];
   phonotactics: IPhonotactics;
+  ancestor?: ILanguage;
 }
 export const DEFAULT_LANGUAGE: ILanguage = {
+  id: 'untitled',
+  name: "Untitled",
   vowels: [],
   consonants: [],
   phonotactics: {

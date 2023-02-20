@@ -11,7 +11,8 @@ export function Languages(props: {children?: any}) {
 
   const [isSelectingSounds, setIsSelectingSounds] = useState(false);
   const [isEditingPhonotactics, setIsEditingPhonotactics] = useState(false);
-  
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+
   const storedLanguage = localStorage.getItem('_language');
   let startingLanguage: ILanguage = DEFAULT_LANGUAGE;
   try {
@@ -49,7 +50,19 @@ export function Languages(props: {children?: any}) {
       <SoundSelection language={language} show={isSelectingSounds} handleClose={(vowels, consonants) => {selectSounds(vowels, consonants); setIsSelectingSounds(false);}}></SoundSelection>
       <Phonotactics language={language} show={isEditingPhonotactics} handleClose={(phonotactics) => {selectPhonotactics(phonotactics); setIsEditingPhonotactics(false);}}></Phonotactics>
 
-      <h2 className='mt-0'>Sounds <button className='btn btn-link' onClick={() => setIsSelectingSounds(true)}>Edit</button></h2>
+      {isEditingTitle ? (
+        <input autoFocus className='mb-3' value={language.name} onChange={ev => setLanguage({...language, name: ev.currentTarget.value})} onBlur={() => setIsEditingTitle(false)} />
+      ) : (
+        <>
+          <h1 className='mt-0 mb-0'>{language.name} <button className='btn btn-link' onClick={() => setIsEditingTitle(true)}>Edit</button></h1>
+          <div className='mb-3 mt-0 text-secondary'>
+            {!language.ancestor ? 'Proto-language' : `Descendant of ${language.ancestor.name}`}
+          </div>
+        </>
+      )}
+      
+
+      <h2>Sounds <button className='btn btn-link' onClick={() => setIsSelectingSounds(true)}>Edit</button></h2>
       <h4>Vowels</h4>
       {language.vowels.length === 0 && (<i>None yet!</i>)}
       <table>
