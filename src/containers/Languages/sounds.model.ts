@@ -77,11 +77,11 @@ export const MANNERS = [
 
 export enum VowelLon {
   Close = 'Close',
-  NearClose = 'NearClose',
+  NearClose = 'Near-close',
   CloseMid = 'Close-mid',
   Mid = 'Mid',
   OpenMid = 'Open-mid',
-  NearOpen = 'NearOpen',
+  NearOpen = 'Near-open',
   Open = 'Open',
 }
 export enum VowelLat {
@@ -89,3 +89,18 @@ export enum VowelLat {
   Central = 'Central',
   Back = 'Back',
 }
+
+export const VOWELCLOSENESS = [
+  {key: VowelLon.Close, name: 'Close'},
+  {key: VowelLon.NearClose, name: 'Near-close'},
+  {key: VowelLon.CloseMid, name: 'Close-mid'},
+  {key: VowelLon.Mid, name: 'Mid'},
+  {key: VowelLon.OpenMid, name: 'Open-mid'},
+  {key: VowelLon.NearOpen, name: 'Near-open'},
+  {key: VowelLon.Open, name: 'Open'},
+];
+export const VOWELFRONTNESS = [
+  {key: VowelLat.Front, name: 'Front'},
+  {key: VowelLat.Central, name: 'Central'},
+  {key: VowelLat.Back, name: 'Back'}
+];

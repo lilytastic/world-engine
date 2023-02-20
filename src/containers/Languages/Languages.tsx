@@ -1,22 +1,26 @@
 import { useState } from 'react';
 import { CONSONANTS } from './consonants';
 import './Languages.scss';
-import { IConsonant, ISound, IVowel, MANNERS, PLACES } from './sounds.model';
+import { IConsonant, ISound, IVowel, MANNERS, PLACES, VOWELCLOSENESS, VOWELFRONTNESS } from './sounds.model';
+import { VOWELS } from './vowels';
 
 
 
 export function Languages(props: {children?: any}) {
 
-  const [setVowels, setChosenVowels] = useState([] as ISound[]);
+  const [chosenVowels, setChosenVowels] = useState([] as IVowel[]);
   const [chosenConsonants, setChosenConsonants] = useState([] as IConsonant[]);
   const [morphology, setMorphology] = useState('CVC');  // (C) works too
   const [phonotactics, setPhonotactics] = useState('-j = ja/je\nq + a = qha\n~(x + x)\n~(C + ŋ)\n~(ŋ-)');
 
-  function getRandomConsonant(consonants: ISound[]) {
+  function getRandomVowel(vowels: IVowel[]) {
+    return vowels[Math.floor(Math.random() * vowels.length)];
+  }
+  function getRandomConsonant(consonants: IConsonant[]) {
     return consonants[Math.floor(Math.random() * consonants.length)];
   }
 
-  function generateWord(consonants: ISound[]) {
+  function generateWord(vowels: IVowel[], consonants: IConsonant[]) {
     if (consonants.length === 0) { return ''; }
     let word = '';
     let length = 1 + Math.floor(Math.random() * 3);
@@ -25,17 +29,18 @@ export function Languages(props: {children?: any}) {
     for (let ii = 0; ii < length; ii++) {
       for (let i = 0; i < morphologyMapped.length; i++) {
         const token = morphologyMapped[i];
-        const sound = getRandomConsonant(consonants);
+        let consonant = getRandomConsonant(consonants);
+        const vowel = getRandomVowel(vowels);
         switch (token) {
           case 'V':
-            word += 'a';
+            word += vowel ? (vowel.romanization || vowel.key) : '';
             break;
           case 'C':
-            word += sound ? (sound.romanization || sound.key) : '';
+            word += consonant ? (consonant.romanization || consonant.key) : '';
             break;
           case 'c':
             if (Math.random() < 0.5) {
-              word += sound ? (sound.romanization || sound.key) : '';
+              word += consonant ? (consonant.romanization || consonant.key) : '';
             }
             break;
           default:
@@ -50,7 +55,7 @@ export function Languages(props: {children?: any}) {
   function getSampleWords(consonants: ISound[]) {
     let arr = [];
     for (let i = 0; i < 10; i++) {
-      arr.push(generateWord(chosenConsonants));
+      arr.push(generateWord(chosenVowels, chosenConsonants));
     }
     return arr;
   }
@@ -58,9 +63,36 @@ export function Languages(props: {children?: any}) {
   return (
     <div>
       <h2>Vowels</h2>
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            {VOWELCLOSENESS.map(place => (<th key={place.key}>{place.name}</th>))}
+          </tr>
+        </thead>
+        <tbody>
+          {VOWELFRONTNESS.map((frontness) => (
+            <tr key={frontness.key}>
+              <td>{frontness.name}</td>
+              {VOWELCLOSENESS.map(openness => (
+                <td key={openness.key}>
+                  {VOWELS.filter(sound => !sound.advanced && sound.frontness === frontness.key && sound.openness === openness.key).map(sound => (
+                    <button key={sound.key}
+                            onClick={() => !chosenConsonants.find(x => x.key === sound.key)
+                              ? setChosenVowels([...chosenVowels, sound])
+                              : setChosenVowels([...chosenVowels.filter(x => x.key !== sound.key)])}
+                            className={`btn btn-link ${!!chosenVowels.find(x => x.key === sound.key) ? 'text-primary' : 'text-secondary'}`}>
+                      {sound.key}
+                    </button>
+                  ))}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
 
-
-      <h2>Pulmonic Consonants</h2>
+      <h2 className="mt-5">Pulmonic Consonants</h2>
       <table>
         <thead>
           <tr>
