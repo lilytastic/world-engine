@@ -43,7 +43,7 @@ export function Phonotactics(props: {children?: any, language: ILanguage, show: 
       {sounds.map(sound => (
         <div key={sound.key} className="d-flex align-items-center justify-content-between">
           <div className='mb-1'>
-            <b className="fs-4">{sound.key}</b> {sound.romanization ? <>("{sound.romanization}")</> : ''}
+            /<b>{sound.key}</b>/ {(sound.romanization && sound.romanization !== sound.key) ? <>("{sound.romanization}")</> : ''}
           </div>
           <ToggleButtonGroup
               type="checkbox"
@@ -54,7 +54,7 @@ export function Phonotactics(props: {children?: any, language: ILanguage, show: 
               }
               onChange={ev => changeRules(sound.key, ev)}>
             <ToggleButton className='btn-dark btn-sm' id={`tbg-check-0-${sound.key}`} value={SoundPositions.Start}>
-              Word-start
+              Open
             </ToggleButton>
             <ToggleButton className='btn-dark btn-sm' id={`tbg-check-1-${sound.key}`} value={SoundPositions.Onset}>
               Onset
@@ -66,7 +66,7 @@ export function Phonotactics(props: {children?: any, language: ILanguage, show: 
               Coda
             </ToggleButton>
             <ToggleButton className='btn-dark btn-sm' id={`tbg-check-4-${sound.key}`} value={SoundPositions.Close}>
-              Word-finish
+              Close
             </ToggleButton>
           </ToggleButtonGroup>
         </div>

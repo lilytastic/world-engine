@@ -26,12 +26,6 @@ export function Languages(props: {children?: any}) {
     localStorage.setItem('_language', JSON.stringify(language));
   }, [language]);
 
-  function getRandomVowel(vowels: IVowel[]) {
-    return vowels[Math.floor(Math.random() * vowels.length)];
-  }
-  function getRandomConsonant(consonants: IConsonant[]) {
-    return consonants[Math.floor(Math.random() * consonants.length)];
-  }
   function getRandomSound(sounds: ISound[]) {
     return sounds[Math.floor(Math.random() * sounds.length)];
   }
@@ -82,13 +76,6 @@ export function Languages(props: {children?: any}) {
           switch (token) {
             case 'V':
               return rules?.positionsAllowed.includes(SoundPositions.Nucleus);
-            case 'c':
-              if (Math.random() * 100 < 50) {
-                return false;
-              }
-              break;
-            case 'C':
-              break;
             default:
               break;
           }
@@ -103,7 +90,9 @@ export function Languages(props: {children?: any}) {
 
         if (sounds.length > 0) {
           const sound = getRandomSound(sounds);
-          syllable.sounds.push(sound);
+          if (!!sound && !(token === 'c' && Math.random() * 100 < 50)) {
+            syllable.sounds.push(sound);
+          }
         }
       }
       syllables.push(syllable)
@@ -146,13 +135,40 @@ export function Languages(props: {children?: any}) {
   }
 
   const printListExclusive = (list: any[]) => {
+    if (list.length === 0) {
+      return;
+    }
     if (list.length === 1) {
       return list[0];
     }
     if (list.length === 2) {
       return list[0] + ' or ' + list[1];
     }
-    return list.slice(0, list.length - 2).join(', ') + ', or ' + list[list.length - 1];
+    return list.slice(0, list.length - 1).join(', ') + ', or ' + list[list.length - 1];
+  }
+
+  const printAllRules = () => {
+    let applicable = [];
+
+    const cantStart = listRules().filter(x => !x.rules.positionsAllowed.includes(SoundPositions.Start));
+    const cantEnd = listRules().filter(x => !x.rules.positionsAllowed.includes(SoundPositions.Close));
+    const nonOnset = listRules().filter(x => !x.rules.positionsAllowed.includes(SoundPositions.Onset) && !x.rules.positionsAllowed.includes(SoundPositions.Nucleus));
+    const nonCoda = listRules().filter(x => !x.rules.positionsAllowed.includes(SoundPositions.Coda) && !x.rules.positionsAllowed.includes(SoundPositions.Nucleus));
+
+    if (cantStart.length > 0) {
+      applicable.push(`Words cannot start with ${printListExclusive(cantStart.map(x => `/<b>${x.key}</b>/`))}.`);
+    }
+    if (cantEnd.length > 0) {
+      applicable.push(`Words cannot end on ${printListExclusive(cantEnd.map(x => `/<b>${x.key}</b>/`))}.`);
+    }
+    if (nonOnset.length > 0) {
+      applicable.push(`${printListExclusive(nonOnset.map(x => `/<b>${x.key}</b>/`))} cannot be used as ${nonOnset.length === 1 ? 'an onset' : 'onsets'}.`);
+    }
+    if (nonCoda.length > 0) {
+      applicable.push(`${printListExclusive(nonCoda.map(x => `/<b>${x.key}</b>/`))} cannot be used as ${nonCoda.length === 1 ? 'a coda' : 'codas'}.`);
+    }
+
+    return applicable;
   }
 
   return (
@@ -214,8 +230,9 @@ export function Languages(props: {children?: any}) {
       <h2>Phonotactics <button className='btn btn-link' onClick={() => setIsEditingPhonotactics(true)}>Edit</button></h2>
       Syllable shape: [{language.phonotactics.syllableShape}]
       <ul>
-        <li dangerouslySetInnerHTML={{__html: `Words cannot start with ${printListExclusive(listRules().filter(x => !x.rules.positionsAllowed.includes(SoundPositions.Start)).map(x => `\\<b>${x.key}</b>\\`))}.`}}></li>
-        <li dangerouslySetInnerHTML={{__html: `Words cannot end with ${printListExclusive(listRules().filter(x => !x.rules.positionsAllowed.includes(SoundPositions.Close)).map(x => `\\<b>${x.key}</b>\\`))}.`}}></li>
+        {printAllRules().map(x => (
+          <li key={x} dangerouslySetInnerHTML={{__html: x}}></li>
+        ))}
       </ul>
 
       <h2>Specimens</h2>
