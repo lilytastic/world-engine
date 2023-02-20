@@ -76,6 +76,12 @@ export function Languages(props: {children?: any}) {
     setLanguage({...language, vowels, consonants});
   }
 
+  const frontnessUsed = VOWELFRONTNESS.filter(x => language.vowels.find(y => y.frontness === x.key));
+  const opennessUsed = VOWELCLOSENESS.filter(x => language.vowels.find(y => y.openness === x.key));
+
+  const placesUsed = PLACES.filter(x => language.consonants.find(y => y.place === x.key));
+  const mannersUsed = MANNERS.filter(x => language.consonants.find(y => y.manner === x.key));
+
   return (
     <div>
       <h2 className='mt-0'>Sounds <button className='btn btn-link' onClick={() => setIsSelectingSounds(true)}>Edit</button></h2>
@@ -85,14 +91,14 @@ export function Languages(props: {children?: any}) {
         <thead>
           <tr>
             <th></th>
-            {VOWELFRONTNESS.map(place => (<th key={place.key}>{place.name}</th>))}
+            {frontnessUsed.map(place => (<th key={place.key}>{place.name}</th>))}
           </tr>
         </thead>
         <tbody>
-          {VOWELCLOSENESS.map((openness) => (
+          {opennessUsed.map((openness) => (
             <tr key={openness.key}>
               <td>{openness.name}</td>
-              {VOWELFRONTNESS.map(frontness => (
+              {frontnessUsed.map(frontness => (
                 <td key={frontness.key}>
                   {language.vowels.filter(sound => sound.frontness === frontness.key && sound.openness === openness.key).map(sound => (
                     sound.key
@@ -109,14 +115,14 @@ export function Languages(props: {children?: any}) {
         <thead>
           <tr>
             <th></th>
-            {PLACES.map(place => (<th key={place.key}>{place.name}</th>))}
+            {placesUsed.map(place => (<th key={place.key}>{place.name}</th>))}
           </tr>
         </thead>
         <tbody>
-          {MANNERS.map((manner) => (
+          {mannersUsed.map((manner) => (
             <tr key={manner.key}>
               <td>{manner.name}</td>
-              {PLACES.map(place => (
+              {placesUsed.map(place => (
                 <td key={place.key}>
                   {language.consonants.filter(sound => sound.manner === manner.key && sound.place === place.key).map(sound => (
                     sound.key
