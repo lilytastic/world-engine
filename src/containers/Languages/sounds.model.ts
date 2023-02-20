@@ -27,6 +27,15 @@ export interface ISyllable {
   sounds: IWordSound[];
 }
 
+export interface ILanguage {
+  vowels: IVowel[];
+  consonants: IConsonant[];
+}
+export const DEFAULT_LANGUAGE: ILanguage = {
+  vowels: [],
+  consonants: []
+}
+
 export enum Place {
   Bilabial = 'Bilabial',
   LabioDental = 'Labio-dental',

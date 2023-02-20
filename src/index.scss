@@ -1,3 +1,5 @@
+
+@import "~bootstrap/scss/bootstrap";
 @import './styles';
 
 body {
@@ -32,6 +34,14 @@ ul {
 .column {
   display: flex;
   flex-direction: column;
+}
+
+.modal-header .btn-close {
+  color: $color-text;
+}
+.modal-content {
+  color: $color-text;
+  background-color: darken($color-background, 5);
 }
 
 input, textarea {
