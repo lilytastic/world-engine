@@ -5,6 +5,7 @@ import { Phonotactics } from './Phonotactics';
 import { SoundSelection } from './Sounds';
 import { IConsonant, ISyllable, IVowel, IWord, ILanguage, DEFAULT_LANGUAGE, MANNERS, PLACES, VOWELCLOSENESS, VOWELFRONTNESS, IPhonotactics, ISound, SoundPositions } from './sounds.model';
 
+console.log('loaded', JSON.parse(localStorage.getItem('_language') || '{}'));
 
 export function Languages(props: {children?: any}) {
 
@@ -23,9 +24,11 @@ export function Languages(props: {children?: any}) {
 
   const [language, setLanguage] = useState(startingLanguage);
 
+
   useEffect(() => {
     localStorage.setItem('_language', JSON.stringify(language));
   }, [language]);
+
 
   function selectSounds(vowels: IVowel[], consonants: IConsonant[]) {
     setLanguage({...language, vowels, consonants});
@@ -33,13 +36,13 @@ export function Languages(props: {children?: any}) {
   function selectPhonotactics(phonotactics: IPhonotactics) {
     setLanguage({...language, phonotactics});
   }
+  
 
   const frontnessUsed = VOWELFRONTNESS.filter(x => language.vowels.find(y => y.frontness === x.key));
   const opennessUsed = VOWELCLOSENESS.filter(x => language.vowels.find(y => y.openness === x.key));
 
   const placesUsed = PLACES.filter(x => language.consonants.find(y => y.place === x.key));
   const mannersUsed = MANNERS.filter(x => language.consonants.find(y => y.manner === x.key));
-
 
   return (
     <div>
@@ -105,7 +108,7 @@ export function Languages(props: {children?: any}) {
         ))}
       </ul>
 
-      <h2>Specimens</h2>
+      <h2>Lexicon <button className='btn btn-link' onClick={() => setIsEditingPhonotactics(true)}>Edit</button></h2>
       <div>
         Sample words: <i>{getSampleWords(language).map(word => transcribeWord(word)).join(', ')}</i>
       </div>

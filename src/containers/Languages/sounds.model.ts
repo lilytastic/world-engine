@@ -56,6 +56,7 @@ export enum SoundPositions {
   Close = 'Close'
 }
 export interface ISoundRules {
+  canCluster: boolean;
   positionsAllowed: SoundPositions[];
 }
 

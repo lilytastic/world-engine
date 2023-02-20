@@ -1,4 +1,5 @@
-import { ILanguage, ISound, ISyllable, IWord, SoundPositions } from "./sounds.model";
+import { ILanguage, ISound, ISoundRules, ISyllable, IWord, SoundPositions } from "./sounds.model";
+import { VOWELS } from "./vowels";
 
 function getRandomSound(sounds: ISound[]) {
   return sounds[Math.floor(Math.random() * sounds.length)];
@@ -15,6 +16,18 @@ export function getSampleWords(language: ILanguage) {
     arr.push(generateWord(language));
   }
   return arr;
+}
+
+export function getDefaultPositions(language: ILanguage, key: string): SoundPositions[] {
+  if (!!VOWELS.find(x => x.key === key)) {
+    return [SoundPositions.Close, SoundPositions.Nucleus, SoundPositions.Start];
+  }
+  return [SoundPositions.Close, SoundPositions.Coda, SoundPositions.Onset, SoundPositions.Start];
+}
+
+export function generateDefaultRule(language: ILanguage, sound: ISound): ISoundRules {
+  const defaultPositions = getDefaultPositions(language, sound.key);
+  return {positionsAllowed: defaultPositions, canCluster: false};
 }
 
 export function generateWord(language: ILanguage) {
@@ -38,12 +51,15 @@ export function generateWord(language: ILanguage) {
       sounds = sounds.filter(sound => {
         let rules = language.phonotactics.rules[sound.key];
         if (!rules) {
+          rules = generateDefaultRule(language, sound);
           if (sound.isVowel) {
             rules = {
+              canCluster: true,
               positionsAllowed: [SoundPositions.Close, SoundPositions.Nucleus, SoundPositions.Start]
             };                
           } else {
             rules = {
+              canCluster: true,
               positionsAllowed: [SoundPositions.Close, SoundPositions.Coda, SoundPositions.Onset, SoundPositions.Start]
             };  
           }

@@ -11,6 +11,7 @@ import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import ToggleButton from 'react-bootstrap/ToggleButton';
 import ToggleButtonGroup from 'react-bootstrap/ToggleButtonGroup';
+import { generateDefaultRule } from './generators.helpers';
 
 export function Phonotactics(props: {children?: any, language: ILanguage, show: boolean, handleClose?: (arg0: IPhonotactics) => void}) {
 
@@ -27,12 +28,12 @@ export function Phonotactics(props: {children?: any, language: ILanguage, show: 
     };
   }
 
-  const changeRules = (key: string, positions: SoundPositions[]) => {
+  const changeRules = (sound: ISound, positions: SoundPositions[]) => {
     const _rules = {...rules};
-    if (!_rules[key]) {
-      _rules[key] = {positionsAllowed: positions}
+    if (!_rules[sound.key]) {
+      _rules[sound.key] = {...generateDefaultRule(props.language, sound), positionsAllowed: positions}
     } else {
-      _rules[key].positionsAllowed = positions;
+      _rules[sound.key].positionsAllowed = positions;
     }
     console.log(_rules);
     setRules(_rules);
@@ -52,7 +53,7 @@ export function Phonotactics(props: {children?: any, language: ILanguage, show: 
                   ? rules[sound.key].positionsAllowed
                   : defaults
               }
-              onChange={ev => changeRules(sound.key, ev)}>
+              onChange={ev => changeRules(sound, ev)}>
             <ToggleButton className='btn-dark btn-sm' id={`tbg-check-0-${sound.key}`} value={SoundPositions.Start}>
               Open
             </ToggleButton>

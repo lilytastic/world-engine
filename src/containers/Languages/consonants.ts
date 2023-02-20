@@ -91,7 +91,8 @@ export const CONSONANTS: IConsonant[] = [
   {
     place: Place.Uvular,
     manner: Manner.Plosive,
-    key: 'q'
+    key: 'q',
+    romanization: 'q',
   },
   {
     place: Place.Uvular,
