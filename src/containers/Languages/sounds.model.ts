@@ -16,6 +16,17 @@ export interface IConsonant extends ISound {
   manner: string;
 }
 
+export interface IWordSound extends ISound {
+  stress?: boolean;
+}
+
+export interface IWord {
+  syllables: ISyllable[];
+}
+export interface ISyllable {
+  sounds: IWordSound[];
+}
+
 export enum Place {
   Bilabial = 'Bilabial',
   LabioDental = 'Labio-dental',

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { CONSONANTS } from './consonants';
 import './Languages.scss';
-import { IConsonant, ISound, IVowel, MANNERS, PLACES, VOWELCLOSENESS, VOWELFRONTNESS } from './sounds.model';
+import { IConsonant, ISound, ISyllable, IVowel, IWord, IWordSound, MANNERS, PLACES, VOWELCLOSENESS, VOWELFRONTNESS } from './sounds.model';
 import { VOWELS } from './vowels';
 
 
@@ -10,7 +10,8 @@ export function Languages(props: {children?: any}) {
 
   const [chosenVowels, setChosenVowels] = useState([] as IVowel[]);
   const [chosenConsonants, setChosenConsonants] = useState([] as IConsonant[]);
-  const [morphology, setMorphology] = useState('CVC');  // (C) works too
+  const [morphology, setMorphology] = useState('CV(C)');
+  const [stressSystem, setStressSystem] = useState('');
   const [phonotactics, setPhonotactics] = useState('-j = ja/je\nq + a = qha\n~(x + x)\n~(C + ŋ)\n~(ŋ-)');
 
   function getRandomVowel(vowels: IVowel[]) {
@@ -21,41 +22,50 @@ export function Languages(props: {children?: any}) {
   }
 
   function generateWord(vowels: IVowel[], consonants: IConsonant[]) {
-    if (consonants.length === 0) { return ''; }
-    let word = '';
     let length = 1 + Math.floor(Math.random() * 3);
     const morphologyMapped = morphology.toUpperCase().replace(/\(C\)/g, 'c');
+    let syllables: ISyllable[] = [];
 
     for (let ii = 0; ii < length; ii++) {
+      let syllable: ISyllable = {sounds: []};
       for (let i = 0; i < morphologyMapped.length; i++) {
         const token = morphologyMapped[i];
         let consonant = getRandomConsonant(consonants);
         const vowel = getRandomVowel(vowels);
         switch (token) {
           case 'V':
-            word += vowel ? (vowel.romanization || vowel.key) : '';
+            syllable.sounds.push(vowel);
             break;
           case 'C':
-            word += consonant ? (consonant.romanization || consonant.key) : '';
+            syllable.sounds.push(consonant);
             break;
           case 'c':
             if (Math.random() * 100 < 50) {
-              word += consonant ? (consonant.romanization || consonant.key) : '';
+              syllable.sounds.push(consonant);
             }
             break;
           default:
             break;
         }
       }
+      syllables.push(syllable)
     }
 
+    let word: IWord = {
+      syllables
+    };
     return word;
   }
 
-  function getSampleWords(consonants: ISound[]) {
-    let arr = [];
+  function transcribeWord(word: IWord) {
+    return word.syllables.map(syllable => syllable.sounds.map(x => x?.romanization || x?.key || '').join('')).join('');
+  }
+
+  function getSampleWords(vowels: IVowel[], consonants: IConsonant[]) {
+    let arr: IWord[] = [];
+    if (consonants.length === 0) { return arr; }
     for (let i = 0; i < 10; i++) {
-      arr.push(generateWord(chosenVowels, chosenConsonants));
+      arr.push(generateWord(vowels, consonants));
     }
     return arr;
   }
@@ -137,8 +147,13 @@ export function Languages(props: {children?: any}) {
         <textarea value={phonotactics} onChange={ev => setPhonotactics(ev.currentTarget.value)} />        
       </div>
 
+      <div className="mt-5">
+        <h3>Stress System</h3>
+        <textarea value={stressSystem} onChange={ev => setStressSystem(ev.currentTarget.value)} />        
+      </div>
+
       <div className="mt-4">
-        Sample words: <i>{getSampleWords(chosenConsonants).join(', ')}</i>
+        Sample words: <i>{getSampleWords(chosenVowels, chosenConsonants).map(word => transcribeWord(word)).join(', ')}</i>
       </div>
     </div>
   );
