@@ -51,14 +51,20 @@ export function Languages(props: {children?: any}) {
         const isWordClose = ii === length - 1 && i ===  morphologyMapped.length - 1;
         const isOnset = i < onsetEnd;
         const isCoda = i > codaStart;
-        let sounds: ISound[] = [...language.vowels, ...language.consonants];
+        let sounds = [...language.vowels.map(x => ({...x, isVowel: true})), ...language.consonants.map(x => ({...x, isVowel: false}))];
 
         sounds = sounds.filter(sound => {
           let rules = language.phonotactics.rules?.[sound.key];
           if (!rules) {
-            rules = {
-              positionsAllowed: [SoundPositions.Close, SoundPositions.Coda, SoundPositions.Nucleus, SoundPositions.Onset, SoundPositions.Start]
-            };
+            if (sound.isVowel) {
+              rules = {
+                positionsAllowed: [SoundPositions.Close, SoundPositions.Coda, SoundPositions.Nucleus, SoundPositions.Onset, SoundPositions.Start]
+              };                
+            } else {
+              rules = {
+                positionsAllowed: [SoundPositions.Close, SoundPositions.Coda, SoundPositions.Onset, SoundPositions.Start]
+              };  
+            }
           }
   
           if (isWordStart) {
@@ -72,7 +78,7 @@ export function Languages(props: {children?: any}) {
             case 'V':
               return rules?.positionsAllowed.includes(SoundPositions.Nucleus);
             case 'C':
-              break;
+              return true;
             case 'c':
               if (Math.random() * 100 < 50) {
                 return true;
