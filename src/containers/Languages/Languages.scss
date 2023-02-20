@@ -2,8 +2,6 @@
 
 td, th {
     padding: 10px;
-    border: solid 1px rgba($color-text, 0.4);
-    white-space: nowrap;
 }
 
 th, td:first-of-type {
@@ -13,4 +11,9 @@ th, td:first-of-type {
 
 th, td:not(:first-of-type) {
     text-align: center;
+}
+
+td:not(:first-of-type) {
+    border: solid 1px rgba($color-text, 0.4);
+    white-space: nowrap;
 }

@@ -35,7 +35,7 @@ enum Manner {
 const PLACES = [
   {key: Place.Bilabial, name: 'Bilabial'},
   {key: Place.LabioDental, name: 'Labio-dental'},
-  {key: Place.LinguoLabial, name: 'Linguo-labial', advanced: true},
+  {key: Place.LinguoLabial, name: 'Linguo-labial'},
   {key: Place.Dental, name: 'Dental'},
   {key: Place.Alveolar, name: 'Alveolar'},
   {key: Place.PostAlveolar, name: 'Post­-alveolar'},
@@ -49,10 +49,10 @@ const PLACES = [
 const MANNERS = [
   {key: Manner.Nasal, name: 'Nasal'},
   {key: Manner.Plosive, name: 'Plosive'},
-  {key: Manner.SibilantAffricate, name: 'Sibilant affricate', advanced: true},
-  {key: Manner.NonSibilantAffricate, name: 'Non-sibilant affricate', advanced: true},
+  {key: Manner.SibilantAffricate, name: 'Sibilant affricate'},
+  {key: Manner.NonSibilantAffricate, name: 'Non-sibilant affricate'},
   {key: Manner.SibilantFricative, name: 'Sibilant fricative'},
-  {key: Manner.NonSibilantFricative, name: 'Non-sibilant fricative', advanced: true},
+  {key: Manner.NonSibilantFricative, name: 'Non-sibilant fricative'},
   {key: Manner.Approximant, name: 'Approximant'},
   {key: Manner.Tap, name: 'Tap/Flap'},
   {key: Manner.Trill, name: 'Trill'},
@@ -67,6 +67,7 @@ export interface ISound {
   manner: string;
   key: string;
   romanization?: string;
+  advanced?: boolean;
 }
 const sounds: ISound[] = [
   {
@@ -80,36 +81,86 @@ const sounds: ISound[] = [
     key: 'b'
   },
   {
-    place: Place.LabioDental,
-    manner: Manner.Plosive,
-    key: 'p̪'
+    place: Place.Bilabial,
+    manner: Manner.Nasal,
+    key: 'm'
+  },
+  {
+    place: Place.Alveolar,
+    manner: Manner.Nasal,
+    key: 'n'
   },
   {
     place: Place.LabioDental,
     manner: Manner.Plosive,
-    key: 'b̪'
+    key: 'p̪',
+    advanced: true
+  },
+  {
+    place: Place.LabioDental,
+    manner: Manner.Plosive,
+    key: 'b̪',
+    advanced: true
   },
   {
     place: Place.LinguoLabial,
     manner: Manner.Plosive,
-    key: 't̼'
+    key: 't̼',
+    advanced: true
   },
   {
     place: Place.LinguoLabial,
     manner: Manner.Plosive,
-    key: 'd̼'
+    key: 'd̼',
+    advanced: true
+  },
+  {
+    place: Place.Alveolar,
+    manner: Manner.Plosive,
+    key: 't'
+  },
+  {
+    place: Place.Alveolar,
+    manner: Manner.Plosive,
+    key: 'd'
+  },
+  {
+    place: Place.PostAlveolar,
+    manner: Manner.SibilantFricative,
+    key: 'ʃ',
+    romanization: 'sh'
+  },
+  {
+    place: Place.PostAlveolar,
+    manner: Manner.SibilantFricative,
+    key: 'ʒ',
+    romanization: 'j'
+  },
+  {
+    place: Place.Retroflex,
+    manner: Manner.Plosive,
+    key: 'ʈ',
+    romanization: 't'
+  },
+  {
+    place: Place.Retroflex,
+    manner: Manner.Plosive,
+    key: 'ɖ',
+    romanization: 'd'
   },
   {
     place: Place.Dental,
     manner: Manner.NonSibilantAffricate,
     key: 't̪θ',
-    romanization: 'th'
+    romanization: 'th',
+    advanced: true
   },
   {
     place: Place.Dental,
     manner: Manner.NonSibilantAffricate,
     key: 'd̪ð',
-    romanization: 'th'
+    romanization: 'th',
+    advanced: true
   },
   {
     place: Place.Dental,
@@ -129,6 +180,16 @@ const sounds: ISound[] = [
     key: 's'
   },
   {
+    place: Place.Palatal,
+    manner: Manner.Plosive,
+    key: 'c'
+  },
+  {
+    place: Place.Palatal,
+    manner: Manner.Plosive,
+    key: 'ɟ'
+  },
+  {
     place: Place.Alveolar,
     manner: Manner.SibilantFricative,
     key: 'z'
@@ -139,22 +200,45 @@ export function Languages(props: {children?: any}) {
 
   const [chosenSounds, setChosenSounds] = useState([] as ISound[])
 
+  function generateWord(sounds: ISound[]) {
+    if (sounds.length === 0) { return ''; }
+    let word = '';
+    let length = Math.floor(2 + Math.random() * 5)
+
+    for (let i = 0; i < length; i++) {
+      const sound = sounds[Math.round(Math.random() * length)];
+      if (!sound) { continue; }
+      word += sound.romanization || sound.key;
+    }
+
+    return word;
+  }
+
+  function getSampleWords(sounds: ISound[]) {
+    let arr = [];
+    for (let i = 0; i < 3; i++) {
+      arr.push(generateWord(chosenSounds));
+    }
+    return arr;
+  }
+
   return (
     <div>
+      <h2>Pulmonic Consonants</h2>
       <table>
         <thead>
           <tr>
             <th></th>
-            {PLACES.filter(manner => !manner.advanced).map(place => (<th key={place.key}>{place.name}</th>))}
+            {PLACES.map(place => (<th key={place.key}>{place.name}</th>))}
           </tr>
         </thead>
         <tbody>
-          {MANNERS.filter(manner => !manner.advanced).map((manner) => (
+          {MANNERS.map((manner) => (
             <tr key={manner.key}>
               <td>{manner.name}</td>
               {PLACES.map(place => (
                 <td key={place.key}>
-                  {sounds.filter(sound => sound.manner === manner.key && sound.place === place.key).map(sound => (
+                  {sounds.filter(sound => !sound.advanced && sound.manner === manner.key && sound.place === place.key).map(sound => (
                     <button key={sound.key}
                             onClick={() => !chosenSounds.find(x => x.key === sound.key)
                               ? setChosenSounds([...chosenSounds, sound])
@@ -172,6 +256,10 @@ export function Languages(props: {children?: any}) {
 
       <div className="mt-4">
         Current sounds: <i>{chosenSounds.map(sound => sound.key).join(', ')}</i>
+      </div>
+
+      <div className="mt-4">
+        Sample words: <i>{getSampleWords(chosenSounds).join(', ')}</i>
       </div>
     </div>
   );
