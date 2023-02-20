@@ -4,6 +4,7 @@ export interface ISound {
   key: string;
   romanization?: string;
   advanced?: boolean;
+  voiced?: boolean;
 }
 export interface IVowel extends ISound {
   frontness: string;

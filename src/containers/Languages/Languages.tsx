@@ -24,7 +24,7 @@ export function Languages(props: {children?: any}) {
     if (consonants.length === 0) { return ''; }
     let word = '';
     let length = 1 + Math.floor(Math.random() * 3);
-    const morphologyMapped = morphology.toUpperCase().replace(/"(C)"/g, 'c');
+    const morphologyMapped = morphology.toUpperCase().replace(/\(C\)/g, 'c');
 
     for (let ii = 0; ii < length; ii++) {
       for (let i = 0; i < morphologyMapped.length; i++) {
@@ -39,7 +39,7 @@ export function Languages(props: {children?: any}) {
             word += consonant ? (consonant.romanization || consonant.key) : '';
             break;
           case 'c':
-            if (Math.random() < 0.5) {
+            if (Math.random() * 100 < 50) {
               word += consonant ? (consonant.romanization || consonant.key) : '';
             }
             break;
@@ -78,7 +78,7 @@ export function Languages(props: {children?: any}) {
                 <td key={frontness.key}>
                   {VOWELS.filter(sound => !sound.advanced && sound.frontness === frontness.key && sound.openness === openness.key).map(sound => (
                     <button key={sound.key}
-                            onClick={() => !chosenConsonants.find(x => x.key === sound.key)
+                            onClick={() => !chosenVowels.find(x => x.key === sound.key)
                               ? setChosenVowels([...chosenVowels, sound])
                               : setChosenVowels([...chosenVowels.filter(x => x.key !== sound.key)])}
                             className={`btn btn-link ${!!chosenVowels.find(x => x.key === sound.key) ? 'text-primary' : 'text-secondary'}`}>
@@ -127,12 +127,13 @@ export function Languages(props: {children?: any}) {
       </div>
 
       <div className="mt-5">
-        <h2>Word Morphology</h2>
+        <h2>Phonotactics</h2>
+        <h3 className='mt-4'>Syllable Shape</h3>
         <input value={morphology} onChange={ev => setMorphology(ev.currentTarget.value)} />        
       </div>
 
       <div className="mt-5">
-        <h2>Phonotactics</h2>
+        <h3>Rules</h3>
         <textarea value={phonotactics} onChange={ev => setPhonotactics(ev.currentTarget.value)} />        
       </div>
 

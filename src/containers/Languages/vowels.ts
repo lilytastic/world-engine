@@ -136,7 +136,8 @@ export const VOWELS: IVowel[] = [
   {
     openness: VowelLon.NearOpen,
     frontness: VowelLat.Front,
-    key: 'æ'
+    key: 'æ',
+    romanization: 'ae'
   },
   {
     openness: VowelLon.NearOpen,
