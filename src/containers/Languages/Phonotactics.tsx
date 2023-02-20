@@ -94,7 +94,7 @@ export function Phonotactics(props: {children?: any, language: ILanguage, show: 
           <textarea value={rules} onChange={ev => setRules(ev.currentTarget.value)} />
           */}
           <div className="d-grid gap-2">
-            {showRules(props.language.vowels, [SoundPositions.Start, SoundPositions.Onset, SoundPositions.Nucleus, SoundPositions.Coda, SoundPositions.Close])}
+            {showRules(props.language.vowels, [SoundPositions.Start, SoundPositions.Nucleus, SoundPositions.Close])}
             <div></div>
             {showRules(props.language.consonants, [SoundPositions.Start, SoundPositions.Onset, SoundPositions.Coda, SoundPositions.Close])}
           </div>

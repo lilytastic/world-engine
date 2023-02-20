@@ -141,6 +141,14 @@ export function Languages(props: {children?: any}) {
   const placesUsed = PLACES.filter(x => language.consonants.find(y => y.place === x.key));
   const mannersUsed = MANNERS.filter(x => language.consonants.find(y => y.manner === x.key));
 
+  const listRules = () => {
+    return Object.keys(language.phonotactics.rules).map(x => ({key: x, rules: language.phonotactics.rules[x]})).filter(x => !!x.rules);
+  }
+
+  const printListExclusive = (list: any[]) => {
+    return list.slice(0, list.length - 2).join(', ') + ', or ' + list[list.length - 1];
+  }
+
   return (
     <div>
       <SoundSelection language={language} show={isSelectingSounds} handleClose={(vowels, consonants) => {selectSounds(vowels, consonants); setIsSelectingSounds(false);}}></SoundSelection>
@@ -198,7 +206,11 @@ export function Languages(props: {children?: any}) {
       </table>
 
       <h2>Phonotactics <button className='btn btn-link' onClick={() => setIsEditingPhonotactics(true)}>Edit</button></h2>
-      Syllable shape: {language.phonotactics.syllableShape}
+      Syllable shape: [{language.phonotactics.syllableShape}]
+      <ul>
+        <li>Words cannot start with {printListExclusive(listRules().filter(x => x.rules.positionsAllowed.includes(SoundPositions.Start)).map(x => `\\${x.key}\\`))}.</li>
+        <li>Words cannot end with {printListExclusive(listRules().filter(x => x.rules.positionsAllowed.includes(SoundPositions.Close)).map(x => `\\${x.key}\\`))}.</li>
+      </ul>
 
       <h2>Specimens</h2>
       <div>
