@@ -32,8 +32,10 @@ export function generateDefaultRule(language: ILanguage, sound: ISound): ISoundR
 
 export function generateWord(language: ILanguage) {
   let length = 1 + Math.floor(Math.random() * 3);
-  const morphologyMapped = language.phonology.syllableShape.toUpperCase().replace(/\(C\)/g, 'c');
+  const morphologyMapped = language.phonology.syllableShape.toUpperCase().replace(/\(C\)/g, 'c').replace(/\(R\)/g, 'r').replace(/\(H\)/g, 'h');
   let syllables: ISyllable[] = [];
+  const phonotactics: IPhonotactic[] = language.phonology.phonotactics;
+  let sounds = [...language.vowels, ...language.consonants];
 
   for (let ii = 0; ii < length; ii++) {
     let syllable: ISyllable = {sounds: []};
@@ -46,11 +48,8 @@ export function generateWord(language: ILanguage) {
       const isWordClose = ii === length - 1 && i ===  morphologyMapped.length - 1;
       const isOnset = i < onsetEnd;
       const isCoda = i > codaStart;
-      let sounds = [...language.vowels, ...language.consonants];
 
       sounds = sounds.filter(sound => {
-        const phonotactics: IPhonotactic[] = language.phonology.phonotactics;
-        
         /*
         let rules = language.phonology.phonotactics[sound.key];
         if (!rules) {
@@ -59,12 +58,12 @@ export function generateWord(language: ILanguage) {
             rules = {
               canCluster: true,
               positionsAllowed: [SoundPositions.Close, SoundPositions.Nucleus, SoundPositions.Start]
-            };                
+            };
           } else {
             rules = {
               canCluster: true,
               positionsAllowed: [SoundPositions.Close, SoundPositions.Coda, SoundPositions.Onset, SoundPositions.Start]
-            };  
+            };
           }
         }
 
@@ -105,6 +104,20 @@ export function generateWord(language: ILanguage) {
           }
         }
         */
+        switch (token) {
+          case 'V':
+            if (sound.type === 'consonant') {
+              return false;
+            }
+            break;
+          case 'C':
+            if (sound.type === 'vowel') {
+              return false;
+            }
+            break;
+          default:
+            break;
+        }
         
         return true;
       });
@@ -151,6 +164,7 @@ export const printListExclusive = (list: any[]) => {
 export const printAllRules = (language: ILanguage) => {
   let applicable: string[] = [];
 
+  return language.phonology.phonotactics.map(x => x.script);
   /*
   const cantStart = listRules(language).filter(x => !x.rules.positionsAllowed.includes(SoundPositions.Start));
   const cantEnd = listRules(language).filter(x => !x.rules.positionsAllowed.includes(SoundPositions.Close));

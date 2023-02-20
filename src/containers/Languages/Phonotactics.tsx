@@ -91,12 +91,8 @@ export function Phonotactics(props: {children?: any, language: ILanguage, show: 
           <input value={morphology} onChange={ev => setMorphology(ev.currentTarget.value)} />
 
           <h3>Phonotactics</h3>
-          <div className='fst-italic mb-2'>
-            TODO: Complex rules for each setting. Indicate with asterisk and force enable.
-          </div>
-          {/*
-          <textarea value={rules} onChange={ev => setRules(ev.currentTarget.value)} />
-          */}
+          <textarea value={phonotactics?.map(x => x.script).join('\n') ?? ''} onChange={ev => setPhonotactics(ev.currentTarget.value.split('\n').map(x => ({script: x})))} />
+
           {/*
           <div className="d-grid gap-2">
             {showRules(props.language.vowels, [SoundPositions.Start, SoundPositions.Nucleus, SoundPositions.Close])}
