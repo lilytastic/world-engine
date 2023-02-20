@@ -67,15 +67,15 @@ export function Languages(props: {children?: any}) {
         <thead>
           <tr>
             <th></th>
-            {VOWELCLOSENESS.map(place => (<th key={place.key}>{place.name}</th>))}
+            {VOWELFRONTNESS.map(place => (<th key={place.key}>{place.name}</th>))}
           </tr>
         </thead>
         <tbody>
-          {VOWELFRONTNESS.map((frontness) => (
-            <tr key={frontness.key}>
-              <td>{frontness.name}</td>
-              {VOWELCLOSENESS.map(openness => (
-                <td key={openness.key}>
+          {VOWELCLOSENESS.map((openness) => (
+            <tr key={openness.key}>
+              <td>{openness.name}</td>
+              {VOWELFRONTNESS.map(frontness => (
+                <td key={frontness.key}>
                   {VOWELS.filter(sound => !sound.advanced && sound.frontness === frontness.key && sound.openness === openness.key).map(sound => (
                     <button key={sound.key}
                             onClick={() => !chosenConsonants.find(x => x.key === sound.key)
