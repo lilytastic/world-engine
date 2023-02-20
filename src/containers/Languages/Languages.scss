@@ -3,11 +3,19 @@
 th, td:first-of-type {
     font-size: 0.7em;
     font-weight: bold;
-    padding: 10px;
+    padding: 10px 12px;
 }
 
 th, td:not(:first-of-type) {
     text-align: center;
+}
+
+th {
+    padding-top: 0;
+}
+
+td:first-of-type {
+    padding-left: 0;
 }
 
 td:not(:first-of-type) {

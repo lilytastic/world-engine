@@ -6,12 +6,15 @@ export interface ISound {
   advanced?: boolean;
   voiced?: boolean;
 }
-export interface IVowel extends ISound {
+export interface ITypedSound<T> extends ISound {
+  type: T;
+}
+export interface IVowel extends ITypedSound<'vowel'> {
   frontness: string;
   openness: string;
   rounded?: boolean;
 }
-export interface IConsonant extends ISound {
+export interface IConsonant extends ITypedSound<'consonant'> {
   place: string;
   manner: string;
 }

@@ -172,4 +172,4 @@ export const VOWELS: IVowel[] = [
     key: 'ɒ'
   },
 
-]
+].map(x => ({...x, type: 'vowel'}));

@@ -46,13 +46,13 @@ export function generateWord(language: ILanguage) {
       const isWordClose = ii === length - 1 && i ===  morphologyMapped.length - 1;
       const isOnset = i < onsetEnd;
       const isCoda = i > codaStart;
-      let sounds = [...language.vowels.map(x => ({...x, isVowel: true})), ...language.consonants.map(x => ({...x, isVowel: false}))];
+      let sounds = [...language.vowels, ...language.consonants];
 
       sounds = sounds.filter(sound => {
         let rules = language.phonotactics.rules[sound.key];
         if (!rules) {
           rules = generateDefaultRule(language, sound);
-          if (sound.isVowel) {
+          if (sound.type === 'vowel') {
             rules = {
               canCluster: true,
               positionsAllowed: [SoundPositions.Close, SoundPositions.Nucleus, SoundPositions.Start]

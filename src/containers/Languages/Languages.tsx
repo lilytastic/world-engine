@@ -5,7 +5,7 @@ import { Phonotactics } from './Phonotactics';
 import { SoundSelection } from './Sounds';
 import { IConsonant, ISyllable, IVowel, IWord, ILanguage, DEFAULT_LANGUAGE, MANNERS, PLACES, VOWELCLOSENESS, VOWELFRONTNESS, IPhonotactics, ISound, SoundPositions } from './sounds.model';
 
-console.log('loaded', JSON.parse(localStorage.getItem('_language') || '{}'));
+// console.log('loaded', JSON.parse(localStorage.getItem('_language') || '{}'));
 
 export function Languages(props: {children?: any}) {
 
@@ -60,6 +60,12 @@ export function Languages(props: {children?: any}) {
           </div>
         </>
       )}
+      
+
+      <h2>Lexicon <button className='btn btn-link' onClick={() => setIsEditingPhonotactics(true)}>Edit</button></h2>
+      <div>
+        Sample words: <i>{getSampleWords(language).map(word => transcribeWord(word)).join(', ')}</i>
+      </div>
       
 
       <h2>Sounds <button className='btn btn-link' onClick={() => setIsSelectingSounds(true)}>Edit</button></h2>
@@ -120,11 +126,6 @@ export function Languages(props: {children?: any}) {
           <li key={x} dangerouslySetInnerHTML={{__html: x}}></li>
         ))}
       </ul>
-
-      <h2>Lexicon <button className='btn btn-link' onClick={() => setIsEditingPhonotactics(true)}>Edit</button></h2>
-      <div>
-        Sample words: <i>{getSampleWords(language).map(word => transcribeWord(word)).join(', ')}</i>
-      </div>
     </div>
   );
 }

@@ -416,4 +416,4 @@ export const CONSONANTS: IConsonant[] = [
     advanced: true
   },
   */
-];
+].map(x => ({...x, type: 'consonant'}))
