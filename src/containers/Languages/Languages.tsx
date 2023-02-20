@@ -72,7 +72,8 @@ export function Languages(props: {children?: any}) {
 
   return (
     <div>
-      <h2>Vowels</h2>
+      <h2>Sounds</h2>
+      <h3>Vowels</h3>
       <table>
         <thead>
           <tr>
@@ -102,7 +103,7 @@ export function Languages(props: {children?: any}) {
         </tbody>
       </table>
 
-      <h2 className="mt-5">Pulmonic Consonants</h2>
+      <h3>Pulmonic Consonants</h3>
       <table>
         <thead>
           <tr>
