@@ -19,7 +19,7 @@ export function Languages(props: {children?: any}) {
   } catch {
     startingLanguage = DEFAULT_LANGUAGE;
   }
-  
+
   const [language, setLanguage] = useState(startingLanguage);
 
   useEffect(() => {
@@ -100,7 +100,8 @@ export function Languages(props: {children?: any}) {
       <SoundSelection language={language} show={isSelectingSounds} handleClose={(vowels, consonants) => {selectSounds(vowels, consonants); setIsSelectingSounds(false);}}></SoundSelection>
       <Phonotactics language={language} show={isEditingPhonotactics} handleClose={(phonotactics) => {selectPhonotactics(phonotactics); setIsEditingPhonotactics(false);}}></Phonotactics>
 
-      <h2 className='mt-0'>Vowels <button className='btn btn-link' onClick={() => setIsSelectingSounds(true)}>Edit</button></h2>
+      <h2 className='mt-0'>Sounds <button className='btn btn-link' onClick={() => setIsSelectingSounds(true)}>Edit</button></h2>
+      <h4>Vowels</h4>
       {language.vowels.length === 0 && (<i>None yet!</i>)}
       <table>
         <thead>
@@ -125,7 +126,7 @@ export function Languages(props: {children?: any}) {
         </tbody>
       </table>
 
-      <h2>Pulmonic Consonants <button className='btn btn-link' onClick={() => setIsSelectingSounds(true)}>Edit</button></h2>
+      <h4>Pulmonic Consonants</h4>
       {language.consonants.length === 0 && (<i>None yet!</i>)}
       <table>
         <thead>

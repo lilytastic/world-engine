@@ -9,6 +9,8 @@ import { VOWELS } from './vowels';
 
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
+import ToggleButton from 'react-bootstrap/ToggleButton';
+import ToggleButtonGroup from 'react-bootstrap/ToggleButtonGroup';
 
 export function Phonotactics(props: {children?: any, language: ILanguage, show: boolean, handleClose?: (arg0: IPhonotactics) => void}) {
 
@@ -26,25 +28,51 @@ export function Phonotactics(props: {children?: any, language: ILanguage, show: 
   }
 
   return (
-    <Modal show={show} fullscreen={true} onHide={() => props.handleClose?.(compilePhonotactics())}>
+    <Modal show={show} onHide={() => props.handleClose?.(compilePhonotactics())}>
       <Modal.Header>
-        <Modal.Title>Sound Selection</Modal.Title>
+        <Modal.Title>Phonotactics</Modal.Title>
         <Button onClick={() => props.handleClose?.(compilePhonotactics())}>Done</Button>
       </Modal.Header>
 
       <Modal.Body>
         <div className='pt-3 pb-5'>
-          <h2>Phonotactics</h2>
-          <h3 className='mt-4'>Syllable Shape</h3>
+          <h3 className='mt-0'>Syllable Shape</h3>
           <input value={morphology} onChange={ev => setMorphology(ev.currentTarget.value)} />
-        </div>
 
-        <div className="mt-5">
-          <h3>Rules</h3>
+          <h3>Sound Rules</h3>
+          <div className='fst-italic mb-2'>
+            TODO: Complex rules for each setting. Indicate with asterisk and lock on.
+          </div>
+          {/*
           <textarea value={rules} onChange={ev => setRules(ev.currentTarget.value)} />
-        </div>
+          */}
+          <div className="d-grid gap-2">
+            {[...props.language.vowels, ...props.language.consonants].map(sound => (
+              <div key={sound.key} className="d-flex align-items-center justify-content-between">
+                <div className='mb-1'>
+                  <b className="fs-4">{sound.key}</b> {sound.romanization ? <>("{sound.romanization}")</> : ''}
+                </div>
+                <ToggleButtonGroup type="checkbox" defaultValue={[0, 1, 2, 3, 4]}>
+                  <ToggleButton className='btn-dark btn-sm' id={`tbg-check-0-${sound.key}`} value={0}>
+                    Word-start
+                  </ToggleButton>
+                  <ToggleButton className='btn-dark btn-sm' id={`tbg-check-1-${sound.key}`} value={1}>
+                    Onset
+                  </ToggleButton>
+                  <ToggleButton className='btn-dark btn-sm' id={`tbg-check-2-${sound.key}`} value={2}>
+                    Nucleus
+                  </ToggleButton>
+                  <ToggleButton className='btn-dark btn-sm' id={`tbg-check-3-${sound.key}`} value={3}>
+                    Coda
+                  </ToggleButton>
+                  <ToggleButton className='btn-dark btn-sm' id={`tbg-check-4-${sound.key}`} value={4}>
+                    Word-finish
+                  </ToggleButton>
+                </ToggleButtonGroup>
+              </div>
+            ))}
+          </div>
 
-        <div className="mt-5">
           <h3>Stress System</h3>
           <textarea value={stressSystem} onChange={ev => setStressSystem(ev.currentTarget.value)} />
         </div>
