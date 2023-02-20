@@ -45,11 +45,11 @@ export function Languages(props: {children?: any}) {
         const isWordStart = ii === 0 && i === 0;
         const isWordClose = ii === length - 1 && i ===  morphologyMapped.length - 1;
         const isOnset = i < onsetEnd;
-        const isCoda = i >= codaStart;
+        const isCoda = i > codaStart;
         let sounds = [...language.vowels.map(x => ({...x, isVowel: true})), ...language.consonants.map(x => ({...x, isVowel: false}))];
 
         sounds = sounds.filter(sound => {
-          let rules = language.phonotactics.rules?.[sound.key];
+          let rules = language.phonotactics.rules[sound.key];
           if (!rules) {
             if (sound.isVowel) {
               rules = {
@@ -63,36 +63,50 @@ export function Languages(props: {children?: any}) {
           }
   
           if (isWordStart) {
-            if (!rules?.positionsAllowed.includes(SoundPositions.Start)) {
+            if (!rules.positionsAllowed.includes(SoundPositions.Start)) {
               return false;
             }
           }
           if (isWordClose) {
-            if (!rules?.positionsAllowed.includes(SoundPositions.Close)) {
+            if (!rules.positionsAllowed.includes(SoundPositions.Close)) {
               return false;
             }
           }
 
-          switch (token) {
-            case 'V':
-              return rules?.positionsAllowed.includes(SoundPositions.Nucleus);
-            default:
-              break;
-          }
-
-          if (isOnset) {
-            return rules?.positionsAllowed.includes(SoundPositions.Onset);
+          if (token === 'V') {
+            if (!rules.positionsAllowed.includes(SoundPositions.Nucleus)) {
+              return false;
+            }
           } else {
-            return rules?.positionsAllowed.includes(SoundPositions.Coda);
+            if (rules.positionsAllowed.includes(SoundPositions.Nucleus)) {
+              return false;
+            }
+
+            if (isOnset) {
+              if (!rules.positionsAllowed.includes(SoundPositions.Onset) && !(isWordStart && rules.positionsAllowed.includes(SoundPositions.Start))) {
+                return false;
+              }
+            } 
+            
+            if (isCoda) {
+              if (!rules.positionsAllowed.includes(SoundPositions.Coda) && !(isWordClose && rules.positionsAllowed.includes(SoundPositions.Close))) {
+                return false;
+              }
+            }
           }
           
+          return true;
         });
 
         if (sounds.length > 0) {
           const sound = getRandomSound(sounds);
-          if (!!sound && !(token === 'c' && Math.random() * 100 < 50)) {
+          if (token === 'c' && Math.random() * 100 < 50) {
+            // ...
+          } else {
             syllable.sounds.push(sound);
           }
+        } else {
+          console.error('No sound found!');
         }
       }
       syllables.push(syllable)
