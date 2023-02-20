@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { CONSONANTS } from './consonants';
 import './Languages.scss';
-import { IConsonant, ILanguage, IPhonotactics, ISound, SoundPositions as SoundPositions, IVowel, MANNERS, PLACES, VOWELCLOSENESS, VOWELFRONTNESS } from './sounds.model';
+import { IConsonant, ILanguage, IPhonology, ISound, SoundPositions as SoundPositions, IVowel, MANNERS, PLACES, VOWELCLOSENESS, VOWELFRONTNESS } from './sounds.model';
 import { VOWELS } from './vowels';
 
 
@@ -13,21 +13,23 @@ import ToggleButton from 'react-bootstrap/ToggleButton';
 import ToggleButtonGroup from 'react-bootstrap/ToggleButtonGroup';
 import { generateDefaultRule } from './generators.helpers';
 
-export function Phonotactics(props: {children?: any, language: ILanguage, show: boolean, handleClose?: (arg0: IPhonotactics) => void}) {
+export function Phonotactics(props: {children?: any, language: ILanguage, show: boolean, handleClose?: (arg0: IPhonology) => void}) {
 
-  const [stressSystem, setStressSystem] = useState(props.language.phonotactics.stressSystem);
-  const [rules, setRules] = useState(props.language.phonotactics.rules);
-  const [morphology, setMorphology] = useState(props.language.phonotactics.syllableShape);
+  const [stressSystem, setStressSystem] = useState(props.language.phonology.stressSystem);
+  //const [rules, setRules] = useState(props.language.phonology.rules);
+  const [morphology, setMorphology] = useState(props.language.phonology.syllableShape);
+  const [phonotactics, setPhonotactics] = useState(props.language.phonology.phonotactics);
   const {show} = props;
 
-  const compilePhonotactics = (): IPhonotactics => {
+  const compilePhonology = (): IPhonology => {
     return {
       syllableShape: morphology,
-      rules,
+      phonotactics,
       stressSystem
     };
   }
 
+  /*
   const changeRules = (sound: ISound, positions: SoundPositions[]) => {
     const _rules = {...rules};
     if (!_rules[sound.key]) {
@@ -74,12 +76,13 @@ export function Phonotactics(props: {children?: any, language: ILanguage, show: 
       ))}
     </>
   )
+  */
 
   return (
-    <Modal show={show} onHide={() => props.handleClose?.(compilePhonotactics())}>
+    <Modal show={show} onHide={() => props.handleClose?.(compilePhonology())}>
       <Modal.Header>
-        <Modal.Title>Phonotactics</Modal.Title>
-        <Button onClick={() => props.handleClose?.(compilePhonotactics())}>Done</Button>
+        <Modal.Title>Phonology</Modal.Title>
+        <Button onClick={() => props.handleClose?.(compilePhonology())}>Done</Button>
       </Modal.Header>
 
       <Modal.Body>
@@ -87,18 +90,20 @@ export function Phonotactics(props: {children?: any, language: ILanguage, show: 
           <h3 className='mt-0'>Syllable Shape</h3>
           <input value={morphology} onChange={ev => setMorphology(ev.currentTarget.value)} />
 
-          <h3>Sound Rules</h3>
+          <h3>Phonotactics</h3>
           <div className='fst-italic mb-2'>
             TODO: Complex rules for each setting. Indicate with asterisk and force enable.
           </div>
           {/*
           <textarea value={rules} onChange={ev => setRules(ev.currentTarget.value)} />
           */}
+          {/*
           <div className="d-grid gap-2">
             {showRules(props.language.vowels, [SoundPositions.Start, SoundPositions.Nucleus, SoundPositions.Close])}
             <div></div>
             {showRules(props.language.consonants, [SoundPositions.Start, SoundPositions.Onset, SoundPositions.Coda, SoundPositions.Close])}
           </div>
+          */}
 
           <h3>Stress System</h3>
           <textarea value={stressSystem} onChange={ev => setStressSystem(ev.currentTarget.value)} />

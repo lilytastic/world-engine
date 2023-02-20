@@ -1,4 +1,4 @@
-import { ILanguage, ISound, ISoundRules, ISyllable, IWord, SoundPositions } from "./sounds.model";
+import { ILanguage, IPhonotactic, ISound, ISoundRules, ISyllable, IWord, SoundPositions } from "./sounds.model";
 import { VOWELS } from "./vowels";
 
 function getRandomSound(sounds: ISound[]) {
@@ -32,7 +32,7 @@ export function generateDefaultRule(language: ILanguage, sound: ISound): ISoundR
 
 export function generateWord(language: ILanguage) {
   let length = 1 + Math.floor(Math.random() * 3);
-  const morphologyMapped = language.phonotactics.syllableShape.toUpperCase().replace(/\(C\)/g, 'c');
+  const morphologyMapped = language.phonology.syllableShape.toUpperCase().replace(/\(C\)/g, 'c');
   let syllables: ISyllable[] = [];
 
   for (let ii = 0; ii < length; ii++) {
@@ -49,7 +49,10 @@ export function generateWord(language: ILanguage) {
       let sounds = [...language.vowels, ...language.consonants];
 
       sounds = sounds.filter(sound => {
-        let rules = language.phonotactics.rules[sound.key];
+        const phonotactics: IPhonotactic[] = language.phonology.phonotactics;
+        
+        /*
+        let rules = language.phonology.phonotactics[sound.key];
         if (!rules) {
           rules = generateDefaultRule(language, sound);
           if (sound.type === 'vowel') {
@@ -101,6 +104,7 @@ export function generateWord(language: ILanguage) {
             }
           }
         }
+        */
         
         return true;
       });
@@ -125,9 +129,11 @@ export function generateWord(language: ILanguage) {
   return word;
 }
 
+/*
 export const listRules = (language: ILanguage) => {
-  return Object.keys(language.phonotactics.rules).map(x => ({key: x, rules: language.phonotactics.rules[x]})).filter(x => !!x.rules && (!!language.vowels.find(y => y.key === x.key) || !!language.consonants.find(y => y.key === x.key)));
+  return Object.keys(language.phonology.rules).map(x => ({key: x, rules: language.phonology.rules[x]})).filter(x => !!x.rules && (!!language.vowels.find(y => y.key === x.key) || !!language.consonants.find(y => y.key === x.key)));
 }
+*/
 
 export const printListExclusive = (list: any[]) => {
   if (list.length === 0) {
@@ -143,8 +149,9 @@ export const printListExclusive = (list: any[]) => {
 }
 
 export const printAllRules = (language: ILanguage) => {
-  let applicable = [];
+  let applicable: string[] = [];
 
+  /*
   const cantStart = listRules(language).filter(x => !x.rules.positionsAllowed.includes(SoundPositions.Start));
   const cantEnd = listRules(language).filter(x => !x.rules.positionsAllowed.includes(SoundPositions.Close));
   const nonOnset = listRules(language).filter(x => !x.rules.positionsAllowed.includes(SoundPositions.Onset) && !x.rules.positionsAllowed.includes(SoundPositions.Nucleus));
@@ -162,6 +169,7 @@ export const printAllRules = (language: ILanguage) => {
   if (nonCoda.length > 0) {
     applicable.push(`${printListExclusive(nonCoda.map(x => `/<b>${x.key}</b>/`))} cannot be used as ${nonCoda.length === 1 ? 'a coda' : 'codas'}.`);
   }
+  */
 
   return applicable;
 }

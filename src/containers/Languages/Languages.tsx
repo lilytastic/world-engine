@@ -3,7 +3,7 @@ import { generateWord, getSampleWords, printAllRules, transcribeWord } from './g
 import './Languages.scss';
 import { Phonotactics } from './Phonotactics';
 import { SoundSelection } from './Sounds';
-import { IConsonant, ISyllable, IVowel, IWord, ILanguage, DEFAULT_LANGUAGE, MANNERS, PLACES, VOWELCLOSENESS, VOWELFRONTNESS, IPhonotactics, ISound, SoundPositions } from './sounds.model';
+import { IConsonant, ISyllable, IVowel, IWord, ILanguage, DEFAULT_LANGUAGE, MANNERS, PLACES, VOWELCLOSENESS, VOWELFRONTNESS, IPhonology, ISound, SoundPositions } from './sounds.model';
 
 // console.log('loaded', JSON.parse(localStorage.getItem('_language') || '{}'));
 
@@ -34,8 +34,8 @@ export function Languages(props: {children?: any}) {
   function selectSounds(vowels: IVowel[], consonants: IConsonant[]) {
     setLanguage({...language, vowels, consonants});
   }
-  function selectPhonotactics(phonotactics: IPhonotactics) {
-    setLanguage({...language, phonotactics});
+  function selectPhonotactics(phonotactics: IPhonology) {
+    setLanguage({...language, phonology: phonotactics});
   }
   
 
@@ -56,7 +56,7 @@ export function Languages(props: {children?: any}) {
         <>
           <h1 className='mt-0 mb-0'>{language.name} <button className='btn btn-link' onClick={() => setIsEditingTitle(true)}>Edit</button></h1>
           <div className='mb-3 mt-0 text-secondary'>
-            {!language.ancestor ? 'Proto-language' : `Descendant of ${language.ancestor.name}`}
+            {!language.ancestor ? 'Proto-language' : `Dialect of ${language.ancestor.name}`}
           </div>
         </>
       )}
@@ -66,7 +66,7 @@ export function Languages(props: {children?: any}) {
       <div>
         Sample words: <i>{getSampleWords(language).map(word => transcribeWord(word)).join(', ')}</i>
       </div>
-      
+
 
       <h2>Sounds <button className='btn btn-link' onClick={() => setIsSelectingSounds(true)}>Edit</button></h2>
       <h4>Vowels</h4>
@@ -119,8 +119,12 @@ export function Languages(props: {children?: any}) {
         </tbody>
       </table>
 
-      <h2>Phonotactics <button className='btn btn-link' onClick={() => setIsEditingPhonotactics(true)}>Edit</button></h2>
-      Syllable shape: [{language.phonotactics.syllableShape}]
+      <h2>Phonology <button className='btn btn-link' onClick={() => setIsEditingPhonotactics(true)}>Edit</button></h2>
+
+      <h3>Syllable shape</h3>
+      {language.phonology.syllableShape}
+
+      <h3>Phonotactics</h3>
       <ul>
         {printAllRules(language).map(x => (
           <li key={x} dangerouslySetInnerHTML={{__html: x}}></li>

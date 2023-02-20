@@ -35,7 +35,7 @@ export interface ILanguage {
   name: string;
   vowels: IVowel[];
   consonants: IConsonant[];
-  phonotactics: IPhonotactics;
+  phonology: IPhonology;
   ancestor?: ILanguage;
 }
 export const DEFAULT_LANGUAGE: ILanguage = {
@@ -43,17 +43,21 @@ export const DEFAULT_LANGUAGE: ILanguage = {
   name: "Untitled",
   vowels: [],
   consonants: [],
-  phonotactics: {
+  phonology: {
     syllableShape: 'CV(C)',
     stressSystem: '',
-    rules: {}
+    phonotactics: []
   }
 }
 
-export interface IPhonotactics {
+export interface IPhonology {
   syllableShape: string;
   stressSystem: string;
-  rules: {[key: string]: ISoundRules};
+  phonotactics: IPhonotactic[];
+}
+
+export interface IPhonotactic {
+  script: string;
 }
 
 export enum SoundPositions {
