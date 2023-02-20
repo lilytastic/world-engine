@@ -41,7 +41,10 @@ ul {
 }
 .modal-content {
   color: $color-text;
-  background-color: darken($color-background, 5);
+  background-color: $color-background;
+}
+.modal-header, .modal-footer {
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
 input, textarea {

@@ -1,29 +1,31 @@
 import React, { useEffect, useState } from 'react';
 import { CONSONANTS } from './consonants';
 import './Languages.scss';
-import { IConsonant, IVowel, MANNERS, PLACES, VOWELCLOSENESS, VOWELFRONTNESS } from './sounds.model';
+import { IConsonant, ILanguage, IVowel, MANNERS, PLACES, VOWELCLOSENESS, VOWELFRONTNESS } from './sounds.model';
 import { VOWELS } from './vowels';
 
 
 import Modal from 'react-bootstrap/Modal';
+import Button from 'react-bootstrap/Button';
 
-export function SoundSelection(props: {children?: any, show: boolean, handleClose?: (vowels: IVowel[], consonants: IConsonant[]) => void}) {
+export function SoundSelection(props: {children?: any, language: ILanguage, show: boolean, handleClose?: (vowels: IVowel[], consonants: IConsonant[]) => void}) {
 
-  const [chosenVowels, setChosenVowels] = useState([] as IVowel[]);
-  const [chosenConsonants, setChosenConsonants] = useState([] as IConsonant[]);
+  const [chosenVowels, setChosenVowels] = useState(props.language.vowels);
+  const [chosenConsonants, setChosenConsonants] = useState(props.language.consonants);
   const {show} = props;
 
   console.log(show);
 
   return (
     <Modal show={show} fullscreen={true} onHide={() => props.handleClose?.(chosenVowels, chosenConsonants)}>
-      <Modal.Header closeButton>
+      <Modal.Header>
         <Modal.Title>Sound Selection</Modal.Title>
+        <Button onClick={() => props.handleClose?.(chosenVowels, chosenConsonants)}>Done</Button>
       </Modal.Header>
 
       <Modal.Body>
-        <div>
-          <h3>Vowels</h3>
+        <div className='pt-3 pb-5'>
+          <h3 className='mt-0'>Vowels</h3>
           <table>
             <thead>
               <tr>
@@ -84,9 +86,6 @@ export function SoundSelection(props: {children?: any, show: boolean, handleClos
           </table>
         </div>
       </Modal.Body>
-      <Modal.Footer>
-
-      </Modal.Footer>
     </Modal>
   );
 }

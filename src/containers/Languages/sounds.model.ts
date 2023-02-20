@@ -30,10 +30,22 @@ export interface ISyllable {
 export interface ILanguage {
   vowels: IVowel[];
   consonants: IConsonant[];
+  phonotactics: IPhonotactics;
 }
 export const DEFAULT_LANGUAGE: ILanguage = {
   vowels: [],
-  consonants: []
+  consonants: [],
+  phonotactics: {
+    syllableShape: 'CV(C)',
+    stressSystem: '',
+    rules: []
+  }
+}
+
+export interface IPhonotactics {
+  syllableShape: string;
+  stressSystem: string;
+  rules: string[];
 }
 
 export enum Place {

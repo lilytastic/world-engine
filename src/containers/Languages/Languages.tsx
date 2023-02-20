@@ -1,16 +1,16 @@
 import { useEffect, useState } from 'react';
 import './Languages.scss';
+import { Phonotactics } from './Phonotactics';
 import { SoundSelection } from './Sounds';
-import { IConsonant, ISyllable, IVowel, IWord, ILanguage, DEFAULT_LANGUAGE, MANNERS, PLACES, VOWELCLOSENESS, VOWELFRONTNESS } from './sounds.model';
+import { IConsonant, ISyllable, IVowel, IWord, ILanguage, DEFAULT_LANGUAGE, MANNERS, PLACES, VOWELCLOSENESS, VOWELFRONTNESS, IPhonotactics } from './sounds.model';
 
 
 export function Languages(props: {children?: any}) {
 
-  const [morphology, setMorphology] = useState('CV(C)');
   const [isSelectingSounds, setIsSelectingSounds] = useState(false);
+  const [isEditingPhonotactics, setIsEditingPhonotactics] = useState(false);
+  
   const [language, setLanguage] = useState(DEFAULT_LANGUAGE);
-  const [stressSystem, setStressSystem] = useState('');
-  const [phonotactics, setPhonotactics] = useState('-j = ja/je\nq + a = qha\n~(x + x)\n~(C + ŋ)\n~(ŋ-)');
 
   useEffect(() => {
 
@@ -25,7 +25,7 @@ export function Languages(props: {children?: any}) {
 
   function generateWord(language: ILanguage) {
     let length = 1 + Math.floor(Math.random() * 3);
-    const morphologyMapped = morphology.toUpperCase().replace(/\(C\)/g, 'c');
+    const morphologyMapped = language.phonotactics.syllableShape.toUpperCase().replace(/\(C\)/g, 'c');
     let syllables: ISyllable[] = [];
 
     for (let ii = 0; ii < length; ii++) {
@@ -75,6 +75,9 @@ export function Languages(props: {children?: any}) {
   function selectSounds(vowels: IVowel[], consonants: IConsonant[]) {
     setLanguage({...language, vowels, consonants});
   }
+  function selectPhonotactics(phonotactics: IPhonotactics) {
+    setLanguage({...language, phonotactics});
+  }
 
   const frontnessUsed = VOWELFRONTNESS.filter(x => language.vowels.find(y => y.frontness === x.key));
   const opennessUsed = VOWELCLOSENESS.filter(x => language.vowels.find(y => y.openness === x.key));
@@ -84,9 +87,11 @@ export function Languages(props: {children?: any}) {
 
   return (
     <div>
-      <h2 className='mt-0'>Sounds <button className='btn btn-link' onClick={() => setIsSelectingSounds(true)}>Edit</button></h2>
-      <SoundSelection show={isSelectingSounds} handleClose={(vowels, consonants) => {selectSounds(vowels, consonants); setIsSelectingSounds(false);}}></SoundSelection>
-      <h3>Vowels</h3>
+      <SoundSelection language={language} show={isSelectingSounds} handleClose={(vowels, consonants) => {selectSounds(vowels, consonants); setIsSelectingSounds(false);}}></SoundSelection>
+      <Phonotactics language={language} show={isEditingPhonotactics} handleClose={(phonotactics) => {selectPhonotactics(phonotactics); setIsEditingPhonotactics(false);}}></Phonotactics>
+
+      <h3 className='mt-0'>Vowels <button className='btn btn-link' onClick={() => setIsSelectingSounds(true)}>Edit</button></h3>
+      {language.vowels.length === 0 && (<i>None yet!</i>)}
       <table>
         <thead>
           <tr>
@@ -110,7 +115,8 @@ export function Languages(props: {children?: any}) {
         </tbody>
       </table>
 
-      <h3>Pulmonic Consonants</h3>
+      <h3>Pulmonic Consonants <button className='btn btn-link' onClick={() => setIsSelectingSounds(true)}>Edit</button></h3>
+      {language.consonants.length === 0 && (<i>None yet!</i>)}
       <table>
         <thead>
           <tr>
@@ -134,27 +140,11 @@ export function Languages(props: {children?: any}) {
         </tbody>
       </table>
 
-      <div className="mt-4">
-        Current sounds: <i>{language.consonants.map(sound => sound.key).join(', ')}</i>
-      </div>
+      <h3>Phonotactics <button className='btn btn-link' onClick={() => setIsEditingPhonotactics(true)}>Edit</button></h3>
+      Syllable shape: {language.phonotactics.syllableShape}
 
-      <div className="mt-5">
-        <h2>Phonotactics</h2>
-        <h3 className='mt-4'>Syllable Shape</h3>
-        <input value={morphology} onChange={ev => setMorphology(ev.currentTarget.value)} />        
-      </div>
-
-      <div className="mt-5">
-        <h3>Rules</h3>
-        <textarea value={phonotactics} onChange={ev => setPhonotactics(ev.currentTarget.value)} />        
-      </div>
-
-      <div className="mt-5">
-        <h3>Stress System</h3>
-        <textarea value={stressSystem} onChange={ev => setStressSystem(ev.currentTarget.value)} />        
-      </div>
-
-      <div className="mt-4">
+      <h3>Specimens</h3>
+      <div>
         Sample words: <i>{getSampleWords(language).map(word => transcribeWord(word)).join(', ')}</i>
       </div>
     </div>

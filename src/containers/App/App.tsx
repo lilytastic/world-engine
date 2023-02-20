@@ -4,6 +4,7 @@ import './App.scss';
 import { Route, RouterProvider, createBrowserRouter, createRoutesFromElements } from 'react-router-dom';
 import Nav from '../Nav/Nav';
 import { Languages } from '../Languages/Languages';
+import Container from 'react-bootstrap/Container';
 
 const ROUTES = [
   {path: '/', icon: 'mountain', element: <div></div>},
@@ -15,10 +16,12 @@ const ROUTES = [
 
 function Root(props: {children?: any}) {
   return (
-    <div className={`container container--main px-sm`}>
-      <Nav routes={ROUTES.filter(x => x.path !== '/')} />
-      <div className="main">{props.children}</div>
-    </div>
+    <Container fluid={'sm'}>
+      <div className='container--main'>
+        <Nav routes={ROUTES.filter(x => x.path !== '/')} />
+        <div className="main">{props.children}</div>
+      </div>
+    </Container>
   );
 }
 
