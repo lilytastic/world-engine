@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import './Languages.scss';
 import { Phonotactics } from './Phonotactics';
 import { SoundSelection } from './Sounds';
-import { IConsonant, ISyllable, IVowel, IWord, ILanguage, DEFAULT_LANGUAGE, MANNERS, PLACES, VOWELCLOSENESS, VOWELFRONTNESS, IPhonotactics } from './sounds.model';
+import { IConsonant, ISyllable, IVowel, IWord, ILanguage, DEFAULT_LANGUAGE, MANNERS, PLACES, VOWELCLOSENESS, VOWELFRONTNESS, IPhonotactics, ISound, SoundPositions } from './sounds.model';
 
 
 export function Languages(props: {children?: any}) {
@@ -32,6 +32,9 @@ export function Languages(props: {children?: any}) {
   function getRandomConsonant(consonants: IConsonant[]) {
     return consonants[Math.floor(Math.random() * consonants.length)];
   }
+  function getRandomSound(sounds: ISound[]) {
+    return sounds[Math.floor(Math.random() * sounds.length)];
+  }
 
   function generateWord(language: ILanguage) {
     let length = 1 + Math.floor(Math.random() * 3);
@@ -40,24 +43,50 @@ export function Languages(props: {children?: any}) {
 
     for (let ii = 0; ii < length; ii++) {
       let syllable: ISyllable = {sounds: []};
+      const onsetEnd = morphologyMapped.indexOf('V');
+      const codaStart = morphologyMapped.lastIndexOf('V');
       for (let i = 0; i < morphologyMapped.length; i++) {
         const token = morphologyMapped[i];
-        let consonant = getRandomConsonant(language.consonants);
-        const vowel = getRandomVowel(language.vowels);
-        switch (token) {
-          case 'V':
-            syllable.sounds.push(vowel);
-            break;
-          case 'C':
-            syllable.sounds.push(consonant);
-            break;
-          case 'c':
-            if (Math.random() * 100 < 50) {
-              syllable.sounds.push(consonant);
-            }
-            break;
-          default:
-            break;
+        const isWordStart = ii === 0 && i === 0;
+        const isWordClose = ii === length - 1 && i ===  morphologyMapped.length - 1;
+        const isOnset = i < onsetEnd;
+        const isCoda = i > codaStart;
+        let sounds: ISound[] = [...language.vowels, ...language.consonants];
+
+        sounds = sounds.filter(sound => {
+          let rules = language.phonotactics.rules?.[sound.key];
+          if (!rules) {
+            rules = {
+              positionsAllowed: [SoundPositions.Close, SoundPositions.Coda, SoundPositions.Nucleus, SoundPositions.Onset, SoundPositions.Start]
+            };
+          }
+  
+          if (isWordStart) {
+            return rules?.positionsAllowed.includes(SoundPositions.Start);
+          }
+          if (isWordClose) {
+            return rules?.positionsAllowed.includes(SoundPositions.Close);
+          }
+
+          switch (token) {
+            case 'V':
+              return rules?.positionsAllowed.includes(SoundPositions.Nucleus);
+            case 'C':
+              break;
+            case 'c':
+              if (Math.random() * 100 < 50) {
+                return true;
+              }
+              return false;
+            default:
+              return true;
+          }
+          
+        });
+
+        if (sounds.length > 0) {
+          const sound = getRandomSound(sounds);
+          syllable.sounds.push(sound);
         }
       }
       syllables.push(syllable)

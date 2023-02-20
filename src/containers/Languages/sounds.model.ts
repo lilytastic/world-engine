@@ -38,14 +38,25 @@ export const DEFAULT_LANGUAGE: ILanguage = {
   phonotactics: {
     syllableShape: 'CV(C)',
     stressSystem: '',
-    rules: []
+    rules: {}
   }
 }
 
 export interface IPhonotactics {
   syllableShape: string;
   stressSystem: string;
-  rules: string[];
+  rules: {[key: string]: ISoundRules};
+}
+
+export enum SoundPositions {
+  Start = 'Start',
+  Onset = 'Onset',
+  Nucleus = 'Nucleus',
+  Coda = 'Coda',
+  Close = 'Close'
+}
+export interface ISoundRules {
+  positionsAllowed: SoundPositions[];
 }
 
 export enum Place {
