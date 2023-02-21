@@ -64,17 +64,27 @@ export function Languages(props: {children?: any}) {
         <input autoFocus className='mb-3' value={language.name} onChange={ev => setLanguage({...language, name: ev.currentTarget.value})} onBlur={() => setIsEditingTitle(false)} />
       ) : (
         <>
-          <h1 className='mt-0 mb-0'>{language.name} <button className='btn btn-link' onClick={() => setIsEditingTitle(true)}>Edit</button></h1>
-          <div className='mb-3 mt-0 text-secondary'>
-            {!language.ancestor ? 'Proto-language' : `Dialect of ${language.ancestor.name}`}
+          <h1 className='mt-0 mb-0 d-flex align-items-center'>
+            {language.isProtoLanguage ? 'Proto-' : ''}{language.name}
+            <button className='btn btn-link ms-1' onClick={() => setIsEditingTitle(true)}>Edit</button>
+          </h1>
+          <div className='mb-0 mt-0 text-secondary'>
+            {!language.ancestor ? 'Prime' : `Dialect of ${language.ancestor.name}`}
           </div>
         </>
       )}
-      
+      <h4>Metadata</h4>
+      <div className="form-check position-relative">
+        <input className="form-check-input" checked={language.isProtoLanguage ? true : false} onChange={ev => setLanguage({...language, isProtoLanguage: ev.currentTarget.checked})} type="checkbox" id="flexCheckDefault" />
+        <label className="form-check-label" htmlFor="flexCheckDefault">
+          Is proto-language?
+        </label>
+      </div>
+
 
       <h2>Lexicon <button className='btn btn-link' onClick={() => setIsEditingLexicon(true)}>Edit</button></h2>
       <div>
-        <h3>Sample <button className='btn btn-link' onClick={() => setSampleWords(getSampleWords(language))}>Regenerate</button></h3>
+        <h4>Sample <button className='btn btn-link' onClick={() => setSampleWords(getSampleWords(language))}>Regenerate</button></h4>
         <div>
           <i>{sampleWords.map(word => transcribeWord(word)).join(', ')}</i>
         </div>
@@ -84,10 +94,10 @@ export function Languages(props: {children?: any}) {
 
       <h2>Phonology <button className='btn btn-link' onClick={() => setIsEditingPhonotactics(true)}>Edit</button></h2>
 
-      <h3>Syllable shape</h3>
+      <h4>Syllable shape</h4>
       {language.phonology.syllableShape}
 
-      <h3>Rules</h3>
+      <h4>Rules</h4>
       <ul>
         {printAllRules(language).map(x => (
           <li key={x} dangerouslySetInnerHTML={{__html: x}}></li>

@@ -47,7 +47,7 @@ ul {
   border-color: rgba(255, 255, 255, 0.2);
 }
 
-input, textarea {
+input:not([type="checkbox"]), textarea {
   color: $color-text;
   background-color: darken($color-background, 5);
   border: none;
