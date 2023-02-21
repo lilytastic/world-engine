@@ -217,26 +217,20 @@ export const getAffectedSounds = (language: ILanguage, rule: IPhonologicalRule) 
         collection = [...collection.filter(x => !_sounds.find(y => y.key === x.key))];
       }
       ci++;
-    } else if (token.type === '+') {
+    } else if (token.type === '+' || token.type.includes('collection')) {
       allowAutoOpen = false;
-      if (next?.items.length > 0) {
+      const collectionToken = token.type === '+' ? next : token;
+      if (collectionToken.items.length > 0) {
         const _sounds: (ITypedSound<'vowel'> | ITypedSound<'consonant'>)[] =
-          next.items.map(item => getSounds(language, next.type, item))
+        collectionToken.items.map(item => getSounds(language, collectionToken.type, item))
                     .flat()
                     .filter(x => !!x) as (ITypedSound<'vowel'> | ITypedSound<'consonant'>)[];
         collection = [...collection, ..._sounds.filter(x => !collection.find(y => y.key === x.key))];
       }
-      ci++;
-    } else if (token.type.includes('collection')) {
-      allowAutoOpen = false;
-      if (token.items.length > 0) {
-        const _sounds: (ITypedSound<'vowel'> | ITypedSound<'consonant'>)[] =
-          token.items.map(item => getSounds(language, token.type, item))
-                    .flat()
-                    .filter(x => !!x) as (ITypedSound<'vowel'> | ITypedSound<'consonant'>)[];
-        collection = [...collection, ..._sounds.filter(x => !collection.find(y => y.key === x.key))];
+      if (token.type === '+') {
+        ci++;
       }
-    }
+    } 
   }
 
   return collection;
