@@ -68,6 +68,18 @@ export function Languages(props: {children?: any}) {
       </div>
 
 
+      <h2>Phonology <button className='btn btn-link' onClick={() => setIsEditingPhonotactics(true)}>Edit</button></h2>
+
+      <h3>Syllable shape</h3>
+      {language.phonology.syllableShape}
+
+      <h3>Rules</h3>
+      <ul>
+        {printAllRules(language).map(x => (
+          <li key={x} dangerouslySetInnerHTML={{__html: x}}></li>
+        ))}
+      </ul>
+
       <h2>Sounds <button className='btn btn-link' onClick={() => setIsSelectingSounds(true)}>Edit</button></h2>
       <h4>Vowels</h4>
       {language.vowels.length === 0 && (<i>None yet!</i>)}
@@ -118,18 +130,6 @@ export function Languages(props: {children?: any}) {
           ))}
         </tbody>
       </table>
-
-      <h2>Phonology <button className='btn btn-link' onClick={() => setIsEditingPhonotactics(true)}>Edit</button></h2>
-
-      <h3>Syllable shape</h3>
-      {language.phonology.syllableShape}
-
-      <h3>Phonotactics</h3>
-      <ul>
-        {printAllRules(language).map(x => (
-          <li key={x} dangerouslySetInnerHTML={{__html: x}}></li>
-        ))}
-      </ul>
     </div>
   );
 }

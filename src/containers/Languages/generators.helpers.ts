@@ -19,7 +19,7 @@ export function getSounds(language: ILanguage, type: string, key: string) {
     case 'phonetic collection':
       return sounds.filter(x => x.key === key);
     case 'digraph collection':
-      return sounds.filter(x => !x.romanization ? x.romanization === key : x.key === key);
+      return sounds.filter(x => fitsArbitraryToken(x, key) || (!x.romanization ? x.romanization === key : x.key === key));
     case 'arbitrary':
       return sounds.filter(x => fitsArbitraryToken(x, key));
     default:
@@ -28,6 +28,15 @@ export function getSounds(language: ILanguage, type: string, key: string) {
 }
 export function fitsArbitraryToken(sound: IVowel | IConsonant, token: string) {
   switch (token.toLowerCase()) {
+    case 'voiced':
+      return sound.voiced;
+    case 'unvoiced':
+      return !sound.voiced;
+    case 'rounded':
+      if (sound.type === "vowel") {
+        return sound.rounded;
+      }
+      break;
     case 'vowels':
       if (sound.type === "vowel") {
         return true;
@@ -44,14 +53,16 @@ export function fitsArbitraryToken(sound: IVowel | IConsonant, token: string) {
       break;
     case 'fricatives':
       if (sound.type === "consonant") {
-        return sound.manner === Manner.NonSibilantFricative || sound.manner === Manner.SibilantFricative;
+        return sound.manner.toLowerCase().includes('fricative');
+      } else {
+        return false;
       }
-      break;
     case 'affricates':
       if (sound.type === "consonant") {
-        return sound.manner === Manner.NonSibilantAffricate || sound.manner === Manner.SibilantAffricate;
+        return sound.manner.toLowerCase().includes('affricate');
+      } else {
+        return false;
       }
-      break;
     default:
       if (sound.type === "vowel") {
         return sound.openness.toLowerCase() === token.toLowerCase() || sound.frontness.toLowerCase() === token.toLowerCase()
@@ -100,8 +111,6 @@ export function generateWord(language: ILanguage) {
   const phonotactics: IPhonotactic[] = language.phonology.phonotactics;
   let sounds: (ITypedSound<'vowel'> | ITypedSound<'consonant'>)[] = [...language.vowels, ...language.consonants];
 
-  let onsets: ISound[] = [];
-  let codas: ISound[] = [];
   const rules = generateRules(phonotactics);
 
   for (let ii = 0; ii < length; ii++) {
@@ -193,12 +202,13 @@ export const listRules = (language: ILanguage) => {
 export const getAffectedSounds = (language: ILanguage, rule: IPhonologicalRule) => {
   let sounds: (ITypedSound<'vowel'> | ITypedSound<'consonant'>)[] = [...language.vowels, ...language.consonants];
   let collection: (ITypedSound<'vowel'> | ITypedSound<'consonant'>)[] = [];
+  let allowAutoOpen = true;
 
   for (let ci = 0; ci < rule.tokens.length; ci++) {
     const token = rule.tokens[ci];
     const next = rule.tokens[ci + 1];
     if (token.type === '-') {
-      if (collection.length === 0) { collection = [...sounds]; }
+      if (collection.length === 0 && allowAutoOpen) { collection = [...sounds]; }
       if (next?.items.length > 0) {
         const _sounds: (ITypedSound<'vowel'> | ITypedSound<'consonant'>)[] =
           next.items.map(item => getSounds(language, next.type, item))
@@ -208,6 +218,7 @@ export const getAffectedSounds = (language: ILanguage, rule: IPhonologicalRule) 
       }
       ci++;
     } else if (token.type === '+') {
+      allowAutoOpen = false;
       if (next?.items.length > 0) {
         const _sounds: (ITypedSound<'vowel'> | ITypedSound<'consonant'>)[] =
           next.items.map(item => getSounds(language, next.type, item))
@@ -217,12 +228,13 @@ export const getAffectedSounds = (language: ILanguage, rule: IPhonologicalRule) 
       }
       ci++;
     } else if (token.type.includes('collection')) {
+      allowAutoOpen = false;
       if (token.items.length > 0) {
         const _sounds: (ITypedSound<'vowel'> | ITypedSound<'consonant'>)[] =
           token.items.map(item => getSounds(language, token.type, item))
                     .flat()
                     .filter(x => !!x) as (ITypedSound<'vowel'> | ITypedSound<'consonant'>)[];
-        collection = [...collection.filter(x => !_sounds.find(y => y.key === x.key))];
+        collection = [...collection, ..._sounds.filter(x => !collection.find(y => y.key === x.key))];
       }
     }
   }
@@ -258,6 +270,30 @@ export const generateRules = (phonotactics: IPhonotactic[]): IPhonologicalRule[]
         case '>':
           newToken = {type: '>', items: []};
           break;
+        case '_':
+          // Put stuff here!
+          newToken = {type: '_', items: []};
+          break;
+        case 'σ':
+          // Syllable boundary
+          newToken = {type: 'σ', items: []};
+          break;
+        case '#':
+          // Put stuff here!
+          newToken = {type: '#', items: []};
+          break;
+        case '/':
+          if (rule.script[i + 1] == ' ') {
+            // This means "in the environment of"!
+            newToken = {type: '/', items: []};
+            break;
+          }
+          next = rule.script.indexOf('/', i + 1);
+          if (next !== -1) {
+            newToken = {type: 'phonetic collection', items: rule.script.slice(i + 1, next).split(',').map(x => x.trim())};
+            i = next+1;
+          }
+          break;
         case '<':
           next = rule.script.indexOf('>', i + 1);
           if (next !== -1) {
@@ -283,13 +319,6 @@ export const generateRules = (phonotactics: IPhonotactic[]): IPhonologicalRule[]
           next = rule.script.indexOf(']', i + 1);
           if (next !== -1) {
             newToken = {type: 'digraph collection', items: rule.script.slice(i + 1, next).split(',').map(x => x.trim())};
-            i = next+1;
-          }
-          break;
-        case '/':
-          next = rule.script.indexOf('/', i + 1);
-          if (next !== -1) {
-            newToken = {type: 'phonetic collection', items: rule.script.slice(i + 1, next).split(',').map(x => x.trim())};
             i = next+1;
           }
           break;
