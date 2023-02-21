@@ -28,12 +28,37 @@ export function getSounds(language: ILanguage, type: string, key: string) {
 }
 export function fitsArbitraryToken(sound: IVowel | IConsonant, token: string) {
   switch (token.toLowerCase()) {
-    case 'plosives':
+    case 'vowels':
+      if (sound.type === "vowel") {
+        return true;
+      } else {
+        return false;
+      }
+      break;
+    case 'consonants':
       if (sound.type === "consonant") {
-        return sound.manner === Manner.Plosive;
+        return true;
+      } else {
+        return false;
+      }
+      break;
+    case 'fricatives':
+      if (sound.type === "consonant") {
+        return sound.manner.toLowerCase() === Manner.NonSibilantFricative || sound.manner.toLowerCase() === Manner.SibilantFricative;
+      }
+      break;
+    case 'affricates':
+      if (sound.type === "consonant") {
+        return sound.manner.toLowerCase() === Manner.NonSibilantAffricate || sound.manner.toLowerCase() === Manner.SibilantAffricate;
       }
       break;
     default:
+      if (sound.type === "vowel") {
+        return sound.openness.toLowerCase() === token.toLowerCase() || sound.frontness.toLowerCase() === token.toLowerCase()
+      }
+      if (sound.type === "consonant") {
+        return sound.manner.toLowerCase() === token.toLowerCase().slice(0, -1) || sound.place.toLowerCase() === token.toLowerCase().slice(0, -1);
+      }
       break;
   }
   return false;
@@ -61,6 +86,12 @@ export function generateDefaultRule(language: ILanguage, sound: ISound): ISoundR
 }
 
 interface IToken {type: string, items: string[]}
+
+export interface IPhonologicalRule {
+  tokens: IToken[];
+  type: string;
+  script: string;
+}
 
 export function generateWord(language: ILanguage) {
   let length = 1 + Math.floor(Math.random() * 3);
@@ -90,40 +121,8 @@ export function generateWord(language: ILanguage) {
       for (let ri = 0; ri < rules.length; ri++) {
         const rule = rules[ri];
         const derivativeMarker = rule.tokens.findIndex(x => x.type === '>');
-        let collection: (ITypedSound<'vowel'> | ITypedSound<'consonant'>)[] = [];
 
-        for (let ci = 0; ci < rule.tokens.length; ci++) {
-          const token = rule.tokens[ci];
-          const next = rule.tokens[ci + 1];
-          if (token.type === '-') {
-            if (collection.length === 0) { collection = [...sounds]; }
-            if (next.items.length > 0) {
-              const _sounds: (ITypedSound<'vowel'> | ITypedSound<'consonant'>)[] =
-                next.items.map(item => getSounds(language, next.type, item))
-                          .flat()
-                          .filter(x => !!x) as (ITypedSound<'vowel'> | ITypedSound<'consonant'>)[];
-              collection = [...collection.filter(x => !_sounds.find(y => y.key === x.key))];
-            }
-            ci++;
-          } else if (token.type === '+') {
-            if (next.items.length > 0) {
-              const _sounds: (ITypedSound<'vowel'> | ITypedSound<'consonant'>)[] =
-                next.items.map(item => getSounds(language, next.type, item))
-                          .flat()
-                          .filter(x => !!x) as (ITypedSound<'vowel'> | ITypedSound<'consonant'>)[];
-              collection = [...collection, ..._sounds.filter(x => !collection.find(y => y.key === x.key))];
-            }
-            ci++;
-          } else if (token.type.includes('collection')) {
-            if (token.items.length > 0) {
-              const _sounds: (ITypedSound<'vowel'> | ITypedSound<'consonant'>)[] =
-                token.items.map(item => getSounds(language, next.type, item))
-                          .flat()
-                          .filter(x => !!x) as (ITypedSound<'vowel'> | ITypedSound<'consonant'>)[];
-              collection = [...collection, ..._sounds.filter(x => !collection.find(y => y.key === x.key))];
-            }
-          }
-        }
+        const collection = getAffectedSounds(language, rule);
 
         switch (rule.type) {
           case 'onsets':
@@ -191,7 +190,47 @@ export const listRules = (language: ILanguage) => {
 }
 */
 
-export const generateRules = (phonotactics: IPhonotactic[]) => {
+export const getAffectedSounds = (language: ILanguage, rule: IPhonologicalRule) => {
+  let sounds: (ITypedSound<'vowel'> | ITypedSound<'consonant'>)[] = [...language.vowels, ...language.consonants];
+  let collection: (ITypedSound<'vowel'> | ITypedSound<'consonant'>)[] = [];
+
+  for (let ci = 0; ci < rule.tokens.length; ci++) {
+    const token = rule.tokens[ci];
+    const next = rule.tokens[ci + 1];
+    if (token.type === '-') {
+      if (collection.length === 0) { collection = [...sounds]; }
+      if (next?.items.length > 0) {
+        const _sounds: (ITypedSound<'vowel'> | ITypedSound<'consonant'>)[] =
+          next.items.map(item => getSounds(language, next.type, item))
+                    .flat()
+                    .filter(x => !!x) as (ITypedSound<'vowel'> | ITypedSound<'consonant'>)[];
+        collection = [...collection.filter(x => !_sounds.find(y => y.key === x.key))];
+      }
+      ci++;
+    } else if (token.type === '+') {
+      if (next?.items.length > 0) {
+        const _sounds: (ITypedSound<'vowel'> | ITypedSound<'consonant'>)[] =
+          next.items.map(item => getSounds(language, next.type, item))
+                    .flat()
+                    .filter(x => !!x) as (ITypedSound<'vowel'> | ITypedSound<'consonant'>)[];
+        collection = [...collection, ..._sounds.filter(x => !collection.find(y => y.key === x.key))];
+      }
+      ci++;
+    } else if (token.type.includes('collection')) {
+      if (token.items.length > 0) {
+        const _sounds: (ITypedSound<'vowel'> | ITypedSound<'consonant'>)[] =
+          token.items.map(item => getSounds(language, token.type, item))
+                    .flat()
+                    .filter(x => !!x) as (ITypedSound<'vowel'> | ITypedSound<'consonant'>)[];
+        collection = [...collection.filter(x => !_sounds.find(y => y.key === x.key))];
+      }
+    }
+  }
+
+  return collection;
+}
+
+export const generateRules = (phonotactics: IPhonotactic[]): IPhonologicalRule[] => {
   return phonotactics.map(tactic => {
     let type = 'custom';
     let script = tactic.script;
