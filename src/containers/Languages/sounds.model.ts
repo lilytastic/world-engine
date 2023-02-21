@@ -1,3 +1,4 @@
+import { IPhonology } from "./phonology.helpers";
 
 
 export interface ISound {
@@ -50,16 +51,6 @@ export const DEFAULT_LANGUAGE: ILanguage = {
     stressSystem: '',
     phonotactics: []
   }
-}
-
-export interface IPhonology {
-  syllableShape: string;
-  stressSystem: string;
-  phonotactics: IPhonotactic[];
-}
-
-export interface IPhonotactic {
-  script: string;
 }
 
 export enum SoundPositions {

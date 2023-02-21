@@ -1,17 +1,13 @@
 
 
 import React, { useEffect, useState } from 'react';
-import { CONSONANTS } from './consonants';
 import './Languages.scss';
-import { IConsonant, ILanguage, IPhonology, ISound, SoundPositions as SoundPositions, IVowel, MANNERS, PLACES, VOWELCLOSENESS, VOWELFRONTNESS } from './sounds.model';
-import { VOWELS } from './vowels';
+import { ILanguage } from './sounds.model';
 
 
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
-import ToggleButton from 'react-bootstrap/ToggleButton';
-import ToggleButtonGroup from 'react-bootstrap/ToggleButtonGroup';
-import { generateDefaultRule } from './generators.helpers';
+import { IPhonology } from './phonology.helpers';
 
 export function Phonotactics(props: {children?: any, language: ILanguage, show: boolean, handleClose?: (arg0: IPhonology) => void}) {
 

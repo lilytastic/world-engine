@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
-import { generateWord, getSampleWords, printAllRules, transcribeWord } from './generators.helpers';
+import { getSampleWords, printAllRules, transcribeWord } from './generators.helpers';
 import './Languages.scss';
+import { IPhonology } from './phonology.helpers';
 import { Phonotactics } from './Phonotactics';
 import { SoundSelection } from './Sounds';
-import { IConsonant, ISyllable, IVowel, IWord, ILanguage, DEFAULT_LANGUAGE, MANNERS, PLACES, VOWELCLOSENESS, VOWELFRONTNESS, IPhonology, ISound, SoundPositions } from './sounds.model';
+import { IConsonant, IVowel, ILanguage, DEFAULT_LANGUAGE, MANNERS, PLACES, VOWELCLOSENESS, VOWELFRONTNESS } from './sounds.model';
 
 // console.log('loaded', JSON.parse(localStorage.getItem('_language') || '{}'));
 
