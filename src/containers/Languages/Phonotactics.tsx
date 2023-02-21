@@ -29,6 +29,8 @@ export function Phonotactics(props: {children?: any, language: ILanguage, show: 
     };
   }
 
+  // TODO: Cover all this shit https://en.wikipedia.org/wiki/Phonological_rule
+
   /*
   const changeRules = (sound: ISound, positions: SoundPositions[]) => {
     const _rules = {...rules};

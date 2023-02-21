@@ -1,12 +1,13 @@
 
 
 export interface ISound {
+  type: string;
   key: string;
   romanization?: string;
   advanced?: boolean;
   voiced?: boolean;
 }
-export interface ITypedSound<T> extends ISound {
+export interface ITypedSound<T extends string> extends ISound {
   type: T;
 }
 export interface IVowel extends ITypedSound<'vowel'> {

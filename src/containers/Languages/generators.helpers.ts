@@ -1,4 +1,4 @@
-import { ILanguage, IPhonotactic, ISound, ISoundRules, ISyllable, IWord, SoundPositions } from "./sounds.model";
+import { IConsonant, ILanguage, IPhonotactic, ISound, ISoundRules, ISyllable, ITypedSound, IVowel, IWord, SoundPositions } from "./sounds.model";
 import { VOWELS } from "./vowels";
 
 function getRandomSound(sounds: ISound[]) {
@@ -7,6 +7,22 @@ function getRandomSound(sounds: ISound[]) {
 
 export function transcribeWord(word: IWord) {
   return word.syllables.map(syllable => syllable.sounds.map(x => x?.romanization || x?.key || '').join('')).join('');
+}
+
+export function getSound(language: ILanguage, key: string) {
+  let sounds = [...language.vowels, ...language.consonants];
+  return sounds.find(x => x.key === key);
+}
+export function getSounds(language: ILanguage, type: string, key: string) {
+  let sounds = [...language.vowels, ...language.consonants];
+  switch (type) {
+    case 'phonetic collection':
+      return sounds.filter(x => x.key === key);
+    case 'digraph collection':
+      return sounds.filter(x => !x.romanization ? x.romanization === key : x.key === key);
+    default:
+      return [];
+  }
 }
 
 export function getSampleWords(language: ILanguage) {
@@ -30,12 +46,18 @@ export function generateDefaultRule(language: ILanguage, sound: ISound): ISoundR
   return {positionsAllowed: defaultPositions, canCluster: false};
 }
 
+interface IToken {type: string, items: string[]}
+
 export function generateWord(language: ILanguage) {
   let length = 1 + Math.floor(Math.random() * 3);
   const morphologyMapped = language.phonology.syllableShape.toUpperCase().replace(/\(C\)/g, 'c').replace(/\(R\)/g, 'r').replace(/\(H\)/g, 'h');
   let syllables: ISyllable[] = [];
   const phonotactics: IPhonotactic[] = language.phonology.phonotactics;
-  let sounds = [...language.vowels, ...language.consonants];
+  let sounds: (ITypedSound<'vowel'> | ITypedSound<'consonant'>)[] = [...language.vowels, ...language.consonants];
+
+  let onsets: ISound[] = [];
+  let codas: ISound[] = [];
+  const rules = generateRules(phonotactics);
 
   for (let ii = 0; ii < length; ii++) {
     let syllable: ISyllable = {sounds: []};
@@ -49,61 +71,59 @@ export function generateWord(language: ILanguage) {
       const isOnset = i < onsetEnd;
       const isCoda = i > codaStart;
 
-      sounds = sounds.filter(sound => {
-        /*
-        let rules = language.phonology.phonotactics[sound.key];
-        if (!rules) {
-          rules = generateDefaultRule(language, sound);
-          if (sound.type === 'vowel') {
-            rules = {
-              canCluster: true,
-              positionsAllowed: [SoundPositions.Close, SoundPositions.Nucleus, SoundPositions.Start]
-            };
-          } else {
-            rules = {
-              canCluster: true,
-              positionsAllowed: [SoundPositions.Close, SoundPositions.Coda, SoundPositions.Onset, SoundPositions.Start]
-            };
-          }
-        }
+      let permitted: (ITypedSound<'vowel'> | ITypedSound<'consonant'>)[] = [...sounds];
 
-        if (isWordStart) {
-          if (!rules.positionsAllowed.includes(SoundPositions.Start)) {
-            return false;
-          }
-        }
-        if (isWordClose) {
-          if (!rules.positionsAllowed.includes(SoundPositions.Close)) {
-            return false;
-          }
-        }
+      for (let ri = 0; ri < rules.length; ri++) {
+        const rule = rules[ri];
+        const derivativeMarker = rule.tokens.findIndex(x => x.type === '>');
+        let collection: (ITypedSound<'vowel'> | ITypedSound<'consonant'>)[] = [];
 
-        // TODO: The H or "medial" token, usually liquids.
-        // TODO: The R for 'resonant', or 'sonorant'.
-        // TODO: < or > to include whether the next sound should either rise or fall in tone.
-
-        if (token === 'V') {
-          if (!rules.positionsAllowed.includes(SoundPositions.Nucleus)) {
-            return false;
-          }
-        } else {
-          if (rules.positionsAllowed.includes(SoundPositions.Nucleus)) {
-            return false;
-          }
-
-          if (isOnset) {
-            if (!rules.positionsAllowed.includes(SoundPositions.Onset) && !(isWordStart && rules.positionsAllowed.includes(SoundPositions.Start))) {
-              return false;
+        for (let ci = 0; ci < rule.tokens.length; ci++) {
+          const token = rule.tokens[ci];
+          const next = rule.tokens[ci + 1];
+          if (token.type === '+') {
+            if (next.items.length > 0) {
+              const _sounds: (ITypedSound<'vowel'> | ITypedSound<'consonant'>)[] =
+                next.items.map(item => getSounds(language, next.type, item))
+                          .flat()
+                          .filter(x => !!x) as (ITypedSound<'vowel'> | ITypedSound<'consonant'>)[];
+              collection = [...collection, ..._sounds.filter(x => !collection.find(y => y.key === x.key))];
             }
-          } 
-          
-          if (isCoda) {
-            if (!rules.positionsAllowed.includes(SoundPositions.Coda) && !(isWordClose && rules.positionsAllowed.includes(SoundPositions.Close))) {
-              return false;
+            ci++;
+          }
+          if (token.type === '-') {
+            if (next.items.length > 0) {
+              const _sounds: (ITypedSound<'vowel'> | ITypedSound<'consonant'>)[] =
+                next.items.map(item => getSounds(language, next.type, item))
+                          .flat()
+                          .filter(x => !!x) as (ITypedSound<'vowel'> | ITypedSound<'consonant'>)[];
+              collection = [...collection.filter(x => !_sounds.find(y => y.key === x.key))];
             }
+            ci++;
           }
         }
-        */
+
+        switch (rule.type) {
+          case 'onsets':
+          case 'Onsets':
+            if (isOnset) {
+              permitted = [...collection];
+            }
+            break;
+          case 'codas':
+          case 'Codas':
+            if (isCoda) {
+              permitted = [...collection];
+            }
+            break;
+          case 'custom':
+            break;
+          default:
+            break;
+        }
+      }
+
+      permitted = permitted.filter(sound => {
         switch (token) {
           case 'V':
             if (sound.type === 'consonant') {
@@ -115,6 +135,11 @@ export function generateWord(language: ILanguage) {
               return false;
             }
             break;
+          case 'c':
+            if (sound.type === 'vowel') {
+              return false;
+            }
+            break;
           default:
             break;
         }
@@ -122,15 +147,15 @@ export function generateWord(language: ILanguage) {
         return true;
       });
 
-      if (sounds.length > 0) {
-        const sound = getRandomSound(sounds);
+      if (permitted.length > 0) {
+        const sound = getRandomSound(permitted);
         if (token === 'c' && Math.random() * 100 < 50) {
           // ...
         } else {
           syllable.sounds.push(sound);
         }
       } else {
-        console.error('No sound found!');
+        console.error(`No sound found for ${token}!`);
       }
     }
     syllables.push(syllable)
@@ -147,6 +172,87 @@ export const listRules = (language: ILanguage) => {
   return Object.keys(language.phonology.rules).map(x => ({key: x, rules: language.phonology.rules[x]})).filter(x => !!x.rules && (!!language.vowels.find(y => y.key === x.key) || !!language.consonants.find(y => y.key === x.key)));
 }
 */
+
+export const generateRules = (phonotactics: IPhonotactic[]) => {
+  return phonotactics.map(tactic => {
+    let type = 'custom';
+    let script = tactic.script;
+    const split = tactic.script.split(':').map(x => x.trim());
+    if (split.length === 2) {
+      type = split[0];
+      script = split[1];
+    }
+    return {type, script};
+  }).map(rule => {
+    let tokens: IToken[] = [];
+    let scratch = '';
+
+    for (let i = 0; i < rule.script.length; i++) {
+      let next = 0;
+      let useScratch = true;
+      switch (rule.script[i]) {
+        case '+':
+          tokens.push({type: '+', items: []});
+          break;
+        case '-':
+          tokens.push({type: '-', items: []});
+          break;
+        case '>':
+          tokens.push({type: '>', items: []});
+          break;
+        case '<':
+          next = rule.script.indexOf('>', i + 1);
+          if (next !== -1) {
+            tokens.push({type: 'conditional collection', items: rule.script.slice(i + 1, next).split(',').map(x => x.trim())});
+            i = next+1;
+          }
+          break;
+        case '{':
+          next = rule.script.indexOf('}', i + 1);
+          if (next !== -1) {
+            tokens.push({type: 'logical-disjunction collection', items: rule.script.slice(i + 1, next).split(',').map(x => x.trim())});
+            i = next+1;
+          }
+          break;
+        case '(':
+          next = rule.script.indexOf('}', i + 1);
+          if (next !== -1) {
+            tokens.push({type: 'optional logical-disjunction collection', items: rule.script.slice(i + 1, next).split(',').map(x => x.trim())});
+            i = next+1;
+          }
+          break;
+        case '[':
+          next = rule.script.indexOf(']', i + 1);
+          if (next !== -1) {
+            tokens.push({type: 'digraph collection', items: rule.script.slice(i + 1, next).split(',').map(x => x.trim())});
+            i = next+1;
+          }
+          break;
+        case '/':
+          next = rule.script.indexOf('/', i + 1);
+          if (next !== -1) {
+            tokens.push({type: 'phonetic collection', items: rule.script.slice(i + 1, next).split(',').map(x => x.trim())});
+            i = next+1;
+          }
+          break;
+        default:
+          useScratch = false;
+          scratch += rule.script[i];
+          break;
+      }
+
+      if (useScratch || i === rule.script.length - 1) {
+        const items = scratch.split(',').map(x => x.trim()).filter(x => x.length > 0);
+        if (items.length > 0) {
+          tokens.push({type: 'arbitrary', items})
+          scratch = '';  
+        }
+      }
+    }
+
+    return {...rule, tokens};
+  });
+}
 
 export const printListExclusive = (list: any[]) => {
   if (list.length === 0) {
