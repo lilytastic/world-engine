@@ -10,6 +10,7 @@ export interface ISound {
 export interface ITypedSound<T extends string> extends ISound {
   type: T;
 }
+
 export interface IVowel extends ITypedSound<'vowel'> {
   frontness: string;
   openness: string;

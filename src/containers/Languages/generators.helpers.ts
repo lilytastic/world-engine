@@ -1,4 +1,4 @@
-import { IConsonant, ILanguage, IPhonotactic, ISound, ISoundRules, ISyllable, ITypedSound, IVowel, IWord, SoundPositions } from "./sounds.model";
+import { IConsonant, ILanguage, IPhonotactic, ISound, ISoundRules, ISyllable, ITypedSound, IVowel, IWord, Manner, MANNERS, SoundPositions } from "./sounds.model";
 import { VOWELS } from "./vowels";
 
 function getRandomSound(sounds: ISound[]) {
@@ -20,9 +20,23 @@ export function getSounds(language: ILanguage, type: string, key: string) {
       return sounds.filter(x => x.key === key);
     case 'digraph collection':
       return sounds.filter(x => !x.romanization ? x.romanization === key : x.key === key);
+    case 'arbitrary':
+      return sounds.filter(x => fitsArbitraryToken(x, key));
     default:
       return [];
   }
+}
+export function fitsArbitraryToken(sound: IVowel | IConsonant, token: string) {
+  switch (token.toLowerCase()) {
+    case 'plosives':
+      if (sound.type === "consonant") {
+        return sound.manner === Manner.Plosive;
+      }
+      break;
+    default:
+      break;
+  }
+  return false;
 }
 
 export function getSampleWords(language: ILanguage) {
