@@ -132,101 +132,114 @@ export const generateRules = (phonotactics: IPhonotactic[]): IPhonologicalRule[]
     }
     return {type, script};
   }).map(rule => {
-    let tokens: IPhonologicalToken[] = [];
-    let scratch = '';
-    let useScratch = false;
-
-    for (let i = 0; i < rule.script.length; i++) {
-      let next = 0;
-      let newToken = null as IPhonologicalToken | null;
-      switch (rule.script[i]) {
-        case '+':
-          newToken = {type: '+', items: []};
-          break;
-        case '-':
-          newToken = {type: '-', items: []};
-          break;
-        case '>':
-          newToken = {type: '>', items: []};
-          break;
-        case '_':
-          // Put stuff here!
-          newToken = {type: '_', items: []};
-          break;
-        case 'Ø':
-          // Deletion (__ > Ø) OR Insertion (Ø > __)
-          newToken = {type: 'Ø', items: []};
-          break;          
-        case 'σ':
-          // Syllable boundary
-          newToken = {type: 'σ', items: []};
-          break;
-        case '#':
-          // Word boundary.
-          newToken = {type: '#', items: []};
-          break;
-        case '/':
-          if (rule.script[i + 1] == ' ') {
-            // This means "in the environment of"!
-            newToken = {type: '/', items: []};
-            break;
-          }
-          next = rule.script.indexOf('/', i + 1);
-          if (next !== -1) {
-            newToken = {type: 'phonetic collection', items: rule.script.slice(i + 1, next).split(',').map(x => x.trim())};
-            i = next+1;
-          }
-          break;
-        case '<':
-          next = rule.script.indexOf('>', i + 1);
-          if (next !== -1) {
-            newToken = {type: 'conditional collection', items: rule.script.slice(i + 1, next).split(',').map(x => x.trim())};
-            i = next+1;
-          }
-          break;
-        case '{':
-          // Seems to work as 'or'? ___{Z, #} would be 'either before Z or at word boundary.
-          next = rule.script.indexOf('}', i + 1);
-          if (next !== -1) {
-            newToken = {type: 'logical collection', items: rule.script.slice(i + 1, next).split(',').map(x => x.trim())};
-            i = next+1;
-          }
-          break;
-        case '(':
-          next = rule.script.indexOf('}', i + 1);
-          if (next !== -1) {
-            newToken = {type: 'optional logical collection', items: rule.script.slice(i + 1, next).split(',').map(x => x.trim())};
-            i = next+1;
-          }
-          break;
-        case '[':
-          next = rule.script.indexOf(']', i + 1);
-          if (next !== -1) {
-            newToken = {type: 'digraph collection', items: rule.script.slice(i + 1, next).split(',').map(x => x.trim())};
-            i = next+1;
-          }
-          break;
-        default:
-          useScratch = false;
-          scratch += rule.script[i];
-          break;
+    return {...rule, tokens: getTokens(rule.script)};
+  }).map(rule => {
+    if (rule.type === 'custom') {
+      let type = rule.type;
+      if (!!rule.tokens.find(x => x.type === '>')) {
+        type = 'derivative';
       }
+      return {...rule, type};
+    }
+    return rule;
+  });
+}
 
-      if (newToken) {
-        useScratch = true;
-      }
-      if (useScratch || i === rule.script.length - 1) {
-        const items = scratch.split(',').map(x => x.trim()).filter(x => x.length > 0);
-        if (items.length > 0) {
-          tokens.push({type: 'arbitrary', items})
-          scratch = '';  
+export const getTokens = (script: string) => {
+  let tokens: IPhonologicalToken[] = [];
+  let scratch = '';
+  let useScratch = false;
+
+  for (let i = 0; i < script.length; i++) {
+    let next = 0;
+    let newToken = null as IPhonologicalToken | null;
+    switch (script[i]) {
+      case '+':
+        newToken = {type: '+', items: []};
+        break;
+      case '-':
+        newToken = {type: '-', items: []};
+        break;
+      case '>':
+        newToken = {type: '>', items: []};
+        break;
+      case '_':
+        // Put stuff here!
+        newToken = {type: '_', items: []};
+        break;
+      case 'Ø':
+        // Deletion (__ > Ø) OR Insertion (Ø > __)
+        newToken = {type: 'Ø', items: []};
+        break;          
+      case 'σ':
+        // Syllable boundary
+        newToken = {type: 'σ', items: []};
+        break;
+      case '#':
+        // Word boundary.
+        newToken = {type: '#', items: []};
+        break;
+      case '/':
+        if (script[i + 1] == ' ') {
+          // This means "in the environment of"!
+          newToken = {type: '/', items: []};
+          break;
         }
-      }
-      if (newToken) {
-        tokens.push(newToken);
-      }
+        next = script.indexOf('/', i + 1);
+        if (next !== -1) {
+          newToken = {type: 'phonetic collection', items: script.slice(i + 1, next).split(',').map(x => x.trim())};
+          i = next+1;
+        }
+        break;
+      case '<':
+        next = script.indexOf('>', i + 1);
+        if (next !== -1) {
+          newToken = {type: 'conditional collection', items: script.slice(i + 1, next).split(',').map(x => x.trim())};
+          i = next+1;
+        }
+        break;
+      case '{':
+        // Seems to work as 'or'? ___{Z, #} would be 'either before Z or at word boundary.
+        next = script.indexOf('}', i + 1);
+        if (next !== -1) {
+          newToken = {type: 'logical collection', items: script.slice(i + 1, next).split(',').map(x => x.trim())};
+          i = next+1;
+        }
+        break;
+      case '(':
+        next = script.indexOf('}', i + 1);
+        if (next !== -1) {
+          newToken = {type: 'optional logical collection', items: script.slice(i + 1, next).split(',').map(x => x.trim())};
+          i = next+1;
+        }
+        break;
+      case '[':
+        next = script.indexOf(']', i + 1);
+        if (next !== -1) {
+          newToken = {type: 'digraph collection', items: script.slice(i + 1, next).split(',').map(x => x.trim())};
+          i = next+1;
+        }
+        break;
+      default:
+        useScratch = false;
+        scratch += script[i];
+        break;
     }
 
-    return {...rule, tokens};
-  });
+    if (newToken) {
+      useScratch = true;
+    }
+    if (useScratch || i === script.length - 1) {
+      const items = scratch.trim().split(',').map(x => x.trim()).filter(x => x.length > 0);
+      if (items.length > 0) {
+        tokens.push({type: 'arbitrary', items})
+        scratch = '';  
+      }
+    }
+    if (newToken) {
+      tokens.push(newToken);
+    }
+  }
+
+  return tokens;
 }
