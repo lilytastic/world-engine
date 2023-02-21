@@ -81,16 +81,6 @@ export function generateWord(language: ILanguage) {
         for (let ci = 0; ci < rule.tokens.length; ci++) {
           const token = rule.tokens[ci];
           const next = rule.tokens[ci + 1];
-          if (token.type === '+') {
-            if (next.items.length > 0) {
-              const _sounds: (ITypedSound<'vowel'> | ITypedSound<'consonant'>)[] =
-                next.items.map(item => getSounds(language, next.type, item))
-                          .flat()
-                          .filter(x => !!x) as (ITypedSound<'vowel'> | ITypedSound<'consonant'>)[];
-              collection = [...collection, ..._sounds.filter(x => !collection.find(y => y.key === x.key))];
-            }
-            ci++;
-          }
           if (token.type === '-') {
             if (collection.length === 0) { collection = [...sounds]; }
             if (next.items.length > 0) {
@@ -101,6 +91,23 @@ export function generateWord(language: ILanguage) {
               collection = [...collection.filter(x => !_sounds.find(y => y.key === x.key))];
             }
             ci++;
+          } else if (token.type === '+') {
+            if (next.items.length > 0) {
+              const _sounds: (ITypedSound<'vowel'> | ITypedSound<'consonant'>)[] =
+                next.items.map(item => getSounds(language, next.type, item))
+                          .flat()
+                          .filter(x => !!x) as (ITypedSound<'vowel'> | ITypedSound<'consonant'>)[];
+              collection = [...collection, ..._sounds.filter(x => !collection.find(y => y.key === x.key))];
+            }
+            ci++;
+          } else if (token.type.includes('collection')) {
+            if (token.items.length > 0) {
+              const _sounds: (ITypedSound<'vowel'> | ITypedSound<'consonant'>)[] =
+                token.items.map(item => getSounds(language, next.type, item))
+                          .flat()
+                          .filter(x => !!x) as (ITypedSound<'vowel'> | ITypedSound<'consonant'>)[];
+              collection = [...collection, ..._sounds.filter(x => !collection.find(y => y.key === x.key))];
+            }
           }
         }
 
