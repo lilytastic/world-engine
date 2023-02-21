@@ -92,6 +92,7 @@ export function generateWord(language: ILanguage) {
             ci++;
           }
           if (token.type === '-') {
+            if (collection.length === 0) { collection = [...sounds]; }
             if (next.items.length > 0) {
               const _sounds: (ITypedSound<'vowel'> | ITypedSound<'consonant'>)[] =
                 next.items.map(item => getSounds(language, next.type, item))
@@ -131,10 +132,6 @@ export function generateWord(language: ILanguage) {
             }
             break;
           case 'C':
-            if (sound.type === 'vowel') {
-              return false;
-            }
-            break;
           case 'c':
             if (sound.type === 'vowel') {
               return false;
