@@ -166,6 +166,9 @@ export const getTokens = (script: string) => {
       case '_':
         // Put stuff here!
         newToken = {type: '_', items: []};
+        while (script[i + 1] === '_') {
+          i++
+        }
         break;
       case 'Ø':
         // Deletion (__ > Ø) OR Insertion (Ø > __)
@@ -180,7 +183,7 @@ export const getTokens = (script: string) => {
         newToken = {type: '#', items: []};
         break;
       case '/':
-        if (script[i + 1] == ' ') {
+        if (script[i + 1] === ' ') {
           // This means "in the environment of"!
           newToken = {type: '/', items: []};
           break;

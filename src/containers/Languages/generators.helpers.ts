@@ -34,7 +34,14 @@ export function generateDefaultRule(language: ILanguage, sound: ISound): ISoundR
 
 export function generateWord(language: ILanguage) {
   let length = 1 + Math.floor(Math.random() * 3);
-  const morphologyMapped = language.phonology.syllableShape.toUpperCase().replace(/\(C\)/g, 'c').replace(/\(R\)/g, 'r').replace(/\(H\)/g, 'h');
+  const morphologyMapped =
+    language.phonology.syllableShape.toUpperCase()
+                                    .replace(/ /g, '')
+                                    .replace(/\(>\)/g, '⪫')
+                                    .replace(/\(<\)/g, '⪪')
+                                    .replace(/\(C\)/g, 'c')
+                                    .replace(/\(R\)/g, 'r')
+                                    .replace(/\(H\)/g, 'h');
   let syllables: ISyllable[] = [];
   const phonotactics: IPhonotactic[] = language.phonology.phonotactics;
   let sounds: (ITypedSound<'vowel'> | ITypedSound<'consonant'>)[] = [...language.vowels, ...language.consonants];
@@ -83,6 +90,10 @@ export function generateWord(language: ILanguage) {
 
       permitted = permitted.filter(sound => {
         switch (token) {
+          case '<':
+            return false;
+          case '>':
+            return false;
           case 'V':
             if (sound.type === 'consonant') {
               return false;
@@ -108,7 +119,7 @@ export function generateWord(language: ILanguage) {
         } else {
           syllable.sounds.push(sound);
         }
-      } else {
+      } else if (token !== '<' && token !== '>') {
         console.error(`No sound found for ${token}!`);
       }
     }
@@ -164,6 +175,4 @@ export const printAllRules = (language: ILanguage) => {
     applicable.push(`${printListExclusive(nonCoda.map(x => `/<b>${x.key}</b>/`))} cannot be used as ${nonCoda.length === 1 ? 'a coda' : 'codas'}.`);
   }
   */
-
-  return applicable;
 }
