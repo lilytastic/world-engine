@@ -153,12 +153,16 @@ export const generateRules = (phonotactics: IPhonotactic[]): IPhonologicalRule[]
           // Put stuff here!
           newToken = {type: '_', items: []};
           break;
+        case 'Ø':
+          // Deletion (__ > Ø) OR Insertion (Ø > __)
+          newToken = {type: 'Ø', items: []};
+          break;          
         case 'σ':
           // Syllable boundary
           newToken = {type: 'σ', items: []};
           break;
         case '#':
-          // Put stuff here!
+          // Word boundary.
           newToken = {type: '#', items: []};
           break;
         case '/':
@@ -181,16 +185,17 @@ export const generateRules = (phonotactics: IPhonotactic[]): IPhonologicalRule[]
           }
           break;
         case '{':
+          // Seems to work as 'or'? ___{Z, #} would be 'either before Z or at word boundary.
           next = rule.script.indexOf('}', i + 1);
           if (next !== -1) {
-            newToken = {type: 'logical-disjunction collection', items: rule.script.slice(i + 1, next).split(',').map(x => x.trim())};
+            newToken = {type: 'logical collection', items: rule.script.slice(i + 1, next).split(',').map(x => x.trim())};
             i = next+1;
           }
           break;
         case '(':
           next = rule.script.indexOf('}', i + 1);
           if (next !== -1) {
-            newToken = {type: 'optional logical-disjunction collection', items: rule.script.slice(i + 1, next).split(',').map(x => x.trim())};
+            newToken = {type: 'optional logical collection', items: rule.script.slice(i + 1, next).split(',').map(x => x.trim())};
             i = next+1;
           }
           break;
