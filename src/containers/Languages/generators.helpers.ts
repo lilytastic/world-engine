@@ -243,52 +243,53 @@ export const generateRules = (phonotactics: IPhonotactic[]): IPhonologicalRule[]
   }).map(rule => {
     let tokens: IToken[] = [];
     let scratch = '';
+    let useScratch = false;
 
     for (let i = 0; i < rule.script.length; i++) {
       let next = 0;
-      let useScratch = true;
+      let newToken = null as IToken | null;
       switch (rule.script[i]) {
         case '+':
-          tokens.push({type: '+', items: []});
+          newToken = {type: '+', items: []};
           break;
         case '-':
-          tokens.push({type: '-', items: []});
+          newToken = {type: '-', items: []};
           break;
         case '>':
-          tokens.push({type: '>', items: []});
+          newToken = {type: '>', items: []};
           break;
         case '<':
           next = rule.script.indexOf('>', i + 1);
           if (next !== -1) {
-            tokens.push({type: 'conditional collection', items: rule.script.slice(i + 1, next).split(',').map(x => x.trim())});
+            newToken = {type: 'conditional collection', items: rule.script.slice(i + 1, next).split(',').map(x => x.trim())};
             i = next+1;
           }
           break;
         case '{':
           next = rule.script.indexOf('}', i + 1);
           if (next !== -1) {
-            tokens.push({type: 'logical-disjunction collection', items: rule.script.slice(i + 1, next).split(',').map(x => x.trim())});
+            newToken = {type: 'logical-disjunction collection', items: rule.script.slice(i + 1, next).split(',').map(x => x.trim())};
             i = next+1;
           }
           break;
         case '(':
           next = rule.script.indexOf('}', i + 1);
           if (next !== -1) {
-            tokens.push({type: 'optional logical-disjunction collection', items: rule.script.slice(i + 1, next).split(',').map(x => x.trim())});
+            newToken = {type: 'optional logical-disjunction collection', items: rule.script.slice(i + 1, next).split(',').map(x => x.trim())};
             i = next+1;
           }
           break;
         case '[':
           next = rule.script.indexOf(']', i + 1);
           if (next !== -1) {
-            tokens.push({type: 'digraph collection', items: rule.script.slice(i + 1, next).split(',').map(x => x.trim())});
+            newToken = {type: 'digraph collection', items: rule.script.slice(i + 1, next).split(',').map(x => x.trim())};
             i = next+1;
           }
           break;
         case '/':
           next = rule.script.indexOf('/', i + 1);
           if (next !== -1) {
-            tokens.push({type: 'phonetic collection', items: rule.script.slice(i + 1, next).split(',').map(x => x.trim())});
+            newToken = {type: 'phonetic collection', items: rule.script.slice(i + 1, next).split(',').map(x => x.trim())};
             i = next+1;
           }
           break;
@@ -298,12 +299,18 @@ export const generateRules = (phonotactics: IPhonotactic[]): IPhonologicalRule[]
           break;
       }
 
+      if (newToken) {
+        useScratch = true;
+      }
       if (useScratch || i === rule.script.length - 1) {
         const items = scratch.split(',').map(x => x.trim()).filter(x => x.length > 0);
         if (items.length > 0) {
           tokens.push({type: 'arbitrary', items})
           scratch = '';  
         }
+      }
+      if (newToken) {
+        tokens.push(newToken);
       }
     }
 
