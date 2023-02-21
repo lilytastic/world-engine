@@ -7,6 +7,8 @@ import { Phonotactics } from './Phonotactics';
 import { SoundSelection } from './Sounds';
 import { IConsonant, IVowel, ILanguage, DEFAULT_LANGUAGE, MANNERS, PLACES, VOWELCLOSENESS, VOWELFRONTNESS, IWord } from './sounds.model';
 
+import Dropdown from 'react-bootstrap/Dropdown';
+
 // console.log('loaded', JSON.parse(localStorage.getItem('_language') || '{}'));
 
 export function Languages(props: {children?: any}) {
@@ -65,32 +67,44 @@ export function Languages(props: {children?: any}) {
       ) : (
         <>
           <h1 className='mt-0 mb-0 d-flex align-items-center'>
-            {language.isProtoLanguage ? 'Proto-' : ''}{language.name}
+            {language.type === 'Proto-language' ? 'Proto-' : ''}{language.name}{language.type === 'Family' ? ' Family' : ''}
             <button className='btn btn-link ms-1' onClick={() => setIsEditingTitle(true)}>Edit</button>
           </h1>
           <div className='mb-0 mt-0 text-secondary'>
-            {!language.ancestor ? 'Prime' : `Dialect of ${language.ancestor.name}`}
+            {!language.ancestor ? 'No ancestors' : `Dialect of ${language.ancestor.name}`}
           </div>
         </>
       )}
-      <h4>Metadata</h4>
+      <h4>Type</h4>
+      {/*
       <div className="form-check position-relative">
         <input className="form-check-input" checked={language.isProtoLanguage ? true : false} onChange={ev => setLanguage({...language, isProtoLanguage: ev.currentTarget.checked})} type="checkbox" id="flexCheckDefault" />
         <label className="form-check-label" htmlFor="flexCheckDefault">
           Is proto-language?
         </label>
       </div>
+      */}
+      <Dropdown onSelect={ev => !!ev ? setLanguage({...language, type: ev}) : null}>
+        <Dropdown.Toggle variant="dark" id="dropdown-basic">
+          {language.type}
+        </Dropdown.Toggle>
+
+        <Dropdown.Menu>
+          <Dropdown.Item eventKey="Language">Language</Dropdown.Item>
+          <Dropdown.Item eventKey="Family">Family</Dropdown.Item>
+          <Dropdown.Item eventKey="Proto-language">Proto-language</Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown>
 
 
       <h2>Lexicon <button className='btn btn-link' onClick={() => setIsEditingLexicon(true)}>Edit</button></h2>
       <div>
-        <h4>Sample <button className='btn btn-link' onClick={() => setSampleWords(getSampleWords(language))}>Regenerate</button></h4>
+        <h4>Samples <button className='btn btn-link' onClick={() => setSampleWords(getSampleWords(language))}>Regenerate</button></h4>
         <div>
           <i>{sampleWords.map(word => transcribeWord(word)).join(', ')}</i>
         </div>
       </div>
       
-
 
       <h2>Phonology <button className='btn btn-link' onClick={() => setIsEditingPhonotactics(true)}>Edit</button></h2>
 
