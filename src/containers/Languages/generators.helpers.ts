@@ -37,8 +37,8 @@ export function generateWord(language: ILanguage) {
   const morphologyMapped =
     language.phonology.syllableShape.toUpperCase()
                                     .replace(/ /g, '')
-                                    .replace(/\(>\)/g, '⪫')
-                                    .replace(/\(<\)/g, '⪪')
+                                    //.replace(/\(>\)/g, '⪫')
+                                    //.replace(/\(<\)/g, '⪪')
                                     .replace(/\(C\)/g, 'c')
                                     .replace(/\(R\)/g, 'r')
                                     .replace(/\(H\)/g, 'h');

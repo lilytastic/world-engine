@@ -40,10 +40,14 @@ export interface ILanguage {
   consonants: IConsonant[];
   phonology: IPhonology;
   ancestor?: ILanguage;
+  isProtoLanguage: boolean;
+  isFamily: boolean;
 }
 export const DEFAULT_LANGUAGE: ILanguage = {
   id: 'untitled',
   name: "Untitled",
+  isFamily: false,
+  isProtoLanguage: false,
   vowels: [],
   consonants: [],
   phonology: {

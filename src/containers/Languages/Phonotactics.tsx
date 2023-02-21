@@ -25,57 +25,6 @@ export function Phonotactics(props: {children?: any, language: ILanguage, show: 
     };
   }
 
-  // TODO: Cover all this shit https://en.wikipedia.org/wiki/Phonological_rule
-
-  /*
-  const changeRules = (sound: ISound, positions: SoundPositions[]) => {
-    const _rules = {...rules};
-    if (!_rules[sound.key]) {
-      _rules[sound.key] = {...generateDefaultRule(props.language, sound), positionsAllowed: positions}
-    } else {
-      _rules[sound.key].positionsAllowed = positions;
-    }
-    console.log(_rules);
-    setRules(_rules);
-  }
-
-  const showRules = (sounds: ISound[], defaults: SoundPositions[]) => (
-    <>
-      {sounds.map(sound => (
-        <div key={sound.key} className="d-flex align-items-center justify-content-between">
-          <div className='mb-1'>
-            /<b>{sound.key}</b>/ {(sound.romanization && sound.romanization !== sound.key) ? <>("{sound.romanization}")</> : ''}
-          </div>
-          <ToggleButtonGroup
-              type="checkbox"
-              defaultValue={
-                rules[sound.key]
-                  ? rules[sound.key].positionsAllowed
-                  : defaults
-              }
-              onChange={ev => changeRules(sound, ev)}>
-            <ToggleButton className='btn-dark btn-sm' id={`tbg-check-0-${sound.key}`} value={SoundPositions.Start}>
-              Open
-            </ToggleButton>
-            <ToggleButton className='btn-dark btn-sm' id={`tbg-check-1-${sound.key}`} value={SoundPositions.Onset}>
-              Onset
-            </ToggleButton>
-            <ToggleButton className='btn-dark btn-sm' id={`tbg-check-2-${sound.key}`} value={SoundPositions.Nucleus}>
-              Nucleus
-            </ToggleButton>
-            <ToggleButton className='btn-dark btn-sm' id={`tbg-check-3-${sound.key}`} value={SoundPositions.Coda}>
-              Coda
-            </ToggleButton>
-            <ToggleButton className='btn-dark btn-sm' id={`tbg-check-4-${sound.key}`} value={SoundPositions.Close}>
-              Close
-            </ToggleButton>
-          </ToggleButtonGroup>
-        </div>
-      ))}
-    </>
-  )
-  */
-
   return (
     <Modal show={show} onHide={() => props.handleClose?.(compilePhonology())}>
       <Modal.Header>

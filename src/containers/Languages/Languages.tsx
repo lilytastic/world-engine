@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { getSampleWords, printAllRules, transcribeWord } from './generators.helpers';
 import './Languages.scss';
+import { Lexicon } from './Lexicon';
 import { IPhonology } from './phonology.helpers';
 import { Phonotactics } from './Phonotactics';
 import { SoundSelection } from './Sounds';
-import { IConsonant, IVowel, ILanguage, DEFAULT_LANGUAGE, MANNERS, PLACES, VOWELCLOSENESS, VOWELFRONTNESS } from './sounds.model';
+import { IConsonant, IVowel, ILanguage, DEFAULT_LANGUAGE, MANNERS, PLACES, VOWELCLOSENESS, VOWELFRONTNESS, IWord } from './sounds.model';
 
 // console.log('loaded', JSON.parse(localStorage.getItem('_language') || '{}'));
 
@@ -12,7 +13,10 @@ export function Languages(props: {children?: any}) {
 
   const [isSelectingSounds, setIsSelectingSounds] = useState(false);
   const [isEditingPhonotactics, setIsEditingPhonotactics] = useState(false);
+  const [isEditingLexicon, setIsEditingLexicon] = useState(false);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
+
+  const [sampleWords, setSampleWords] = useState([] as IWord[]);
 
   const storedLanguage = localStorage.getItem('_language');
   let startingLanguage: ILanguage = DEFAULT_LANGUAGE;
@@ -26,9 +30,13 @@ export function Languages(props: {children?: any}) {
 
   const [language, setLanguage] = useState(startingLanguage);
 
+  useEffect(() => {
+    setSampleWords(getSampleWords(language));
+  }, []);
 
   useEffect(() => {
     localStorage.setItem('_language', JSON.stringify(language));
+    setSampleWords(getSampleWords(language));
   }, [language]);
 
 
@@ -50,6 +58,7 @@ export function Languages(props: {children?: any}) {
     <div>
       <SoundSelection language={language} show={isSelectingSounds} handleClose={(vowels, consonants) => {selectSounds(vowels, consonants); setIsSelectingSounds(false);}}></SoundSelection>
       <Phonotactics language={language} show={isEditingPhonotactics} handleClose={(phonotactics) => {selectPhonotactics(phonotactics); setIsEditingPhonotactics(false);}}></Phonotactics>
+      <Lexicon language={language} show={isEditingLexicon} handleClose={(language) => {setLanguage(language); setIsEditingLexicon(false);}}></Lexicon>
 
       {isEditingTitle ? (
         <input autoFocus className='mb-3' value={language.name} onChange={ev => setLanguage({...language, name: ev.currentTarget.value})} onBlur={() => setIsEditingTitle(false)} />
@@ -63,10 +72,14 @@ export function Languages(props: {children?: any}) {
       )}
       
 
-      <h2>Lexicon <button className='btn btn-link' onClick={() => setIsEditingPhonotactics(true)}>Edit</button></h2>
+      <h2>Lexicon <button className='btn btn-link' onClick={() => setIsEditingLexicon(true)}>Edit</button></h2>
       <div>
-        Sample words: <i>{getSampleWords(language).map(word => transcribeWord(word)).join(', ')}</i>
+        <h3>Sample <button className='btn btn-link' onClick={() => setSampleWords(getSampleWords(language))}>Regenerate</button></h3>
+        <div>
+          <i>{sampleWords.map(word => transcribeWord(word)).join(', ')}</i>
+        </div>
       </div>
+      
 
 
       <h2>Phonology <button className='btn btn-link' onClick={() => setIsEditingPhonotactics(true)}>Edit</button></h2>
