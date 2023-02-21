@@ -7,14 +7,16 @@ export interface IPhonology {
 }
 
 export interface IPhonotactic {
+  id: string;
+  type: string;
   script: string;
 }
 
 interface IPhonologicalToken {type: string, items: string[]}
 
 export interface IPhonologicalRule {
-  tokens: IPhonologicalToken[];
   type: string;
+  tokens: IPhonologicalToken[];
   script: string;
 }
 
