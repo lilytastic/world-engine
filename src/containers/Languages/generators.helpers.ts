@@ -44,12 +44,12 @@ export function fitsArbitraryToken(sound: IVowel | IConsonant, token: string) {
       break;
     case 'fricatives':
       if (sound.type === "consonant") {
-        return sound.manner.toLowerCase() === Manner.NonSibilantFricative || sound.manner.toLowerCase() === Manner.SibilantFricative;
+        return sound.manner === Manner.NonSibilantFricative || sound.manner === Manner.SibilantFricative;
       }
       break;
     case 'affricates':
       if (sound.type === "consonant") {
-        return sound.manner.toLowerCase() === Manner.NonSibilantAffricate || sound.manner.toLowerCase() === Manner.SibilantAffricate;
+        return sound.manner === Manner.NonSibilantAffricate || sound.manner === Manner.SibilantAffricate;
       }
       break;
     default:
