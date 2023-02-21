@@ -5,12 +5,14 @@ import { Route, RouterProvider, createBrowserRouter, createRoutesFromElements } 
 import Nav from '../Nav/Nav';
 import { Languages } from '../Languages/Languages';
 import Container from 'react-bootstrap/Container';
+import { Language } from '../Languages/Language';
 
 const ROUTES = [
   {path: '/', icon: 'mountain', element: <div></div>},
   {path: '/geography', icon: 'mountain', element: <div></div>},
   {path: '/cultures', icon: 'landmark', element: <div></div>},
-  {path: '/languages', icon: 'book', element: <Languages />},
+  {path: '/languages', icon: 'book', element: <Language />},
+  {path: '/languages/:id', icon: 'book', element: <Language />},
   {path: '/characters', icon: 'users', element: <div></div>},
 ];
 
