@@ -20,7 +20,7 @@ export function Languages(props: {children?: any}) {
 
   const [sampleWords, setSampleWords] = useState([] as IWord[]);
 
-  const storedLanguage = localStorage.getItem('_language');
+  const storedLanguage = localStorage.getItem('language');
   let startingLanguage: ILanguage = DEFAULT_LANGUAGE;
   try {
     if (storedLanguage) {
@@ -37,7 +37,7 @@ export function Languages(props: {children?: any}) {
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('_language', JSON.stringify(language));
+    localStorage.setItem('language', JSON.stringify(language));
     setSampleWords(getSampleWords(language));
   }, [language]);
 
@@ -75,7 +75,6 @@ export function Languages(props: {children?: any}) {
           </div>
         </>
       )}
-      <h4>Type</h4>
       {/*
       <div className="form-check position-relative">
         <input className="form-check-input" checked={language.isProtoLanguage ? true : false} onChange={ev => setLanguage({...language, isProtoLanguage: ev.currentTarget.checked})} type="checkbox" id="flexCheckDefault" />
@@ -84,7 +83,7 @@ export function Languages(props: {children?: any}) {
         </label>
       </div>
       */}
-      <Dropdown onSelect={ev => !!ev ? setLanguage({...language, type: ev}) : null}>
+      <Dropdown className='mt-3' onSelect={ev => !!ev ? setLanguage({...language, type: ev}) : null}>
         <Dropdown.Toggle variant="dark" id="dropdown-basic">
           {language.type}
         </Dropdown.Toggle>
