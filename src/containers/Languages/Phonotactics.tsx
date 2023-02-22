@@ -16,7 +16,7 @@ export function Phonotactics(props: {children?: any, language: ILanguage, show: 
   //const [rules, setRules] = useState(props.language.phonology.rules);
   const [morphology, setMorphology] = useState(props.language.phonology.syllableShape);
   const [phonotactics, setPhonotactics] = useState(props.language.phonology.phonotactics);
-  const [isEditingPhonotatic, editPhonotatic] = useState(null as IPhonotactic | null);
+  const [isEditingPhonotatic, editPhonotatic] = useState(0);
   const {show} = props;
 
   const compilePhonology = (): IPhonology => {
@@ -25,6 +25,17 @@ export function Phonotactics(props: {children?: any, language: ILanguage, show: 
       phonotactics,
       stressSystem
     };
+  }
+  const addPhonotactic = () => {
+    const id = Math.max(0, ...phonotactics.map(x => x.id)) + 1;
+    console.log(id);
+    setPhonotactics([...phonotactics, {
+      id,
+      type: '',
+      description: '',
+      script: 'test'
+    }]);
+    editPhonotatic(id);
   }
 
   return (
@@ -47,19 +58,19 @@ export function Phonotactics(props: {children?: any, language: ILanguage, show: 
             <textarea value={phonotactics?.map(x => x.script).join('\n') ?? ''} onChange={ev => setPhonotactics(ev.currentTarget.value.split('\n').map(x => ({script: x})))} />
             */}
             <div className='mb-3 mt-2'>
-              {phonotactics?.filter(x => x.script !== '').map(rule => {
-                return (<button key={rule.script} className='btn btn-dark my-1 py-2 w-100 text-start' onClick={ev => editPhonotatic(rule)}>
-                  <div className='text-muted'>{rule.type || 'Derivative'}</div>
+              {phonotactics?.map(rule => {
+                return (<button key={rule.id} className='btn btn-dark my-1 py-2 w-100 text-start' onClick={ev => editPhonotatic(rule.id)}>
+                  <div className='text-muted'>{rule.id}) {rule.description || 'No description'}</div>
                   {rule.script}
                 </button>);
               })}
             </div>
-            <button className='btn btn-primary btn-sm d-block'>Add</button>
+            <button className='btn btn-primary btn-sm d-block' onClick={ev => addPhonotactic()}>Add</button>
           </div>
           <Phonotactic language={props.language}
-                       show={isEditingPhonotatic !== null}
-                       phonotactic={isEditingPhonotatic || undefined}
-                       handleClose={ev => {console.log(ev, phonotactics); setPhonotactics(phonotactics.map(x => x.id === ev.id ? ev : x)); editPhonotatic(null)}}
+                       show={isEditingPhonotatic !== 0}
+                       phonotactic={phonotactics.find(x => x.id === isEditingPhonotatic) || undefined}
+                       handleClose={ev => {console.log(ev, phonotactics); setPhonotactics(phonotactics.map(x => x.id === isEditingPhonotatic ? ev : x)); editPhonotatic(0)}}
           ></Phonotactic>
           {/*
           <div className="d-grid gap-2">

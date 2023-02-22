@@ -34,7 +34,7 @@ export interface ISyllable {
 }
 
 export interface ILanguage {
-  id: string;
+  id: number;
   name: string;
   vowels: IVowel[];
   consonants: IConsonant[];
@@ -43,7 +43,7 @@ export interface ILanguage {
   type: string;
 }
 export const DEFAULT_LANGUAGE: ILanguage = {
-  id: 'untitled',
+  id: 1,
   name: "Untitled",
   type: 'language',
   vowels: [],

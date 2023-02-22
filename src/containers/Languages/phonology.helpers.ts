@@ -7,8 +7,9 @@ export interface IPhonology {
 }
 
 export interface IPhonotactic {
-  id: string;
+  id: number;
   type: string;
+  description: string;
   script: string;
 }
 
