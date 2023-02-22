@@ -126,7 +126,7 @@ export const getAffectedSounds = (language: ILanguage, rule: IPhonologicalRule) 
 
 export const generateRules = (phonotactics: IPhonotactic[]): IPhonologicalRule[] => {
   return phonotactics.map(tactic => {
-    let type = 'custom';
+    let type = tactic.description;
     let script = tactic.script;
     const split = tactic.script.split(':').map(x => x.trim());
     if (split.length === 2) {
