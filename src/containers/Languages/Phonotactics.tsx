@@ -29,7 +29,6 @@ export function Phonotactics(props: {children?: any, language: ILanguage, show: 
   }
   const addPhonotactic = () => {
     const id = Math.max(0, ...phonotactics.map(x => x.id)) + 1;
-    console.log(id);
     setPhonotactics([...phonotactics, {
       id,
       type: '',
@@ -40,7 +39,7 @@ export function Phonotactics(props: {children?: any, language: ILanguage, show: 
   }
 
   return (
-    <Offcanvas show={show} onHide={() => props.handleClose?.(compilePhonology())}>
+    <Offcanvas show={show} placement={'end'} onHide={() => props.handleClose?.(compilePhonology())}>
       <Offcanvas.Header>
         <Offcanvas.Title>Phonology</Offcanvas.Title>
         <CloseButton variant="white" onClick={() => props.handleClose?.(compilePhonology())}></CloseButton>
@@ -71,7 +70,7 @@ export function Phonotactics(props: {children?: any, language: ILanguage, show: 
           <Phonotactic language={props.language}
                        show={isEditingPhonotatic !== 0}
                        phonotactic={phonotactics.find(x => x.id === isEditingPhonotatic) || undefined}
-                       handleClose={ev => {console.log(ev, phonotactics); setPhonotactics(phonotactics.map(x => x.id === isEditingPhonotatic ? ev : x)); editPhonotatic(0)}}
+                       handleClose={ev => {setPhonotactics(phonotactics.map(x => x.id === isEditingPhonotatic ? ev : x)); editPhonotatic(0)}}
           ></Phonotactic>
           {/*
           <div className="d-grid gap-2">

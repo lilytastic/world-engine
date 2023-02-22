@@ -1,5 +1,5 @@
-import { generateRules, getAffectedSounds, IPhonotactic } from "./phonology.helpers";
-import { ILanguage, ISound, ISoundRules, ISyllable, ITypedSound, IWord, SoundPositions } from "./sounds.model";
+import { getAffectedSounds, getTokens, IPhonologicalRule, IPhonotactic } from "./phonology.helpers";
+import { ILanguage, ISound, ISoundRules, ISyllable, ITypedSound, IWord, SoundPositions, TypedSound } from "./sounds.model";
 import { VOWELS } from "./vowels";
 
 function getRandomSound(sounds: ISound[]) {
@@ -13,8 +13,9 @@ export function transcribeWord(word: IWord) {
 export function getSampleWords(language: ILanguage) {
   let arr: IWord[] = [];
   if (language.vowels.length === 0 || language.consonants.length === 0) { return arr; }
+  const rules = generateRules(language.phonology.phonotactics);
   for (let i = 0; i < 30; i++) {
-    arr.push(generateWord(language));
+    arr.push(generateWord(language, rules));
   }
   return arr;
 }
@@ -32,7 +33,16 @@ export function generateDefaultRule(language: ILanguage, sound: ISound): ISoundR
 }
 
 
-export function generateWord(language: ILanguage) {
+export const generateRules = (phonotactics: IPhonotactic[]): IPhonologicalRule[] => {
+  return phonotactics.map(tactic => {
+    let type = tactic.description;
+    let script = tactic.script;
+    const tokens = getTokens(script);
+    return {type, script, tokens};
+  });
+}
+
+export function generateWord(language: ILanguage, rules: IPhonologicalRule[]) {
   let length = 1 + Math.floor(Math.random() * 3);
   const morphologyMapped =
     language.phonology.syllableShape.toUpperCase()
@@ -44,9 +54,7 @@ export function generateWord(language: ILanguage) {
                                     .replace(/\(H\)/g, 'h');
   let syllables: ISyllable[] = [];
   const phonotactics: IPhonotactic[] = language.phonology.phonotactics;
-  let sounds: (ITypedSound<'vowel'> | ITypedSound<'consonant'>)[] = [...language.vowels, ...language.consonants];
-
-  const rules = generateRules(phonotactics);
+  let sounds: TypedSound[] = [...language.vowels, ...language.consonants];
 
   for (let ii = 0; ii < length; ii++) {
     let syllable: ISyllable = {sounds: []};
@@ -60,14 +68,27 @@ export function generateWord(language: ILanguage) {
       const isOnset = i < onsetEnd;
       const isCoda = i > codaStart;
 
-      let permitted: (ITypedSound<'vowel'> | ITypedSound<'consonant'>)[] = [...sounds];
+      let permitted: TypedSound[] = [...sounds];
 
       for (let ri = 0; ri < rules.length; ri++) {
         const rule = rules[ri];
         const derivativeMarker = rule.tokens.findIndex(x => x.type === '>');
+        const environmentMarker = rule.tokens.findIndex(x => x.type === '/');
 
-        const collection = getAffectedSounds(language, rule);
+        const collection = getAffectedSounds(language, rule.tokens);
 
+        if (environmentMarker) {
+          let isApplicable = false;
+          const env = rule.tokens.slice(environmentMarker + 1);
+          // console.log('checking environment...', env);
+          if (isOnset && env.find(x => !!x.items.find(x => x.toLowerCase() === 'onsets'))) { isApplicable = true; }
+          if (isCoda && env.find(x => !!x.items.find(x => x.toLowerCase() === 'cods'))) { isApplicable = true; }
+
+          if (isApplicable) {
+            permitted = [...collection];
+          }
+        }
+        /*
         switch (rule.type) {
           case 'onsets':
           case 'Onsets':
@@ -86,6 +107,7 @@ export function generateWord(language: ILanguage) {
           default:
             break;
         }
+        */
       }
 
       permitted = permitted.filter(sound => {

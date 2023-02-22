@@ -8,6 +8,9 @@ export interface ISound {
   advanced?: boolean;
   voiced?: boolean;
 }
+
+export type TypedSound = IVowel | IConsonant;
+
 export interface ITypedSound<T extends string> extends ISound {
   type: T;
 }

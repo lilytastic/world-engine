@@ -1,4 +1,4 @@
-import { IConsonant, ILanguage, ITypedSound, IVowel } from "./sounds.model";
+import { IConsonant, ILanguage, ITypedSound, IVowel, TypedSound } from "./sounds.model";
 
 export interface IPhonology {
   syllableShape: string;
@@ -30,15 +30,13 @@ export function getSounds(language: ILanguage, type: string, key: string) {
   switch (type) {
     case 'phonetic collection':
       return sounds.filter(x => x.key === key);
-    case 'digraph collection':
-      return sounds.filter(x => fitsArbitraryToken(x, key) || (!x.romanization ? x.romanization === key : x.key === key));
-    case 'arbitrary':
+    case 'term collection':
       return sounds.filter(x => fitsArbitraryToken(x, key));
     default:
       return [];
   }
 }
-export function fitsArbitraryToken(sound: IVowel | IConsonant, token: string) {
+export function fitsArbitraryToken(sound: TypedSound, token: string) {
   switch (token.toLowerCase()) {
     case 'voiced':
       return sound.voiced;
@@ -87,32 +85,36 @@ export function fitsArbitraryToken(sound: IVowel | IConsonant, token: string) {
   return false;
 }
 
-export const getAffectedSounds = (language: ILanguage, rule: IPhonologicalRule) => {
-  let sounds: (ITypedSound<'vowel'> | ITypedSound<'consonant'>)[] = [...language.vowels, ...language.consonants];
-  let collection: (ITypedSound<'vowel'> | ITypedSound<'consonant'>)[] = [];
+export const getAffectedSounds = (language: ILanguage, tokens: IPhonologicalToken[]) => {
+  let sounds: TypedSound[] = [...language.vowels, ...language.consonants];
+  let collection: TypedSound[] = [];
   let allowAutoOpen = true;
 
-  for (let ci = 0; ci < rule.tokens.length; ci++) {
-    const token = rule.tokens[ci];
-    const next = rule.tokens[ci + 1];
+  for (let ci = 0; ci < tokens.length; ci++) {
+    const token = tokens[ci];
+    const nextToken = tokens[ci + 1];
+    let operativeToken = token;
+
     if (token.type === '-') {
+      // If you're just removing sounds, assume it's removing from the full set.
       if (collection.length === 0 && allowAutoOpen) { collection = [...sounds]; }
-      if (next?.items.length > 0) {
-        const _sounds: (ITypedSound<'vowel'> | ITypedSound<'consonant'>)[] =
-          next.items.map(item => getSounds(language, next.type, item))
+
+      if (nextToken?.items.length > 0) {
+        const _sounds: TypedSound[] =
+          nextToken.items.map(item => getSounds(language, nextToken.type, item))
                     .flat()
-                    .filter(x => !!x) as (ITypedSound<'vowel'> | ITypedSound<'consonant'>)[];
+                    .filter(x => !!x) as TypedSound[];
         collection = [...collection.filter(x => !_sounds.find(y => y.key === x.key))];
       }
       ci++;
     } else if (token.type === '+' || token.type.includes('collection')) {
       allowAutoOpen = false;
-      const collectionToken = token.type === '+' ? next : token;
+      const collectionToken = token.type === '+' ? nextToken : token;
       if (collectionToken.items.length > 0) {
-        const _sounds: (ITypedSound<'vowel'> | ITypedSound<'consonant'>)[] =
+        const _sounds: TypedSound[] =
         collectionToken.items.map(item => getSounds(language, collectionToken.type, item))
                     .flat()
-                    .filter(x => !!x) as (ITypedSound<'vowel'> | ITypedSound<'consonant'>)[];
+                    .filter(x => !!x) as TypedSound[];
         collection = [...collection, ..._sounds.filter(x => !collection.find(y => y.key === x.key))];
       }
       if (token.type === '+') {
@@ -124,29 +126,25 @@ export const getAffectedSounds = (language: ILanguage, rule: IPhonologicalRule) 
   return collection;
 }
 
-export const generateRules = (phonotactics: IPhonotactic[]): IPhonologicalRule[] => {
-  return phonotactics.map(tactic => {
-    let type = tactic.description;
-    let script = tactic.script;
-    const split = tactic.script.split(':').map(x => x.trim());
-    if (split.length === 2) {
-      type = split[0];
-      script = split[1];
-    }
-    return {type, script};
-  }).map(rule => {
-    return {...rule, tokens: getTokens(rule.script)};
-  }).map(rule => {
-    if (rule.type === 'custom') {
-      let type = rule.type;
-      if (!!rule.tokens.find(x => x.type === '>')) {
-        type = 'derivative';
-      }
-      return {...rule, type};
-    }
-    return rule;
-  });
+export enum PhonologicalTokens {
+  Addition = '+',
+  Subtractive = '-',
+  Transform = '>',
+  Filter = '/',
+  Self = '_',
+  Deletion = 'Ø',
+  Syllable = 'σ',
+  Word = '#'
 }
+
+export const BOUNDARY_MARKERS: [string, string, string][] = [
+  ['term collection','[', ']'],
+  ['logiconditionalcal collection','<', '>'],
+  ['logical collection','{', '}'],
+  ['optional logical collection', '(', ')'],
+  ['phonetic collection','/', '/']
+];
+
 
 export const getTokens = (script: string) => {
   let tokens: IPhonologicalToken[] = [];
@@ -156,79 +154,43 @@ export const getTokens = (script: string) => {
   for (let i = 0; i < script.length; i++) {
     let next = 0;
     let newToken = null as IPhonologicalToken | null;
+
     switch (script[i]) {
-      case '+':
-        newToken = {type: '+', items: []};
+      case PhonologicalTokens.Addition:
+      case PhonologicalTokens.Subtractive:
+      case PhonologicalTokens.Transform:
+      case PhonologicalTokens.Deletion:
+      case PhonologicalTokens.Syllable:
+      case PhonologicalTokens.Word:
+        newToken = {type: script[i], items: []};
         break;
-      case '-':
-        newToken = {type: '-', items: []};
-        break;
-      case '>':
-        newToken = {type: '>', items: []};
-        break;
-      case '_':
+      case PhonologicalTokens.Self:
         // Put stuff here!
         newToken = {type: '_', items: []};
         while (script[i + 1] === '_') {
           i++
         }
         break;
-      case 'Ø':
-        // Deletion (__ > Ø) OR Insertion (Ø > __)
-        newToken = {type: 'Ø', items: []};
-        break;          
-      case 'σ':
-        // Syllable boundary
-        newToken = {type: 'σ', items: []};
-        break;
-      case '#':
-        // Word boundary.
-        newToken = {type: '#', items: []};
-        break;
-      case '/':
+      // @ts-ignore;
+      case PhonologicalTokens.Filter:
         if (script[i + 1] === ' ') {
           // This means "in the environment of"!
           newToken = {type: '/', items: []};
           break;
         }
-        next = script.indexOf('/', i + 1);
-        if (next !== -1) {
-          newToken = {type: 'phonetic collection', items: script.slice(i + 1, next).split(',').map(x => x.trim())};
-          i = next+1;
-        }
-        break;
-      case '<':
-        next = script.indexOf('>', i + 1);
-        if (next !== -1) {
-          newToken = {type: 'conditional collection', items: script.slice(i + 1, next).split(',').map(x => x.trim())};
-          i = next+1;
-        }
-        break;
-      case '{':
-        // Seems to work as 'or'? ___{Z, #} would be 'either before Z or at word boundary.
-        next = script.indexOf('}', i + 1);
-        if (next !== -1) {
-          newToken = {type: 'logical collection', items: script.slice(i + 1, next).split(',').map(x => x.trim())};
-          i = next+1;
-        }
-        break;
-      case '(':
-        next = script.indexOf('}', i + 1);
-        if (next !== -1) {
-          newToken = {type: 'optional logical collection', items: script.slice(i + 1, next).split(',').map(x => x.trim())};
-          i = next+1;
-        }
-        break;
-      case '[':
-        next = script.indexOf(']', i + 1);
-        if (next !== -1) {
-          newToken = {type: 'digraph collection', items: script.slice(i + 1, next).split(',').map(x => x.trim())};
-          i = next+1;
-        }
-        break;
       default:
-        useScratch = false;
-        scratch += script[i];
+        const boundaryMarker = BOUNDARY_MARKERS.find(x => x[1] === script[i]);
+        if (boundaryMarker) {
+          useScratch = true;
+          next = script.indexOf(boundaryMarker[2], i + 1);
+          if (next !== -1) {
+            newToken = {type: boundaryMarker[0], items: script.slice(i + 1, next).split(',').map(x => x.trim())};
+            i = next+1;
+          }
+        } else {
+          useScratch = false;
+          scratch += script[i];
+        }
         break;
     }
 
