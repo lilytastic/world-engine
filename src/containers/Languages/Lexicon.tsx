@@ -6,6 +6,7 @@ import { ILanguage } from './sounds.model';
 
 
 import Modal from 'react-bootstrap/Modal';
+import CloseButton from 'react-bootstrap/CloseButton';
 import Button from 'react-bootstrap/Button';
 
 export function Lexicon(props: {children?: any, language: ILanguage, show: boolean, handleClose?: (arg0: ILanguage) => void}) {
@@ -19,10 +20,10 @@ export function Lexicon(props: {children?: any, language: ILanguage, show: boole
   }
 
   return (
-    <Modal show={show} onHide={() => props.handleClose?.(compileChanges())}>
+    <Modal centered show={show} onHide={() => props.handleClose?.(compileChanges())}>
       <Modal.Header>
         <Modal.Title>Lexicon</Modal.Title>
-        <Button onClick={() => props.handleClose?.(compileChanges())}>Done</Button>
+        <CloseButton variant="white" onClick={() => props.handleClose?.(compileChanges())}></CloseButton>
       </Modal.Header>
 
       <Modal.Body>

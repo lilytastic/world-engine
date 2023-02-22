@@ -6,7 +6,7 @@ import { VOWELS } from './vowels';
 
 
 import Modal from 'react-bootstrap/Modal';
-import Button from 'react-bootstrap/Button';
+import CloseButton from 'react-bootstrap/CloseButton';
 
 export function SoundSelection(props: {children?: any, language: ILanguage, show: boolean, handleClose?: (vowels: IVowel[], consonants: IConsonant[]) => void}) {
 
@@ -18,7 +18,7 @@ export function SoundSelection(props: {children?: any, language: ILanguage, show
     <Modal show={show} fullscreen={true} onHide={() => props.handleClose?.(chosenVowels, chosenConsonants)}>
       <Modal.Header>
         <Modal.Title>Sound Selection</Modal.Title>
-        <Button onClick={() => props.handleClose?.(chosenVowels, chosenConsonants)}>Done</Button>
+        <CloseButton variant="white" onClick={() => props.handleClose?.(chosenVowels, chosenConsonants)}></CloseButton>
       </Modal.Header>
 
       <Modal.Body>

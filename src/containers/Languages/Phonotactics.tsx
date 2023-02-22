@@ -7,6 +7,7 @@ import { ILanguage } from './sounds.model';
 
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
+import CloseButton from 'react-bootstrap/CloseButton';
 import { IPhonology, IPhonotactic } from './phonology.helpers';
 import { Phonotactic } from './Phonotactic';
 
@@ -39,10 +40,10 @@ export function Phonotactics(props: {children?: any, language: ILanguage, show: 
   }
 
   return (
-    <Modal size='lg' show={show} onHide={() => props.handleClose?.(compilePhonology())}>
+    <Modal centered size='lg' show={show} onHide={() => props.handleClose?.(compilePhonology())}>
       <Modal.Header>
         <Modal.Title>Phonology</Modal.Title>
-        <Button onClick={() => props.handleClose?.(compilePhonology())}>Done</Button>
+        <CloseButton variant="white" onClick={() => props.handleClose?.(compilePhonology())}></CloseButton>
       </Modal.Header>
 
       <Modal.Body>

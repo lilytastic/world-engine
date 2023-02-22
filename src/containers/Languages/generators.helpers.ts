@@ -155,7 +155,7 @@ export const printListExclusive = (list: any[]) => {
 export const printAllRules = (language: ILanguage) => {
   let applicable: string[] = [];
 
-  return language.phonology.phonotactics.map(x => x.script);
+  return language.phonology.phonotactics.map(x => `${x.description}: ${x.script}`);
   /*
   const cantStart = listRules(language).filter(x => !x.rules.positionsAllowed.includes(SoundPositions.Start));
   const cantEnd = listRules(language).filter(x => !x.rules.positionsAllowed.includes(SoundPositions.Close));
