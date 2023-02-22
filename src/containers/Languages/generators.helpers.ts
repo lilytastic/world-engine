@@ -7,7 +7,7 @@ function getRandomSound(sounds: ISound[]) {
 }
 
 export function transcribeWord(word: IWord) {
-  return word.syllables.map(syllable => syllable.sounds.map(x => x?.romanization || x?.key || '').join('')).join('');
+  return word.syllables.map(syllable => syllable.sounds.map(x => x?.romanization || x?.phoneme || '').join('')).join('');
 }
 
 export function getSampleWords(language: ILanguage) {
@@ -20,15 +20,15 @@ export function getSampleWords(language: ILanguage) {
   return arr;
 }
 
-export function getDefaultPositions(language: ILanguage, key: string): SoundPositions[] {
-  if (!!VOWELS.find(x => x.key === key)) {
+export function getDefaultPositions(language: ILanguage, phoneme: string): SoundPositions[] {
+  if (!!VOWELS.find(x => x.phoneme === phoneme)) {
     return [SoundPositions.Close, SoundPositions.Nucleus, SoundPositions.Start];
   }
   return [SoundPositions.Close, SoundPositions.Coda, SoundPositions.Onset, SoundPositions.Start];
 }
 
 export function generateDefaultRule(language: ILanguage, sound: ISound): ISoundRules {
-  const defaultPositions = getDefaultPositions(language, sound.key);
+  const defaultPositions = getDefaultPositions(language, sound.phoneme);
   return {positionsAllowed: defaultPositions, canCluster: false};
 }
 
@@ -88,26 +88,6 @@ export function generateWord(language: ILanguage, rules: IPhonologicalRule[]) {
             permitted = [...collection];
           }
         }
-        /*
-        switch (rule.type) {
-          case 'onsets':
-          case 'Onsets':
-            if (isOnset) {
-              permitted = [...collection];
-            }
-            break;
-          case 'codas':
-          case 'Codas':
-            if (isCoda) {
-              permitted = [...collection];
-            }
-            break;
-          case 'custom':
-            break;
-          default:
-            break;
-        }
-        */
       }
 
       permitted = permitted.filter(sound => {
@@ -154,12 +134,6 @@ export function generateWord(language: ILanguage, rules: IPhonologicalRule[]) {
   return word;
 }
 
-/*
-export const listRules = (language: ILanguage) => {
-  return Object.keys(language.phonology.rules).map(x => ({key: x, rules: language.phonology.rules[x]})).filter(x => !!x.rules && (!!language.vowels.find(y => y.key === x.key) || !!language.consonants.find(y => y.key === x.key)));
-}
-*/
-
 
 export const printListExclusive = (list: any[]) => {
   if (list.length === 0) {
@@ -175,26 +149,5 @@ export const printListExclusive = (list: any[]) => {
 }
 
 export const printAllRules = (language: ILanguage) => {
-  let applicable: string[] = [];
-
   return language.phonology.phonotactics.map(x => `${x.description ? x.description + ': ' : ''}${x.script}`);
-  /*
-  const cantStart = listRules(language).filter(x => !x.rules.positionsAllowed.includes(SoundPositions.Start));
-  const cantEnd = listRules(language).filter(x => !x.rules.positionsAllowed.includes(SoundPositions.Close));
-  const nonOnset = listRules(language).filter(x => !x.rules.positionsAllowed.includes(SoundPositions.Onset) && !x.rules.positionsAllowed.includes(SoundPositions.Nucleus));
-  const nonCoda = listRules(language).filter(x => !x.rules.positionsAllowed.includes(SoundPositions.Coda) && !x.rules.positionsAllowed.includes(SoundPositions.Nucleus));
-
-  if (cantStart.length > 0) {
-    applicable.push(`Words cannot start with ${printListExclusive(cantStart.map(x => `/<b>${x.key}</b>/`))}.`);
-  }
-  if (cantEnd.length > 0) {
-    applicable.push(`Words cannot end on ${printListExclusive(cantEnd.map(x => `/<b>${x.key}</b>/`))}.`);
-  }
-  if (nonOnset.length > 0) {
-    applicable.push(`${printListExclusive(nonOnset.map(x => `/<b>${x.key}</b>/`))} cannot be used as ${nonOnset.length === 1 ? 'an onset' : 'onsets'}.`);
-  }
-  if (nonCoda.length > 0) {
-    applicable.push(`${printListExclusive(nonCoda.map(x => `/<b>${x.key}</b>/`))} cannot be used as ${nonCoda.length === 1 ? 'a coda' : 'codas'}.`);
-  }
-  */
 }

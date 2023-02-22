@@ -7,61 +7,61 @@ export const CONSONANTS: IConsonant[] = [
   {
     place: Place.Bilabial,
     manner: Manner.Plosive,
-    key: 'p'
+    phoneme: 'p'
   },
   {
     place: Place.Bilabial,
     manner: Manner.Plosive,
-    key: 'b',
+    phoneme: 'b',
     voiced: true
   },
   {
     place: Place.LabioDental,
     manner: Manner.Plosive,
-    key: 'p̪',
+    phoneme: 'p̪',
     advanced: true
   },
   {
     place: Place.LabioDental,
     manner: Manner.Plosive,
-    key: 'b̪',
+    phoneme: 'b̪',
     advanced: true,
     voiced: true
   },
   {
     place: Place.LinguoLabial,
     manner: Manner.Plosive,
-    key: 't̼',
+    phoneme: 't̼',
     advanced: true
   },
   {
     place: Place.LinguoLabial,
     manner: Manner.Plosive,
-    key: 'd̼',
+    phoneme: 'd̼',
     advanced: true,
     voiced: true
   },
   {
     place: Place.Alveolar,
     manner: Manner.Plosive,
-    key: 't'
+    phoneme: 't'
   },
   {
     place: Place.Alveolar,
     manner: Manner.Plosive,
-    key: 'd',
+    phoneme: 'd',
     voiced: true
   },
   {
     place: Place.Retroflex,
     manner: Manner.Plosive,
-    key: 'ʈ',
+    phoneme: 'ʈ',
     romanization: 't'
   },
   {
     place: Place.Retroflex,
     manner: Manner.Plosive,
-    key: 'ɖ',
+    phoneme: 'ɖ',
     romanization: 'd',
     voiced: true
   },
@@ -69,42 +69,42 @@ export const CONSONANTS: IConsonant[] = [
   {
     place: Place.Palatal,
     manner: Manner.Plosive,
-    key: 'c'
+    phoneme: 'c'
   },
   {
     place: Place.Palatal,
     manner: Manner.Plosive,
-    key: 'ɟ',
+    phoneme: 'ɟ',
     voiced: true
   },
   {
     place: Place.Velar,
     manner: Manner.Plosive,
-    key: 'k'
+    phoneme: 'k'
   },
   {
     place: Place.Velar,
     manner: Manner.Plosive,
-    key: 'g',
+    phoneme: 'g',
     voiced: true
   },
   {
     place: Place.Uvular,
     manner: Manner.Plosive,
-    key: 'q',
+    phoneme: 'q',
     romanization: 'q',
   },
   {
     place: Place.Uvular,
     manner: Manner.Plosive,
-    key: 'ɢ',
+    phoneme: 'ɢ',
     romanization: 'gh',
     voiced: true
   },
   {
     place: Place.Glottal,
     manner: Manner.Plosive,
-    key: 'ʔ',
+    phoneme: 'ʔ',
     romanization: 'gh'
   },
 
@@ -113,41 +113,41 @@ export const CONSONANTS: IConsonant[] = [
   {
     place: Place.Bilabial,
     manner: Manner.Nasal,
-    key: 'm'
+    phoneme: 'm'
   },
   {
     place: Place.LabioDental,
     manner: Manner.Nasal,
-    key: 'ɱ',
+    phoneme: 'ɱ',
     romanization: 'm'
   },
   {
     place: Place.Alveolar,
     manner: Manner.Nasal,
-    key: 'n',
+    phoneme: 'n',
     romanization: 'n'
   },
   {
     place: Place.Palatal,
     manner: Manner.Nasal,
-    key: 'ɲ'
+    phoneme: 'ɲ'
   },
   {
     place: Place.Uvular,
     manner: Manner.Nasal,
-    key: 'ɴ',
+    phoneme: 'ɴ',
     romanization: 'ng'
   },
   {
     place: Place.Velar,
     manner: Manner.Nasal,
-    key: 'ŋ',
+    phoneme: 'ŋ',
     romanization: 'ng'
   },
   {
     place: Place.Retroflex,
     manner: Manner.Nasal,
-    key: 'ɳ',
+    phoneme: 'ɳ',
     romanization: 'ng'
   },
 
@@ -157,139 +157,139 @@ export const CONSONANTS: IConsonant[] = [
   {
     place: Place.PostAlveolar,
     manner: Manner.SibilantFricative,
-    key: 'ʃ',
+    phoneme: 'ʃ',
     romanization: 'sh'
   },
   {
     place: Place.PostAlveolar,
     manner: Manner.SibilantFricative,
-    key: 'ʒ',
+    phoneme: 'ʒ',
     romanization: 'j',
     voiced: true
   },
   {
     place: Place.Retroflex,
     manner: Manner.SibilantFricative,
-    key: 'ʂ',
+    phoneme: 'ʂ',
     romanization: 'sh'
   },
   {
     place: Place.Retroflex,
     manner: Manner.SibilantFricative,
-    key: 'ʐ',
+    phoneme: 'ʐ',
     romanization: 'j',
     voiced: true
   },
   {
     place: Place.Palatal,
     manner: Manner.NonSibilantFricative,
-    key: 'ç',
+    phoneme: 'ç',
     romanization: 'sh'
   },
   {
     place: Place.Palatal,
     manner: Manner.NonSibilantFricative,
-    key: 'ʝ',
+    phoneme: 'ʝ',
     romanization: 'y',
     voiced: true
   },
   {
     place: Place.Bilabial,
     manner: Manner.NonSibilantFricative,
-    key: 'ɸ',
+    phoneme: 'ɸ',
     romanization: 'th'
   },
   {
     place: Place.Bilabial,
     manner: Manner.NonSibilantFricative,
-    key: 'β',
+    phoneme: 'β',
     romanization: 'th',
     voiced: true
   },
   {
     place: Place.LabioDental,
     manner: Manner.NonSibilantFricative,
-    key: 'f'
+    phoneme: 'f'
   },
   {
     place: Place.LabioDental,
     manner: Manner.NonSibilantFricative,
-    key: 'v',
+    phoneme: 'v',
     voiced: true
   },
   {
     place: Place.Dental,
     manner: Manner.NonSibilantFricative,
-    key: 'θ',
+    phoneme: 'θ',
     romanization: 'th'
   },
   {
     place: Place.Dental,
     manner: Manner.NonSibilantFricative,
-    key: 'ð',
+    phoneme: 'ð',
     romanization: 'th',
     voiced: true
   },
   {
     place: Place.Alveolar,
     manner: Manner.SibilantFricative,
-    key: 's'
+    phoneme: 's'
   },
   {
     place: Place.Alveolar,
     manner: Manner.SibilantFricative,
-    key: 'z',
+    phoneme: 'z',
     voiced: true
   },
   {
     place: Place.Velar,
     manner: Manner.NonSibilantFricative,
-    key: 'x',
+    phoneme: 'x',
     romanization: 'kh'
   },
   {
     place: Place.Velar,
     manner: Manner.NonSibilantFricative,
-    key: 'ɣ',
+    phoneme: 'ɣ',
     romanization: 'jh',
     voiced: true
   },
   {
     place: Place.Uvular,
     manner: Manner.NonSibilantFricative,
-    key: 'χ',
+    phoneme: 'χ',
     romanization: 'h'
   },
   {
     place: Place.Uvular,
     manner: Manner.NonSibilantFricative,
-    key: 'ʁ',
+    phoneme: 'ʁ',
     romanization: 'wr',
     voiced: true
   },
   {
     place: Place.Pharyngeal,
     manner: Manner.NonSibilantFricative,
-    key: 'ħ',
+    phoneme: 'ħ',
     romanization: 'h'
   },
   {
     place: Place.Pharyngeal,
     manner: Manner.NonSibilantFricative,
-    key: 'ʕ',
+    phoneme: 'ʕ',
     romanization: 'hw',
     voiced: true
   },
   {
     place: Place.Glottal,
     manner: Manner.NonSibilantFricative,
-    key: 'h',
+    phoneme: 'h',
     romanization: 'h'
   },
   {
     place: Place.Glottal,
     manner: Manner.NonSibilantFricative,
-    key: 'ɦ',
+    phoneme: 'ɦ',
     romanization: 'h',
     voiced: true
   },
@@ -297,105 +297,105 @@ export const CONSONANTS: IConsonant[] = [
   {
     place: Place.Alveolar,
     manner: Manner.Tap,
-    key: 'ɾ',
+    phoneme: 'ɾ',
     romanization: 'r'
   },
   {
     place: Place.LabioDental,
     manner: Manner.Tap,
-    key: 'ⱱ',
+    phoneme: 'ⱱ',
     romanization: 'vr'
   },
   {
     place: Place.Retroflex,
     manner: Manner.Tap,
-    key: 'ɽ',
+    phoneme: 'ɽ',
     romanization: 'r'
   },
 
   {
     place: Place.Bilabial,
     manner: Manner.Trill,
-    key: 'ʙ',
+    phoneme: 'ʙ',
     romanization: 'b'
   },
   {
     place: Place.Alveolar,
     manner: Manner.Trill,
-    key: 'r',
+    phoneme: 'r',
     romanization: 'r'
   },
   {
     place: Place.Uvular,
     manner: Manner.Trill,
-    key: 'ʀ',
+    phoneme: 'ʀ',
     romanization: 'r'
   },
 
   {
     place: Place.Alveolar,
     manner: Manner.LateralFricative,
-    key: 'ɬ',
+    phoneme: 'ɬ',
     romanization: 'sh'
   },
   {
     place: Place.Alveolar,
     manner: Manner.LateralFricative,
-    key: 'ɮ',
+    phoneme: 'ɮ',
     romanization: 'j'
   },
   {
     place: Place.LabioDental,
     manner: Manner.Approximant,
-    key: 'ʋ',
+    phoneme: 'ʋ',
     romanization: 'w'
   },
   {
     place: Place.Alveolar,
     manner: Manner.Approximant,
-    key: 'ɹ',
+    phoneme: 'ɹ',
     romanization: 'wr'
   },
   {
     place: Place.Retroflex,
     manner: Manner.Approximant,
-    key: 'ɻ',
+    phoneme: 'ɻ',
     romanization: 'rh'
   },
   {
     place: Place.Palatal,
     manner: Manner.Approximant,
-    key: 'j',
+    phoneme: 'j',
     romanization: 'y'
   },
   {
     place: Place.Velar,
     manner: Manner.Approximant,
-    key: 'ɰ',
+    phoneme: 'ɰ',
     romanization: 'hr'
   },
 
   {
     place: Place.Alveolar,
     manner: Manner.LateralApproximant,
-    key: 'l'
+    phoneme: 'l'
   },
   {
     place: Place.Retroflex,
     manner: Manner.LateralApproximant,
-    key: 'ɭ',
+    phoneme: 'ɭ',
     romanization: 'l'
   },
   {
     place: Place.Palatal,
     manner: Manner.LateralApproximant,
-    key: 'ʎ',
+    phoneme: 'ʎ',
     romanization: 'y'
   },
   {
     place: Place.Velar,
     manner: Manner.LateralApproximant,
-    key: 'ʟ',
+    phoneme: 'ʟ',
     romanization: 'wl'
   },
 
@@ -404,14 +404,14 @@ export const CONSONANTS: IConsonant[] = [
   {
     place: Place.Dental,
     manner: Manner.NonSibilantAffricate,
-    key: 't̪θ',
+    phoneme: 't̪θ',
     romanization: 'th',
     advanced: true
   },
   {
     place: Place.Dental,
     manner: Manner.NonSibilantAffricate,
-    key: 'd̪ð',
+    phoneme: 'd̪ð',
     romanization: 'th',
     advanced: true
   },

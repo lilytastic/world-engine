@@ -38,12 +38,12 @@ export function SoundSelection(props: {children?: any, language: ILanguage, show
                   {VOWELFRONTNESS.map(frontness => (
                     <td key={frontness.key}>
                       {VOWELS.filter(sound => !sound.advanced && sound.frontness === frontness.key && sound.openness === openness.key).map(sound => (
-                        <button key={sound.key}
-                                onClick={() => !chosenVowels.find(x => x.key === sound.key)
+                        <button key={sound.phoneme}
+                                onClick={() => !chosenVowels.find(x => x.phoneme === sound.phoneme)
                                   ? setChosenVowels([...chosenVowels, sound])
-                                  : setChosenVowels([...chosenVowels.filter(x => x.key !== sound.key)])}
-                                className={`btn btn-link ${!!chosenVowels.find(x => x.key === sound.key) ? 'text-primary' : 'text-secondary'}`}>
-                          {sound.key}
+                                  : setChosenVowels([...chosenVowels.filter(x => x.phoneme !== sound.phoneme)])}
+                                className={`btn btn-link ${!!chosenVowels.find(x => x.phoneme === sound.phoneme) ? 'text-primary' : 'text-secondary'}`}>
+                          {sound.phoneme}
                         </button>
                       ))}
                     </td>
@@ -68,12 +68,12 @@ export function SoundSelection(props: {children?: any, language: ILanguage, show
                   {PLACES.map(place => (
                     <td key={place.key}>
                       {CONSONANTS.filter(sound => !sound.advanced && sound.manner === manner.key && sound.place === place.key).map(sound => (
-                        <button key={sound.key}
-                                onClick={() => !chosenConsonants.find(x => x.key === sound.key)
+                        <button key={sound.phoneme}
+                                onClick={() => !chosenConsonants.find(x => x.phoneme === sound.phoneme)
                                   ? setChosenConsonants([...chosenConsonants, sound])
-                                  : setChosenConsonants([...chosenConsonants.filter(x => x.key !== sound.key)])}
-                                className={`btn btn-link ${!!chosenConsonants.find(x => x.key === sound.key) ? 'text-primary' : 'text-secondary'}`}>
-                          {sound.key}
+                                  : setChosenConsonants([...chosenConsonants.filter(x => x.phoneme !== sound.phoneme)])}
+                                className={`btn btn-link ${!!chosenConsonants.find(x => x.phoneme === sound.phoneme) ? 'text-primary' : 'text-secondary'}`}>
+                          {sound.phoneme}
                         </button>
                       ))}
                     </td>

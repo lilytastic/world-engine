@@ -1,4 +1,4 @@
-import { IConsonant, ILanguage, ITypedSound, IVowel, TypedSound } from "./sounds.model";
+import { ILanguage, TypedSound } from "./sounds.model";
 
 export interface IPhonology {
   syllableShape: string;
@@ -13,30 +13,60 @@ export interface IPhonotactic {
   script: string;
 }
 
-interface IPhonologicalToken {type: string, items: string[]}
+export interface IPhonologicalToken {
+  type: string;
+  items: string[];
+}
 
 export interface IPhonologicalRule {
   type: string;
   tokens: IPhonologicalToken[];
   script: string;
+} 
+
+export enum PhonologicalTokens {
+  Addition = '+',
+  Subtractive = '-',
+  Transform = '>',
+  Filter = '/',
+  Self = '_',
+  Deletion = 'Ø',
+  Syllable = 'σ',
+  Word = '#'
 }
 
-export function getSound(language: ILanguage, key: string) {
-  let sounds = [...language.vowels, ...language.consonants];
-  return sounds.find(x => x.key === key);
+export enum PhonologicalTokenCollectionTypes {
+  Terms = 'term collection',
+  Conditional = 'conditional collection',
+  Logical = 'logical collection',
+  LogicalOptional = 'optional logical collection',
+  Phonetic = 'phonetic collection',
 }
-export function getSounds(language: ILanguage, type: string, key: string) {
+
+export const BOUNDARY_MARKERS: [string, string, string][] = [
+  [PhonologicalTokenCollectionTypes.Terms, '[', ']'],
+  [PhonologicalTokenCollectionTypes.Conditional, '<', '>'],
+  [PhonologicalTokenCollectionTypes.Logical, '{', '}'],
+  [PhonologicalTokenCollectionTypes.LogicalOptional, '(', ')'],
+  [PhonologicalTokenCollectionTypes.Phonetic, '/', '/']
+];
+
+export function getSound(language: ILanguage, phoneme: string) {
   let sounds = [...language.vowels, ...language.consonants];
-  switch (type) {
-    case 'phonetic collection':
-      return sounds.filter(x => x.key === key);
-    case 'term collection':
-      return sounds.filter(x => fitsArbitraryToken(x, key));
+  return sounds.find(x => x.phoneme === phoneme);
+}
+export function getSounds(language: ILanguage, token: IPhonologicalToken, tokenItem: string) {
+  let sounds = [...language.vowels, ...language.consonants];
+  switch (token.type) {
+    case PhonologicalTokenCollectionTypes.Phonetic:
+      return sounds.filter(sound => sound.phoneme === tokenItem);
+    case PhonologicalTokenCollectionTypes.Terms:
+      return sounds.filter(sound => doesSoundMatchToken(sound, tokenItem));
     default:
       return [];
   }
 }
-export function fitsArbitraryToken(sound: TypedSound, token: string) {
+export function doesSoundMatchToken(sound: TypedSound, token: string) {
   switch (token.toLowerCase()) {
     case 'voiced':
       return sound.voiced;
@@ -90,6 +120,8 @@ export const getAffectedSounds = (language: ILanguage, tokens: IPhonologicalToke
   let collection: TypedSound[] = [];
   let allowAutoOpen = true;
 
+  let _sounds: TypedSound[] = [];
+
   for (let ci = 0; ci < tokens.length; ci++) {
     const token = tokens[ci];
     const nextToken = tokens[ci + 1];
@@ -100,22 +132,16 @@ export const getAffectedSounds = (language: ILanguage, tokens: IPhonologicalToke
       if (collection.length === 0 && allowAutoOpen) { collection = [...sounds]; }
 
       if (nextToken?.items.length > 0) {
-        const _sounds: TypedSound[] =
-          nextToken.items.map(item => getSounds(language, nextToken.type, item))
-                    .flat()
-                    .filter(x => !!x) as TypedSound[];
-        collection = [...collection.filter(x => !_sounds.find(y => y.key === x.key))];
+        _sounds = nextToken.items.map(item => getSounds(language, nextToken, item)).flat();
+        collection = [...collection.filter(x => !_sounds.find(y => y.phoneme === x.phoneme))];
       }
       ci++;
     } else if (token.type === '+' || token.type.includes('collection')) {
       allowAutoOpen = false;
       const collectionToken = token.type === '+' ? nextToken : token;
       if (collectionToken.items.length > 0) {
-        const _sounds: TypedSound[] =
-        collectionToken.items.map(item => getSounds(language, collectionToken.type, item))
-                    .flat()
-                    .filter(x => !!x) as TypedSound[];
-        collection = [...collection, ..._sounds.filter(x => !collection.find(y => y.key === x.key))];
+        _sounds = collectionToken.items.map(item => getSounds(language, collectionToken, item)).flat();
+        collection = [...collection, ..._sounds.filter(x => !collection.find(y => y.phoneme === x.phoneme))];
       }
       if (token.type === '+') {
         ci++;
@@ -125,25 +151,6 @@ export const getAffectedSounds = (language: ILanguage, tokens: IPhonologicalToke
 
   return collection;
 }
-
-export enum PhonologicalTokens {
-  Addition = '+',
-  Subtractive = '-',
-  Transform = '>',
-  Filter = '/',
-  Self = '_',
-  Deletion = 'Ø',
-  Syllable = 'σ',
-  Word = '#'
-}
-
-export const BOUNDARY_MARKERS: [string, string, string][] = [
-  ['term collection','[', ']'],
-  ['logiconditionalcal collection','<', '>'],
-  ['logical collection','{', '}'],
-  ['optional logical collection', '(', ')'],
-  ['phonetic collection','/', '/']
-];
 
 
 export const getTokens = (script: string) => {

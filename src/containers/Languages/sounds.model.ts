@@ -3,7 +3,7 @@ import { IPhonology } from "./phonology.helpers";
 
 export interface ISound {
   type: string;
-  key: string;
+  phoneme: string;
   romanization?: string;
   advanced?: boolean;
   voiced?: boolean;

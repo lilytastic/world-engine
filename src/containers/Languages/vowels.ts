@@ -4,33 +4,33 @@ export const VOWELS: IVowel[] = [
   {
     openness: VowelLon.Close,
     frontness: VowelLat.Front,
-    key: 'i'
+    phoneme: 'i'
   },
   {
     openness: VowelLon.Close,
     frontness: VowelLat.Front,
-    key: 'y'
+    phoneme: 'y'
   },
   {
     openness: VowelLon.Close,
     frontness: VowelLat.Central,
-    key: 'ɨ'
+    phoneme: 'ɨ'
   },
   {
     openness: VowelLon.Close,
     frontness: VowelLat.Central,
-    key: 'ʉ',
+    phoneme: 'ʉ',
     rounded: true
   },
   {
     openness: VowelLon.Close,
     frontness: VowelLat.Back,
-    key: 'ɯ'
+    phoneme: 'ɯ'
   },
   {
     openness: VowelLon.Close,
     frontness: VowelLat.Back,
-    key: 'u',
+    phoneme: 'u',
     rounded: true
   },
 
@@ -38,18 +38,18 @@ export const VOWELS: IVowel[] = [
   {
     openness: VowelLon.NearClose,
     frontness: VowelLat.Front,
-    key: 'ɪ'
+    phoneme: 'ɪ'
   },
   {
     openness: VowelLon.NearClose,
     frontness: VowelLat.Front,
-    key: 'ʏ',
+    phoneme: 'ʏ',
     rounded: true
   },
   {
     openness: VowelLon.NearClose,
     frontness: VowelLat.Back,
-    key: 'ʊ',
+    phoneme: 'ʊ',
     rounded: true
   },
 
@@ -57,41 +57,41 @@ export const VOWELS: IVowel[] = [
   {
     openness: VowelLon.Mid,
     frontness: VowelLat.Central,
-    key: 'ə'
+    phoneme: 'ə'
   },
 
   
   {
     openness: VowelLon.CloseMid,
     frontness: VowelLat.Front,
-    key: 'e'
+    phoneme: 'e'
   },
   {
     openness: VowelLon.CloseMid,
     frontness: VowelLat.Front,
-    key: 'ø',
+    phoneme: 'ø',
     rounded: true
   },
   {
     openness: VowelLon.CloseMid,
     frontness: VowelLat.Central,
-    key: 'ɘ'
+    phoneme: 'ɘ'
   },
   {
     openness: VowelLon.CloseMid,
     frontness: VowelLat.Central,
-    key: 'ɵ',
+    phoneme: 'ɵ',
     rounded: true
   },
   {
     openness: VowelLon.CloseMid,
     frontness: VowelLat.Back,
-    key: 'ɤ'
+    phoneme: 'ɤ'
   },
   {
     openness: VowelLon.CloseMid,
     frontness: VowelLat.Back,
-    key: 'o',
+    phoneme: 'o',
     rounded: true
   },
 
@@ -99,35 +99,35 @@ export const VOWELS: IVowel[] = [
   {
     openness: VowelLon.OpenMid,
     frontness: VowelLat.Front,
-    key: 'ɛ'
+    phoneme: 'ɛ'
   },
   {
     openness: VowelLon.OpenMid,
     frontness: VowelLat.Front,
-    key: 'œ',
+    phoneme: 'œ',
     rounded: true
   },
   {
     openness: VowelLon.OpenMid,
     frontness: VowelLat.Central,
-    key: 'ɜ'
+    phoneme: 'ɜ'
   },
   {
     openness: VowelLon.OpenMid,
     frontness: VowelLat.Central,
-    key: 'ɞ',
+    phoneme: 'ɞ',
     rounded: true
   },
 
   {
     openness: VowelLon.OpenMid,
     frontness: VowelLat.Back,
-    key: 'ʌ'
+    phoneme: 'ʌ'
   },
   {
     openness: VowelLon.OpenMid,
     frontness: VowelLat.Back,
-    key: 'ɔ',
+    phoneme: 'ɔ',
     rounded: true
   },
 
@@ -136,40 +136,40 @@ export const VOWELS: IVowel[] = [
   {
     openness: VowelLon.NearOpen,
     frontness: VowelLat.Front,
-    key: 'æ',
+    phoneme: 'æ',
     romanization: 'ae'
   },
   {
     openness: VowelLon.NearOpen,
     frontness: VowelLat.Central,
-    key: 'ɐ'
+    phoneme: 'ɐ'
   },
 
   {
     openness: VowelLon.Open,
     frontness: VowelLat.Front,
-    key: 'a'
+    phoneme: 'a'
   },
   {
     openness: VowelLon.Open,
     frontness: VowelLat.Front,
-    key: 'ɶ',
+    phoneme: 'ɶ',
     rounded: true
   },
   {
     openness: VowelLon.Open,
     frontness: VowelLat.Central,
-    key: 'ä'
+    phoneme: 'ä'
   },
   {
     openness: VowelLon.Open,
     frontness: VowelLat.Back,
-    key: 'ɑ'
+    phoneme: 'ɑ'
   },
   {
     openness: VowelLon.Open,
     frontness: VowelLat.Back,
-    key: 'ɒ'
+    phoneme: 'ɒ'
   },
 
 ].map(x => ({...x, type: 'vowel'}));

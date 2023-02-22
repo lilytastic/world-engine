@@ -37,6 +37,10 @@ export function Language(props: {children?: any}) {
   }, []);
 
   useEffect(() => {
+    console.log(sampleWords);
+  }, [sampleWords]);
+
+  useEffect(() => {
     localStorage.setItem('language', JSON.stringify(language));
     setSampleWords(getSampleWords(language));
   }, [language]);
@@ -134,7 +138,7 @@ export function Language(props: {children?: any}) {
               {frontnessUsed.map(frontness => (
                 <td key={frontness.key}>
                   {language.vowels.filter(sound => sound.frontness === frontness.key && sound.openness === openness.key).map(sound => (
-                    sound.key
+                    sound.phoneme
                   )).join(' ')}
                 </td>
               ))}
@@ -159,7 +163,7 @@ export function Language(props: {children?: any}) {
               {placesUsed.map(place => (
                 <td key={place.key}>
                   {language.consonants.filter(sound => sound.manner === manner.key && sound.place === place.key).map(sound => (
-                    sound.key
+                    sound.phoneme
                   )).join(' ')}
                 </td>
               ))}
