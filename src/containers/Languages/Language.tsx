@@ -37,7 +37,9 @@ export function Language(props: {children?: any}) {
   }, []);
 
   useEffect(() => {
-    console.log(sampleWords);
+    if (sampleWords.length > 0) {
+      console.log(sampleWords);
+    }
   }, [sampleWords]);
 
   useEffect(() => {
@@ -104,7 +106,7 @@ export function Language(props: {children?: any}) {
       <div>
         <h4>Samples <button className='btn btn-link' onClick={() => setSampleWords(getSampleWords(language))}>Regenerate</button></h4>
         <div>
-          <i>{sampleWords.map(word => transcribeWord(word)).join(', ')}</i>
+          <i>{sampleWords.map(word => transcribeWord(language, word)).join(', ')}</i>
         </div>
       </div>
       

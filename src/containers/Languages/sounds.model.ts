@@ -25,15 +25,11 @@ export interface IConsonant extends ITypedSound<'consonant'> {
   manner: string;
 }
 
-export interface IWordSound extends ISound {
-  stress?: boolean;
-}
-
 export interface IWord {
   syllables: ISyllable[];
 }
 export interface ISyllable {
-  sounds: IWordSound[];
+  sounds: string[];
 }
 
 export interface ILanguage {

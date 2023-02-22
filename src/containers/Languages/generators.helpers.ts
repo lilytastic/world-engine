@@ -1,3 +1,4 @@
+import { CONSONANTS } from "./consonants";
 import { getAffectedSounds, getTokens, IPhonologicalRule, IPhonotactic } from "./phonology.helpers";
 import { ILanguage, ISound, ISoundRules, ISyllable, ITypedSound, IWord, SoundPositions, TypedSound } from "./sounds.model";
 import { VOWELS } from "./vowels";
@@ -6,8 +7,14 @@ function getRandomSound(sounds: ISound[]) {
   return sounds[Math.floor(Math.random() * sounds.length)];
 }
 
-export function transcribeWord(word: IWord) {
-  return word.syllables.map(syllable => syllable.sounds.map(x => x?.romanization || x?.phoneme || '').join('')).join('');
+export function transcribeWord(language: ILanguage, word: IWord) {
+  return word.syllables.map(syllable => 
+    syllable.sounds.map(phoneme => 
+      [...VOWELS, ...CONSONANTS].find(sound => sound.phoneme === phoneme)
+    ).map(x => 
+      x?.romanization || x?.phoneme || ''
+    )
+  ).flat().join('');
 }
 
 export function getSampleWords(language: ILanguage) {
@@ -119,7 +126,7 @@ export function generateWord(language: ILanguage, rules: IPhonologicalRule[]) {
         if (token === 'c' && Math.random() * 100 < 50) {
           // ...
         } else {
-          syllable.sounds.push(sound);
+          syllable.sounds.push(sound.phoneme);
         }
       } else if (token !== '<' && token !== '>') {
         console.error(`No sound found for ${token}!`);
