@@ -6,7 +6,7 @@ import { ILanguage } from './sounds.model';
 
 
 import Modal from 'react-bootstrap/Modal';
-import Button from 'react-bootstrap/Button';
+import Offcanvas from 'react-bootstrap/Offcanvas';
 import CloseButton from 'react-bootstrap/CloseButton';
 import { IPhonology, IPhonotactic } from './phonology.helpers';
 import { Phonotactic } from './Phonotactic';
@@ -40,13 +40,13 @@ export function Phonotactics(props: {children?: any, language: ILanguage, show: 
   }
 
   return (
-    <Modal centered size='lg' show={show} onHide={() => props.handleClose?.(compilePhonology())}>
-      <Modal.Header>
-        <Modal.Title>Phonology</Modal.Title>
+    <Offcanvas show={show} onHide={() => props.handleClose?.(compilePhonology())}>
+      <Offcanvas.Header>
+        <Offcanvas.Title>Phonology</Offcanvas.Title>
         <CloseButton variant="white" onClick={() => props.handleClose?.(compilePhonology())}></CloseButton>
-      </Modal.Header>
+      </Offcanvas.Header>
 
-      <Modal.Body>
+      <Offcanvas.Body>
         <div className='pt-3 pb-5'>
           <div className="form-group mb-3">
             <label>Syllable Shape</label>
@@ -85,7 +85,7 @@ export function Phonotactics(props: {children?: any, language: ILanguage, show: 
           <textarea value={stressSystem} onChange={ev => setStressSystem(ev.currentTarget.value)} />
           */}
         </div>
-      </Modal.Body>
-    </Modal>
+      </Offcanvas.Body>
+    </Offcanvas>
   );
 }

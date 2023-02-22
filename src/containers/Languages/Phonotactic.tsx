@@ -35,7 +35,7 @@ export function Phonotactic(props: {children?: any, language: ILanguage, phonota
   }
 
   return (
-    <Modal show={show} onHide={() => props.handleClose?.(compilePhonotatic())}>
+    <Modal centered show={show} onHide={() => props.handleClose?.(compilePhonotatic())}>
       <Modal.Header>
         <Modal.Title>Edit Phonotactic</Modal.Title>
         <CloseButton variant="white" onClick={() => props.handleClose?.(compilePhonotatic())}></CloseButton>

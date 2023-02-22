@@ -39,14 +39,16 @@ ul {
 .modal-header .btn-close {
   color: $color-text;
 }
-.modal-content {
+.offcanvas, .modal-content {
   color: $color-text;
   background-color: $color-background;
   box-shadow: 0 2px 10px -1px rgba(0,0,0,0.7);
 }
-.modal-header, .modal-footer {
-  border: none;
-  background-color: darken($color-background, 3);
+.offcanvas, .modal {
+  &-header, &-footer {
+    border: none;
+    background-color: darken($color-background, 3);
+  }  
 }
 
 input:not([type="checkbox"]), textarea {
