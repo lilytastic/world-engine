@@ -105,16 +105,25 @@ export function generateWord(language: ILanguage, rules: IPhonologicalRule[]) {
           if (token === 'V' && checkForToken(env, 'nucleus')) { isApplicable = true; }
           if (isWordClose && checkForToken(env, 'word-finish')) { isApplicable = true; }
           if (isWordStart && checkForToken(env, 'word-start')) { isApplicable = true; }
-          if (selfIndex !== -1) {
+          for (let mi = 0; mi < env.length; mi++) {
+            if (selfIndex !== -1) {
+              let offsetFromSelf = selfIndex - mi;
+              // console.log('check', morphologyMapped[i + offsetFromSelf], env[mi]);
+              if (env[mi] && !!env[mi].items.find(item => morphologyMapped[i - offsetFromSelf] === item)) {
+                // console.log(rule, collection, env[mi], morphologyMapped[i]);
+                isApplicable = true;
+              }
+            }
+            /*
             if (env[selfIndex + 1].items.includes('C') && morphologyMapped[i + 1] === 'C') {
               isApplicable = true;
               // console.log('IT DO!');
             }
+            */ 
           }
           //isRuleApplicable({syllableShape: morphologyMapped, letter: i}, env);
 
           if (isApplicable) {
-            // console.log('applying rule', rule, collection);
             permitted = [...permitted, ...collection.permitted];
             forbidden = [...forbidden, ...collection.forbidden];
           }
@@ -126,27 +135,6 @@ export function generateWord(language: ILanguage, rules: IPhonologicalRule[]) {
         if (!!forbidden.find(forbiddenSound => forbiddenSound.phoneme === sound.phoneme)) {
           // VERBOTEN!
           return false;
-        }
-
-        switch (token) {
-          case '<':
-            return false;
-          case '>':
-            return false;
-          case 'V':
-          case 'v':
-            if (sound.type === 'consonant') {
-              return false;
-            }
-            break;
-          case 'C':
-          case 'c':
-            if (sound.type === 'vowel') {
-              return false;
-            }
-            break;
-          default:
-            break;
         }
         
         return true;
