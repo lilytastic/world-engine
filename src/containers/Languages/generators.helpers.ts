@@ -66,8 +66,6 @@ export function generateWord(language: ILanguage, rules: IPhonologicalRule[]) {
                  .replace(/\(R\)/g, 'r')
                  .replace(/\(H\)/g, 'h');
   let syllables: ISyllable[] = [];
-  const phonotactics: IPhonotactic[] = language.phonology.phonotactics;
-  let sounds: TypedSound[] = [...language.vowels, ...language.consonants];
 
   for (let ii = 0; ii < length; ii++) {
     let syllable: ISyllable = {sounds: []};
@@ -81,18 +79,23 @@ export function generateWord(language: ILanguage, rules: IPhonologicalRule[]) {
       const isOnset = i < onsetEnd;
       const isCoda = i > codaStart;
 
-      let permitted: TypedSound[] = [...sounds];
+      let permitted: TypedSound[] = [];
+      let forbidden: TypedSound[] = [];
+      if (token.toLowerCase() === 'c') { permitted = [...language.consonants]; }
+      else if (token.toLowerCase() === 'v') { permitted = [...language.vowels]; }
 
+      // First, iterate through our rules and see which sounds we're allowed to use...
       for (let ri = 0; ri < rules.length; ri++) {
         const rule = rules[ri];
         const derivativeMarker = rule.tokens.findIndex(x => x.type === '>');
         const environmentMarker = rule.tokens.findIndex(x => x.type === '/');
 
-        const collection = getAffectedSounds(language, rule.tokens);
-
         if (environmentMarker) {
-          let isApplicable = false;
+          const collection = getAffectedSounds(language, rule.tokens.slice(environmentMarker));
+
           const env = rule.tokens.slice(environmentMarker + 1);
+
+          let isApplicable = false;
           // console.log('checking environment...', env);
           if (isOnset && checkForToken(env, 'onset')) { isApplicable = true; }
           if (isCoda && checkForToken(env, 'coda')) { isApplicable = true; }
@@ -100,18 +103,26 @@ export function generateWord(language: ILanguage, rules: IPhonologicalRule[]) {
           if (isWordStart && checkForToken(env, 'word-start')) { isApplicable = true; }
 
           if (isApplicable) {
-            permitted = [...collection];
+            permitted = [...permitted, ...collection.permitted];
+            forbidden = [...forbidden, ...collection.forbidden];
           }
         }
       }
 
       permitted = permitted.filter(sound => {
+
+        if (!!forbidden.find(forbiddenSound => forbiddenSound.phoneme === sound.phoneme)) {
+          // VERBOTEN!
+          return false;
+        }
+
         switch (token) {
           case '<':
             return false;
           case '>':
             return false;
           case 'V':
+          case 'v':
             if (sound.type === 'consonant') {
               return false;
             }

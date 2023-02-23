@@ -126,9 +126,10 @@ export function doesSoundMatchToken(sound: TypedSound, token: string) {
   return false;
 }
 
-export const getAffectedSounds = (language: ILanguage, tokens: IPhonologicalToken[]) => {
+export const getAffectedSounds = (language: ILanguage, tokens: IPhonologicalToken[]): {permitted: TypedSound[], forbidden: TypedSound[]} => {
   let sounds: TypedSound[] = [...language.vowels, ...language.consonants];
-  let collection: TypedSound[] = [];
+  let permitted: TypedSound[] = [];
+  let forbidden: TypedSound[] = [];
   let allowAutoOpen = true;
 
   let _sounds: TypedSound[] = [];
@@ -140,11 +141,9 @@ export const getAffectedSounds = (language: ILanguage, tokens: IPhonologicalToke
 
     if (token.type === '-') {
       // If you're just removing sounds, assume it's removing from the full set.
-      if (collection.length === 0 && allowAutoOpen) { collection = [...sounds]; }
-
       if (nextToken?.items.length > 0) {
         _sounds = nextToken.items.map(item => getSounds(language, nextToken, item)).flat();
-        collection = [...collection.filter(x => !_sounds.find(y => y.phoneme === x.phoneme))];
+        forbidden = [...forbidden, ..._sounds];
       }
       ci++;
     } else if (token.type === '+' || token.type.includes('collection')) {
@@ -152,7 +151,7 @@ export const getAffectedSounds = (language: ILanguage, tokens: IPhonologicalToke
       const collectionToken = token.type === '+' ? nextToken : token;
       if (collectionToken.items.length > 0) {
         _sounds = collectionToken.items.map(item => getSounds(language, collectionToken, item)).flat();
-        collection = [...collection, ..._sounds.filter(x => !collection.find(y => y.phoneme === x.phoneme))];
+        permitted = [...permitted, ..._sounds];
       }
       if (token.type === '+') {
         ci++;
@@ -160,7 +159,7 @@ export const getAffectedSounds = (language: ILanguage, tokens: IPhonologicalToke
     } 
   }
 
-  return collection;
+  return {permitted, forbidden};
 }
 
 
