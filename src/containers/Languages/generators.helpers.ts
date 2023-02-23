@@ -21,6 +21,7 @@ export function getSampleWords(language: ILanguage) {
   let arr: IWord[] = [];
   if (language.vowels.length === 0 || language.consonants.length === 0) { return arr; }
   const rules = generateRules(language.phonology.phonotactics);
+  console.log('rules', rules);
   for (let i = 0; i < 30; i++) {
     arr.push(generateWord(language, rules));
   }
@@ -56,18 +57,18 @@ export function checkForToken(tokens: IPhonologicalToken[], key: string) {
 export function generateWord(language: ILanguage, rules: IPhonologicalRule[]) {
   let length = 1 + Math.floor(Math.random() * 3);
   const splitSyllableShape = language.phonology.syllableShape.split('\n');
-  const syllableShape = splitSyllableShape[Math.floor(Math.random() * splitSyllableShape.length)];
-  const morphologyMapped =
-    syllableShape.toUpperCase()
-                 .replace(/ /g, '')
-                 //.replace(/\(>\)/g, '⪫')
-                 //.replace(/\(<\)/g, '⪪')
-                 .replace(/\(C\)/g, 'c')
-                 .replace(/\(R\)/g, 'r')
-                 .replace(/\(H\)/g, 'h');
   let syllables: ISyllable[] = [];
 
   for (let ii = 0; ii < length; ii++) {
+    const syllableShape = splitSyllableShape[Math.floor(Math.random() * splitSyllableShape.length)];
+    const morphologyMapped =
+      syllableShape.toUpperCase()
+                  .replace(/ /g, '')
+                  //.replace(/\(>\)/g, '⪫')
+                  //.replace(/\(<\)/g, '⪪')
+                  .replace(/\(C\)/g, 'c')
+                  .replace(/\(R\)/g, 'r')
+                  .replace(/\(H\)/g, 'h');
     let syllable: ISyllable = {sounds: []};
     const onsetEnd = morphologyMapped.indexOf('V');
     const codaStart = morphologyMapped.lastIndexOf('V');
@@ -91,9 +92,10 @@ export function generateWord(language: ILanguage, rules: IPhonologicalRule[]) {
         const environmentMarker = rule.tokens.findIndex(x => x.type === '/');
 
         if (environmentMarker) {
-          const collection = getAffectedSounds(language, rule.tokens.slice(environmentMarker));
+          const collection = getAffectedSounds(language, rule.tokens.slice(0, environmentMarker));
 
           const env = rule.tokens.slice(environmentMarker + 1);
+          const selfIndex = env.findIndex(x => x.type === '_');
 
           let isApplicable = false;
           // console.log('checking environment...', env);
@@ -101,8 +103,16 @@ export function generateWord(language: ILanguage, rules: IPhonologicalRule[]) {
           if (isCoda && checkForToken(env, 'coda')) { isApplicable = true; }
           if (isWordClose && checkForToken(env, 'word-finish')) { isApplicable = true; }
           if (isWordStart && checkForToken(env, 'word-start')) { isApplicable = true; }
+          if (selfIndex !== -1) {
+            if (env[selfIndex + 1].items.includes('C') && morphologyMapped[i + 1] === 'C') {
+              isApplicable = true;
+              // console.log('IT DO!');
+            }
+          }
+          //isRuleApplicable({syllableShape: morphologyMapped, letter: i}, env);
 
           if (isApplicable) {
+            // console.log('applying rule', rule, collection);
             permitted = [...permitted, ...collection.permitted];
             forbidden = [...forbidden, ...collection.forbidden];
           }
