@@ -19,7 +19,7 @@ td:first-of-type {
 }
 
 td:not(:first-of-type) {
-    border: solid 1px rgba($color-text, 0.4);
+    border: solid 1px;
     white-space: nowrap;
 }
 

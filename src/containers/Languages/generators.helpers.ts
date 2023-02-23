@@ -3,6 +3,9 @@ import { getAffectedSounds, getTokens, IPhonologicalRule, IPhonologicalToken, IP
 import { ILanguage, ISound, ISoundRules, ISyllable, ITypedSound, IWord, SoundPositions, TypedSound } from "./sounds.model";
 import { VOWELS } from "./vowels";
 
+// TODO: Try to implement some of https://github.com/conlang-software-dev/Logopoeist
+// TODO: Also this https://www.vulgarlang.com/sound-changes
+
 function getRandomSound(sounds: ISound[]) {
   return sounds[Math.floor(Math.random() * sounds.length)];
 }
@@ -89,9 +92,13 @@ export function generateWord(language: ILanguage, rules: IPhonologicalRule[]) {
       // First, iterate through our rules and see which sounds we're allowed to use...
       for (let ri = 0; ri < rules.length; ri++) {
         const rule = rules[ri];
-        const derivativeMarker = rule.tokens.findIndex(x => x.type === '>');
+        const derivationMarker = rule.tokens.findIndex(x => x.type === '>');
         const environmentMarker = rule.tokens.findIndex(x => x.type === '/');
 
+        if (derivationMarker !== -1) {
+          // If it's a derivation, run it on the next pass.
+          continue;
+        }
         if (environmentMarker) {
           const collection = getAffectedSounds(language, rule.tokens.slice(0, environmentMarker));
 

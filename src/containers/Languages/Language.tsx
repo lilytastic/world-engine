@@ -36,11 +36,13 @@ export function Language(props: {children?: any}) {
     setSampleWords(getSampleWords(language));
   }, []);
 
+  /*
   useEffect(() => {
     if (sampleWords.length > 0) {
       console.log('Sample words:', sampleWords);
     }
   }, [sampleWords]);
+  */
 
   useEffect(() => {
     localStorage.setItem('language', JSON.stringify(language));
@@ -89,6 +91,7 @@ export function Language(props: {children?: any}) {
         </label>
       </div>
       */}
+      {/*
       <Dropdown className='mt-3' onSelect={ev => !!ev ? setLanguage({...language, type: ev}) : null}>
         <Dropdown.Toggle variant="dark" id="dropdown-basic">
           {language.type}
@@ -100,7 +103,7 @@ export function Language(props: {children?: any}) {
           <Dropdown.Item eventKey="Proto-language">Proto-language</Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
-
+      */}
 
       <h2>Lexicon <button className='btn btn-link' onClick={() => setIsEditingLexicon(true)}>Edit</button></h2>
       <div>
@@ -118,7 +121,12 @@ export function Language(props: {children?: any}) {
 
       <h4>Rules</h4>
       <ul>
-        {language.phonology.phonotactics.map(x => <div key={x.id} className='mb-3'>{x.description && (<label className='text-muted small'>{x.description || 'No description'}</label>)}<div>{x.script}</div></div>)}
+        {language.phonology.phonotactics.map((x, i) => (
+          <div key={x.id} className='mb-3'>
+            <label className='small'>{i+1}) {x.description || 'No description'}</label>
+            <div><code>{x.script}</code></div>
+          </div>
+        ))}
       </ul>
 
       <h2>Sounds <button className='btn btn-link' onClick={() => setIsSelectingSounds(true)}>Edit</button></h2>
