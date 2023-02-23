@@ -49,7 +49,7 @@ export function Phonotactics(props: {children?: any, language: ILanguage, show: 
         <div className='pt-3 pb-5'>
           <div className="form-group mb-3">
             <label>Syllable Shape</label>
-            <input value={morphology} onChange={ev => setMorphology(ev.currentTarget.value)} />
+            <textarea value={morphology} onChange={ev => setMorphology(ev.currentTarget.value)}></textarea>
           </div>
 
           <div className="form-group mb-3">

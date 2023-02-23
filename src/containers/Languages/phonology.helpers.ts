@@ -51,6 +51,17 @@ export const BOUNDARY_MARKERS: [string, string, string][] = [
   [PhonologicalTokenCollectionTypes.Phonetic, '/', '/']
 ];
 
+/*
+
+Ideal Syntax:
+
+[light] = CV
+[heavy] = CVV, CVC
+[superheavy] = CVVC, CVCC
+
+*/
+
+
 export function getSound(language: ILanguage, phoneme: string) {
   let sounds = [...language.vowels, ...language.consonants];
   return sounds.find(x => x.phoneme === phoneme);
@@ -207,7 +218,7 @@ export const getTokens = (script: string) => {
     if (useScratch || i === script.length - 1) {
       const items = scratch.trim().split(',').map(x => x.trim()).filter(x => x.length > 0);
       if (items.length > 0) {
-        tokens.push({type: 'arbitrary', items})
+        tokens.push({type: PhonologicalTokenCollectionTypes.Terms, items})
         scratch = '';  
       }
     }

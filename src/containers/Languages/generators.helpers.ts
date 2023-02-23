@@ -1,5 +1,5 @@
 import { CONSONANTS } from "./consonants";
-import { getAffectedSounds, getTokens, IPhonologicalRule, IPhonotactic } from "./phonology.helpers";
+import { getAffectedSounds, getTokens, IPhonologicalRule, IPhonologicalToken, IPhonotactic } from "./phonology.helpers";
 import { ILanguage, ISound, ISoundRules, ISyllable, ITypedSound, IWord, SoundPositions, TypedSound } from "./sounds.model";
 import { VOWELS } from "./vowels";
 
@@ -49,16 +49,22 @@ export const generateRules = (phonotactics: IPhonotactic[]): IPhonologicalRule[]
   });
 }
 
+export function checkForToken(tokens: IPhonologicalToken[], key: string) {
+  return tokens.find(x => !!x.items.find(x => x.toLowerCase() === key));
+}
+
 export function generateWord(language: ILanguage, rules: IPhonologicalRule[]) {
   let length = 1 + Math.floor(Math.random() * 3);
+  const splitSyllableShape = language.phonology.syllableShape.split('\n');
+  const syllableShape = splitSyllableShape[Math.floor(Math.random() * splitSyllableShape.length)];
   const morphologyMapped =
-    language.phonology.syllableShape.toUpperCase()
-                                    .replace(/ /g, '')
-                                    //.replace(/\(>\)/g, '⪫')
-                                    //.replace(/\(<\)/g, '⪪')
-                                    .replace(/\(C\)/g, 'c')
-                                    .replace(/\(R\)/g, 'r')
-                                    .replace(/\(H\)/g, 'h');
+    syllableShape.toUpperCase()
+                 .replace(/ /g, '')
+                 //.replace(/\(>\)/g, '⪫')
+                 //.replace(/\(<\)/g, '⪪')
+                 .replace(/\(C\)/g, 'c')
+                 .replace(/\(R\)/g, 'r')
+                 .replace(/\(H\)/g, 'h');
   let syllables: ISyllable[] = [];
   const phonotactics: IPhonotactic[] = language.phonology.phonotactics;
   let sounds: TypedSound[] = [...language.vowels, ...language.consonants];
@@ -88,8 +94,10 @@ export function generateWord(language: ILanguage, rules: IPhonologicalRule[]) {
           let isApplicable = false;
           const env = rule.tokens.slice(environmentMarker + 1);
           // console.log('checking environment...', env);
-          if (isOnset && env.find(x => !!x.items.find(x => x.toLowerCase() === 'onsets'))) { isApplicable = true; }
-          if (isCoda && env.find(x => !!x.items.find(x => x.toLowerCase() === 'cods'))) { isApplicable = true; }
+          if (isOnset && checkForToken(env, 'onset')) { isApplicable = true; }
+          if (isCoda && checkForToken(env, 'coda')) { isApplicable = true; }
+          if (isWordClose && checkForToken(env, 'word-finish')) { isApplicable = true; }
+          if (isWordStart && checkForToken(env, 'word-start')) { isApplicable = true; }
 
           if (isApplicable) {
             permitted = [...collection];
