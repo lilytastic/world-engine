@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getSampleWords, printAllRules, transcribeWord } from './generators.helpers';
+import { getSampleWords, transcribeWord } from './generators.helpers';
 import './Languages.scss';
 import { Lexicon } from './Lexicon';
 import { IPhonology } from './phonology.helpers';
@@ -38,7 +38,7 @@ export function Language(props: {children?: any}) {
 
   useEffect(() => {
     if (sampleWords.length > 0) {
-      console.log(sampleWords);
+      console.log('Sample words:', sampleWords);
     }
   }, [sampleWords]);
 
@@ -54,13 +54,13 @@ export function Language(props: {children?: any}) {
   function selectPhonotactics(phonotactics: IPhonology) {
     setLanguage({...language, phonology: phonotactics});
   }
-  
 
   const frontnessUsed = VOWELFRONTNESS.filter(x => language.vowels.find(y => y.frontness === x.key));
   const opennessUsed = VOWELCLOSENESS.filter(x => language.vowels.find(y => y.openness === x.key));
 
   const placesUsed = PLACES.filter(x => language.consonants.find(y => y.place === x.key));
   const mannersUsed = MANNERS.filter(x => language.consonants.find(y => y.manner === x.key));
+
 
   return (
     <div>
@@ -118,9 +118,7 @@ export function Language(props: {children?: any}) {
 
       <h4>Rules</h4>
       <ul>
-        {printAllRules(language).map(x => (
-          <li key={x} dangerouslySetInnerHTML={{__html: x}}></li>
-        ))}
+        {language.phonology.phonotactics.map(x => <div key={x.id} className='mb-3'>{x.description && (<label className='text-muted small'>{x.description || 'No description'}</label>)}<div>{x.script}</div></div>)}
       </ul>
 
       <h2>Sounds <button className='btn btn-link' onClick={() => setIsSelectingSounds(true)}>Edit</button></h2>

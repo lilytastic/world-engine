@@ -21,7 +21,7 @@ export function getSampleWords(language: ILanguage) {
   let arr: IWord[] = [];
   if (language.vowels.length === 0 || language.consonants.length === 0) { return arr; }
   const rules = generateRules(language.phonology.phonotactics);
-  console.log('rules', rules);
+  //console.log('rules', rules);
   for (let i = 0; i < 30; i++) {
     arr.push(generateWord(language, rules));
   }
@@ -124,11 +124,13 @@ export function generateWord(language: ILanguage, rules: IPhonologicalRule[]) {
           //isRuleApplicable({syllableShape: morphologyMapped, letter: i}, env);
 
           if (isApplicable) {
+            //console.log('applying rule', rule, collection);
             permitted = [...permitted, ...collection.permitted];
             forbidden = [...forbidden, ...collection.forbidden];
           }
         }
       }
+      //console.log(token, 'final sound set', permitted, forbidden);
 
       permitted = permitted.filter(sound => {
 
@@ -172,8 +174,4 @@ export const printListExclusive = (list: any[]) => {
     return list[0] + ' or ' + list[1];
   }
   return list.slice(0, list.length - 1).join(', ') + ', or ' + list[list.length - 1];
-}
-
-export const printAllRules = (language: ILanguage) => {
-  return language.phonology.phonotactics.map(x => `${x.description ? x.description + ': ' : ''}${x.script}`);
 }
