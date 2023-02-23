@@ -79,6 +79,10 @@ export function getSounds(language: ILanguage, token: IPhonologicalToken, tokenI
 }
 export function doesSoundMatchToken(sound: TypedSound, token: string) {
   switch (token.toLowerCase()) {
+    case 'v':
+      return sound.type === 'vowel';
+    case 'c':
+      return sound.type === 'consonant';
     case 'voiced':
       return sound.voiced;
     case 'unvoiced':

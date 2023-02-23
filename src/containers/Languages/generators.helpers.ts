@@ -82,8 +82,9 @@ export function generateWord(language: ILanguage, rules: IPhonologicalRule[]) {
 
       let permitted: TypedSound[] = [];
       let forbidden: TypedSound[] = [];
-      if (token.toLowerCase() === 'c') { permitted = [...language.consonants]; }
-      else if (token.toLowerCase() === 'v') { permitted = [...language.vowels]; }
+      
+      //if (token.toLowerCase() === 'c') { permitted = [...language.consonants]; }
+      //else if (token.toLowerCase() === 'v') { permitted = [...language.vowels]; }
 
       // First, iterate through our rules and see which sounds we're allowed to use...
       for (let ri = 0; ri < rules.length; ri++) {
@@ -101,6 +102,7 @@ export function generateWord(language: ILanguage, rules: IPhonologicalRule[]) {
           // console.log('checking environment...', env);
           if (isOnset && checkForToken(env, 'onset')) { isApplicable = true; }
           if (isCoda && checkForToken(env, 'coda')) { isApplicable = true; }
+          if (token === 'V' && checkForToken(env, 'nucleus')) { isApplicable = true; }
           if (isWordClose && checkForToken(env, 'word-finish')) { isApplicable = true; }
           if (isWordStart && checkForToken(env, 'word-start')) { isApplicable = true; }
           if (selfIndex !== -1) {
