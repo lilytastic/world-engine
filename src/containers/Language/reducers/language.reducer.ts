@@ -40,11 +40,18 @@ export const languageSlice = createSlice({
       const languages = languageAdapter.upsertOne({...state.languages}, newLanguage);
       localStorage.setItem('languages', JSON.stringify(languages));
       return {...state, languages: {...languages}}
+    },
+    updateLanguage: (state, action) => {
+      console.log(action.payload);
+      const lang: ILanguage = action.payload;
+      const languages = languageAdapter.updateOne({...state.languages}, { id: lang.id, changes: lang });
+      localStorage.setItem('languages', JSON.stringify(languages));
+      return {...state, languages}
     }
-  },
+  }
 })
 
-export const { addNewLanguage } = languageSlice.actions
+export const { addNewLanguage, updateLanguage } = languageSlice.actions
 
 export const getLanguages = createSelector((state: RootState) => state.language, (state) => state.languages);
 
