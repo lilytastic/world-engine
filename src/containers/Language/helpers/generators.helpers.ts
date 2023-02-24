@@ -1,5 +1,5 @@
-import { getAffectedSounds, getTokens, IPhonologicalRule, IPhonologicalToken, IPhonotactic } from "./phonology.helpers";
-import { ILanguage, ISound, ISoundRules, ISyllable, IWord, SoundPositions, TypedSound } from "../models/sounds.model";
+import { getAffectedSounds, getTokens } from "./phonology.helpers";
+import { ILanguage, ISound, ISoundRules, ISyllable, IWord, SoundPositions, TypedSound, IPhonologicalRule, IPhonologicalToken, IPhonotactic } from "../models/sounds.model";
 import { VOWELS } from "../data/vowels";
 import { CONSONANTS } from "../data/consonants";
 

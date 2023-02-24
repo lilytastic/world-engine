@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { getSampleWords, transcribeWord } from '../Language/helpers/generators.helpers';
 
-import { IPhonology } from './helpers/phonology.helpers';
 import { Lexicon } from './views/Lexicon';
 import { Phonotactics } from './views/Phonotactics';
 import { SoundSelection } from './views/Sounds';
-import { IConsonant, IVowel, ILanguage, MANNERS, PLACES, VOWELCLOSENESS, VOWELFRONTNESS, IWord } from './models/sounds.model';
+import { IConsonant, IVowel, ILanguage, MANNERS, PLACES, VOWELCLOSENESS, VOWELFRONTNESS, IWord, IPhonology } from './models/sounds.model';
 import { useDispatch, useSelector } from 'react-redux';
 import { getLanguages, updateLanguage } from './reducers/language.reducer';
 import { useParams } from 'react-router';
@@ -76,20 +75,49 @@ export function Language(props: {children?: any}) {
 
   return (
     <div>
-      <SoundSelection language={language} show={isSelectingSounds} handleClose={(vowels, consonants) => {selectSounds(vowels, consonants); setIsSelectingSounds(false);}}></SoundSelection>
-      <Phonotactics language={language} show={isEditingPhonotactics} handleClose={(phonotactics) => {selectPhonotactics(phonotactics); setIsEditingPhonotactics(false);}}></Phonotactics>
-      <Lexicon language={language} show={isEditingLexicon} handleClose={(language) => {
+      <SoundSelection
+        language={language}
+        show={isSelectingSounds}
+        handleClose={(vowels, consonants) => {
+          selectSounds(vowels, consonants);
+          setIsSelectingSounds(false);
+        }}
+      ></SoundSelection>
+      <Phonotactics
+        language={language}
+        show={isEditingPhonotactics}
+        handleClose={(phonotactics) => {
+          selectPhonotactics(phonotactics);
+          setIsEditingPhonotactics(false);
+        }}
+      ></Phonotactics>
+      <Lexicon
+        language={language}
+        show={isEditingLexicon}
+        handleClose={(language) => {
           dispatch(updateLanguage(language));
           setIsEditingLexicon(false);
-        }}></Lexicon>
+        }}
+      ></Lexicon>
 
       {isEditingTitle ? (
-        <input autoFocus className='mb-3' value={title} onChange={ev => setTitle(ev.currentTarget.value)} onBlur={ev => { dispatch(updateLanguage({...language, name: title})); setIsEditingTitle(false); }} />
+        <input
+          autoFocus
+          className='mb-3'
+          value={title}
+          onChange={ev => setTitle(ev.currentTarget.value)}
+          onBlur={ev => {
+            dispatch(updateLanguage({...language, name: title}));
+            setIsEditingTitle(false);
+          }} />
       ) : (
         <>
           <h1 className='mb-0 d-flex align-items-center'>
             {language.type === 'Proto-language' ? 'Proto-' : ''}{language.name}{language.type === 'Family' ? ' Family' : ''}
-            <button className='btn btn-link ms-1' onClick={() => setIsEditingTitle(true)}>Edit</button>
+            <button className='btn btn-link ms-1'
+                    onClick={() => setIsEditingTitle(true)}>
+                Edit
+            </button>
           </h1>
           <div className='mb-0 mt-0 text-secondary'>
             {!language.ancestor ? 'No ancestors' : `Dialect of ${language.ancestor.name}`}

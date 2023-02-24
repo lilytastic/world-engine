@@ -1,5 +1,3 @@
-import { IPhonology } from "../helpers/phonology.helpers";
-
 
 export interface ISound {
   type: string;
@@ -49,10 +47,63 @@ export const DEFAULT_LANGUAGE: ILanguage = {
   consonants: [],
   phonology: {
     syllableShape: 'CV(C)',
+    phonemeClasses: 'C = b k p t d r s v w q g\nL = l m n\nV = a e i o u\nS = CV CVL VC',
     stressSystem: '',
     phonotactics: []
   }
 }
+
+export interface IPhonology {
+  syllableShape: string;
+  stressSystem: string;
+  phonemeClasses: string;
+  phonotactics: IPhonotactic[];
+}
+
+export interface IPhonotactic {
+  id: number;
+  type: string;
+  description: string;
+  script: string;
+}
+
+export interface IPhonologicalToken {
+  type: string;
+  items: string[];
+}
+
+export interface IPhonologicalRule {
+  type: string;
+  tokens: IPhonologicalToken[];
+  script: string;
+} 
+
+export enum PhonologicalTokens {
+  Addition = '+',
+  Subtractive = '-',
+  Transform = '>',
+  Filter = '/',
+  Self = '_',
+  Deletion = 'Ø',
+  Syllable = 'σ',
+  Word = '#'
+}
+
+export enum PhonologicalTokenCollectionTypes {
+  Terms = 'term collection',
+  Conditional = 'conditional collection',
+  Logical = 'logical collection',
+  LogicalOptional = 'optional logical collection',
+  Phonetic = 'phonetic collection',
+}
+
+export const BOUNDARY_MARKERS: [string, string, string][] = [
+  [PhonologicalTokenCollectionTypes.Terms, '[', ']'],
+  [PhonologicalTokenCollectionTypes.Conditional, '<', '>'],
+  [PhonologicalTokenCollectionTypes.Logical, '{', '}'],
+  [PhonologicalTokenCollectionTypes.LogicalOptional, '(', ')'],
+  [PhonologicalTokenCollectionTypes.Phonetic, '/', '/']
+];
 
 export enum SoundPositions {
   Start = 'Start',

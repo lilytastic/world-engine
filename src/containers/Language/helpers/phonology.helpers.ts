@@ -1,55 +1,4 @@
-import { ILanguage, TypedSound } from "../models/sounds.model";
-
-export interface IPhonology {
-  syllableShape: string;
-  stressSystem: string;
-  phonotactics: IPhonotactic[];
-}
-
-export interface IPhonotactic {
-  id: number;
-  type: string;
-  description: string;
-  script: string;
-}
-
-export interface IPhonologicalToken {
-  type: string;
-  items: string[];
-}
-
-export interface IPhonologicalRule {
-  type: string;
-  tokens: IPhonologicalToken[];
-  script: string;
-} 
-
-export enum PhonologicalTokens {
-  Addition = '+',
-  Subtractive = '-',
-  Transform = '>',
-  Filter = '/',
-  Self = '_',
-  Deletion = 'Ø',
-  Syllable = 'σ',
-  Word = '#'
-}
-
-export enum PhonologicalTokenCollectionTypes {
-  Terms = 'term collection',
-  Conditional = 'conditional collection',
-  Logical = 'logical collection',
-  LogicalOptional = 'optional logical collection',
-  Phonetic = 'phonetic collection',
-}
-
-export const BOUNDARY_MARKERS: [string, string, string][] = [
-  [PhonologicalTokenCollectionTypes.Terms, '[', ']'],
-  [PhonologicalTokenCollectionTypes.Conditional, '<', '>'],
-  [PhonologicalTokenCollectionTypes.Logical, '{', '}'],
-  [PhonologicalTokenCollectionTypes.LogicalOptional, '(', ')'],
-  [PhonologicalTokenCollectionTypes.Phonetic, '/', '/']
-];
+import { BOUNDARY_MARKERS, ILanguage, IPhonologicalToken, PhonologicalTokenCollectionTypes, PhonologicalTokens, TypedSound } from "../models/sounds.model";
 
 /*
 
@@ -203,13 +152,17 @@ export const getTokens = (script: string) => {
           newToken = {type: '/', items: []};
           break;
         }
+        continue;
       default:
         const boundaryMarker = BOUNDARY_MARKERS.find(x => x[1] === script[i]);
         if (boundaryMarker) {
           useScratch = true;
           next = script.indexOf(boundaryMarker[2], i + 1);
           if (next !== -1) {
-            newToken = {type: boundaryMarker[0], items: script.slice(i + 1, next).split(',').map(x => x.trim())};
+            newToken = {
+              type: boundaryMarker[0],
+              items: script.slice(i + 1, next).split(',').map(x => x.trim())
+            };
             i = next+1;
           }
         } else {

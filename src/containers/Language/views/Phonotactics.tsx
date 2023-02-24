@@ -1,12 +1,11 @@
 
 
-import React, { useEffect, useState } from 'react';
-import { ILanguage } from '../models/sounds.model';
+import React, { useState } from 'react';
+import { ILanguage, IPhonology } from '../models/sounds.model';
 
 
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import CloseButton from 'react-bootstrap/CloseButton';
-import { IPhonology } from '../helpers/phonology.helpers';
 import { Phonotactic } from './Phonotactic';
 
 export function Phonotactics(props: {children?: any, language: ILanguage, show: boolean, handleClose?: (arg0: IPhonology) => void}) {
@@ -15,6 +14,7 @@ export function Phonotactics(props: {children?: any, language: ILanguage, show: 
   //const [rules, setRules] = useState(props.language.phonology.rules);
   const [morphology, setMorphology] = useState(props.language.phonology.syllableShape);
   const [phonotactics, setPhonotactics] = useState(props.language.phonology.phonotactics);
+  const [phonemeClasses, setPhonemeClasses] = useState(props.language.phonology.phonemeClasses);
   const [isEditingPhonotatic, editPhonotatic] = useState(0);
   const {show} = props;
 
@@ -22,6 +22,7 @@ export function Phonotactics(props: {children?: any, language: ILanguage, show: 
     return {
       syllableShape: morphology,
       phonotactics,
+      phonemeClasses,
       stressSystem
     };
   }
