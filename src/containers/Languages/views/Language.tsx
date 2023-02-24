@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { getSampleWords, transcribeWord } from '../Language/helpers/generators.helpers';
+import { getSampleWords, transcribeWord } from '../helpers/generators.helpers';
 
-import { Lexicon } from './views/Lexicon';
-import { Phonotactics } from './views/Phonotactics';
-import { SoundSelection } from './views/Sounds';
-import { IConsonant, IVowel, ILanguage, MANNERS, PLACES, VOWELCLOSENESS, VOWELFRONTNESS, IWord, IPhonology } from './models/sounds.model';
+import { Lexicon } from './Lexicon';
+import { Phonotactics } from './Phonotactics';
+import { SoundSelection } from './Sounds';
+import { IConsonant, IVowel, ILanguage, MANNERS, PLACES, VOWELCLOSENESS, VOWELFRONTNESS, IWord, IPhonology } from '../models/sounds.model';
 import { useDispatch, useSelector } from 'react-redux';
-import { getLanguages, updateLanguage } from './reducers/language.reducer';
+import { getLanguages, updateLanguage } from '../reducers/language.reducer';
 import { useParams } from 'react-router';
 
 export function Language(props: {children?: any}) {
@@ -37,14 +37,6 @@ export function Language(props: {children?: any}) {
     }
   }, []);
 
-  /*
-  useEffect(() => {
-    if (sampleWords.length > 0) {
-      console.log('Sample words:', sampleWords);
-    }
-  }, [sampleWords]);
-  */
-
   useEffect(() => {
     if (!!language) {
       localStorage.setItem('language', JSON.stringify(language));
@@ -62,7 +54,7 @@ export function Language(props: {children?: any}) {
   }
 
   if (!language) {
-    return <div>No language!</div>
+    return <div></div>;
   }
 
 

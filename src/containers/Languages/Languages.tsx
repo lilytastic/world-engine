@@ -7,7 +7,7 @@ import Nav from 'react-bootstrap/Nav';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
-import { addNewLanguage, getLanguages } from '../Language/reducers/language.reducer';
+import { addNewLanguage, getLanguages } from './reducers/language.reducer';
 import { Outlet, useLocation } from 'react-router';
 import { NavLink } from 'react-router-dom';
 
@@ -25,14 +25,15 @@ export function Languages(props: {children?: any}) {
         <Row>
           <Col sm={3}>
             <Nav variant="pills" className="flex-column">
+              <Nav.Item as={Button} className="align-left" variant={'outline-success'} onClick={() => dispatch(addNewLanguage())}>
+                Create Language
+              </Nav.Item>
+              <hr/>
               {languages.ids.map(id => (
                 <Nav.Item className="mb-2" key={id}>
                   <Nav.Link as={NavLink} active={location.pathname === `/languages/${id}`} to={`/languages/${id}`}>{languages.entities[id]?.name}</Nav.Link>
                 </Nav.Item>
               ))}
-              <Nav.Item as={Button} className="align-left" variant={'success'} onClick={() => dispatch(addNewLanguage())}>
-                Add New
-              </Nav.Item>
             </Nav>
           </Col>
           <Col sm={9}>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Language } from '../Language/Language';
+import { Language } from '../Languages/views/Language';
 import { Languages } from '../Languages/Languages';
 
 export const ROUTES = [

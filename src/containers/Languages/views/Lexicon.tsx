@@ -1,12 +1,11 @@
 
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { ILanguage } from '../models/sounds.model';
 
 
 import Modal from 'react-bootstrap/Modal';
 import CloseButton from 'react-bootstrap/CloseButton';
-import Button from 'react-bootstrap/Button';
 
 export function Lexicon(props: {children?: any, language: ILanguage, show: boolean, handleClose?: (arg0: ILanguage) => void}) {
 
