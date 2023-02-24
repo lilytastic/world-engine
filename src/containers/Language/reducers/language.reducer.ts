@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createSlice, createEntityAdapter, EntityState } from '@reduxjs/toolkit'
 import type { RootState } from '../../App/store'
 import { createSelector } from 'reselect'
 import { DEFAULT_LANGUAGE, ILanguage } from '../models/sounds.model'
@@ -13,6 +13,13 @@ try {
   
 }
 
+const languageAdapter = createEntityAdapter<ILanguage>({
+  // Assume IDs are stored in a field other than `book.id`
+  selectId: (book) => book.id,
+  // Keep the "all IDs" array sorted based on book titles
+  sortComparer: (a, b) => a.name.localeCompare(b.name),
+})
+
 const storedLanguage = localStorage.getItem('language');
 let startingLanguage: ILanguage = DEFAULT_LANGUAGE;
 try {
@@ -25,12 +32,12 @@ try {
 
 // Define a type for the slice state
 interface LanguageState {
-  languages: ILanguage[];
+  languages: EntityState<ILanguage>;
 }
 
 // Define the initial state using that type
 const initialState: LanguageState = {
-  languages: [ ...(storedLanguages || []), startingLanguage ],
+  languages: languageAdapter.upsertMany(languageAdapter.getInitialState(), [ ...(storedLanguages || []), startingLanguage ]),
 }
 
 export const languageSlice = createSlice({
@@ -38,11 +45,14 @@ export const languageSlice = createSlice({
   // `createSlice` will infer the state type from the `initialState` argument
   initialState,
   reducers: {
-    // ...
+    addNewLanguage: (state) => {
+      const newLanguage = { ...DEFAULT_LANGUAGE, id: Math.max(...state.languages.ids.map(x => +x)) + 1 };
+      return {...state, languages: {...languageAdapter.upsertOne({...state.languages}, newLanguage)}}
+    }
   },
 })
 
-export const { } = languageSlice.actions
+export const { addNewLanguage } = languageSlice.actions
 
 export const getLanguages = createSelector((state: RootState) => state.language, (state) => state.languages);
 

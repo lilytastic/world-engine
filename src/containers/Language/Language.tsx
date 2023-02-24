@@ -5,20 +5,34 @@ import { IPhonology } from './helpers/phonology.helpers';
 import { Lexicon } from './views/Lexicon';
 import { Phonotactics } from './views/Phonotactics';
 import { SoundSelection } from './views/Sounds';
-import { IConsonant, IVowel, ILanguage, DEFAULT_LANGUAGE, MANNERS, PLACES, VOWELCLOSENESS, VOWELFRONTNESS, IWord } from './models/sounds.model';
+import { IConsonant, IVowel, ILanguage, MANNERS, PLACES, VOWELCLOSENESS, VOWELFRONTNESS, IWord } from './models/sounds.model';
+import { useSelector } from 'react-redux';
+import { getLanguages } from './reducers/language.reducer';
+import { useParams } from 'react-router';
 
-export function Language(props: {children?: any, language: ILanguage}) {
+export function Language(props: {children?: any}) {
 
-  const { language } = props;
+  const languages = useSelector(getLanguages);
+  const params = useParams();
+
   const [isSelectingSounds, setIsSelectingSounds] = useState(false);
   const [isEditingPhonotactics, setIsEditingPhonotactics] = useState(false);
   const [isEditingLexicon, setIsEditingLexicon] = useState(false);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
 
   const [sampleWords, setSampleWords] = useState([] as IWord[]);
+  const [language, setLanguage] = useState(undefined as ILanguage | undefined);
 
   useEffect(() => {
-    setSampleWords(getSampleWords(language));
+    if (params.id) {
+      setLanguage(languages.entities[params.id]);
+    }
+  }, [languages, params.id]);
+
+  useEffect(() => {
+    if (!!language) {
+      setSampleWords(getSampleWords(language));
+    }
   }, []);
 
   /*
@@ -30,8 +44,10 @@ export function Language(props: {children?: any, language: ILanguage}) {
   */
 
   useEffect(() => {
-    localStorage.setItem('language', JSON.stringify(language));
-    setSampleWords(getSampleWords(language));
+    if (!!language) {
+      localStorage.setItem('language', JSON.stringify(language));
+      setSampleWords(getSampleWords(language));
+    }
   }, [language]);
 
 
@@ -41,6 +57,11 @@ export function Language(props: {children?: any, language: ILanguage}) {
   function selectPhonotactics(phonotactics: IPhonology) {
     // setLanguage({...language, phonology: phonotactics});
   }
+
+  if (!language) {
+    return <div>No language!</div>
+  }
+
 
   const frontnessUsed = VOWELFRONTNESS.filter(x => language.vowels.find(y => y.frontness === x.key));
   const opennessUsed = VOWELCLOSENESS.filter(x => language.vowels.find(y => y.openness === x.key));
