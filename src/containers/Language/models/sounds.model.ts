@@ -1,4 +1,4 @@
-import { IPhonology } from "./phonology.helpers";
+import { IPhonology } from "../helpers/phonology.helpers";
 
 
 export interface ISound {

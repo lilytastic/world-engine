@@ -1,8 +1,7 @@
 
 
 import React, { useEffect, useState } from 'react';
-import './Languages.scss';
-import { ILanguage } from './sounds.model';
+import { ILanguage } from '../models/sounds.model';
 
 
 import Modal from 'react-bootstrap/Modal';

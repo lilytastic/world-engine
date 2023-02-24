@@ -1,7 +1,7 @@
-import { CONSONANTS } from "./consonants";
 import { getAffectedSounds, getTokens, IPhonologicalRule, IPhonologicalToken, IPhonotactic } from "./phonology.helpers";
-import { ILanguage, ISound, ISoundRules, ISyllable, ITypedSound, IWord, SoundPositions, TypedSound } from "./sounds.model";
-import { VOWELS } from "./vowels";
+import { ILanguage, ISound, ISoundRules, ISyllable, IWord, SoundPositions, TypedSound } from "../models/sounds.model";
+import { VOWELS } from "../data/vowels";
+import { CONSONANTS } from "../data/consonants";
 
 // TODO: Try to implement some of https://github.com/conlang-software-dev/Logopoeist
 // TODO: Also this https://www.vulgarlang.com/sound-changes

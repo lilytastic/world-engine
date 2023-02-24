@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import './App.scss';
 
 import { useLocation } from 'react-router-dom';
 import Container from 'react-bootstrap/Container';
 
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
-import { ROUTES } from './App.routes';
+import { ROUTES } from '../App/App.routes';
 
 export function Root(props: {children?: any}) {
   const location = useLocation();

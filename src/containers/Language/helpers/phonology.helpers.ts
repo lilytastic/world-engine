@@ -1,4 +1,4 @@
-import { ILanguage, TypedSound } from "./sounds.model";
+import { ILanguage, TypedSound } from "../models/sounds.model";
 
 export interface IPhonology {
   syllableShape: string;

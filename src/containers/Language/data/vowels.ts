@@ -1,4 +1,4 @@
-import { IVowel, VowelLat, VowelLon } from "./sounds.model";
+import { IVowel, VowelLat, VowelLon } from "../models/sounds.model";
 
 export const VOWELS: IVowel[] = [
   {

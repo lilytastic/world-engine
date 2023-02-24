@@ -1,36 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { getSampleWords, transcribeWord } from './generators.helpers';
-import './Languages.scss';
-import { Lexicon } from './Lexicon';
-import { IPhonology } from './phonology.helpers';
-import { Phonotactics } from './Phonotactics';
-import { SoundSelection } from './Sounds';
-import { IConsonant, IVowel, ILanguage, DEFAULT_LANGUAGE, MANNERS, PLACES, VOWELCLOSENESS, VOWELFRONTNESS, IWord } from './sounds.model';
+import { getSampleWords, transcribeWord } from '../Language/helpers/generators.helpers';
 
-import Dropdown from 'react-bootstrap/Dropdown';
+import { IPhonology } from './helpers/phonology.helpers';
+import { Lexicon } from './views/Lexicon';
+import { Phonotactics } from './views/Phonotactics';
+import { SoundSelection } from './views/Sounds';
+import { IConsonant, IVowel, ILanguage, DEFAULT_LANGUAGE, MANNERS, PLACES, VOWELCLOSENESS, VOWELFRONTNESS, IWord } from './models/sounds.model';
 
-// console.log('loaded', JSON.parse(localStorage.getItem('_language') || '{}'));
+export function Language(props: {children?: any, language: ILanguage}) {
 
-export function Language(props: {children?: any}) {
-
+  const { language } = props;
   const [isSelectingSounds, setIsSelectingSounds] = useState(false);
   const [isEditingPhonotactics, setIsEditingPhonotactics] = useState(false);
   const [isEditingLexicon, setIsEditingLexicon] = useState(false);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
 
   const [sampleWords, setSampleWords] = useState([] as IWord[]);
-
-  const storedLanguage = localStorage.getItem('language');
-  let startingLanguage: ILanguage = DEFAULT_LANGUAGE;
-  try {
-    if (storedLanguage) {
-      startingLanguage = {...DEFAULT_LANGUAGE, ...JSON.parse(storedLanguage)};
-    }
-  } catch {
-    startingLanguage = DEFAULT_LANGUAGE;
-  }
-
-  const [language, setLanguage] = useState(startingLanguage);
 
   useEffect(() => {
     setSampleWords(getSampleWords(language));
@@ -51,10 +36,10 @@ export function Language(props: {children?: any}) {
 
 
   function selectSounds(vowels: IVowel[], consonants: IConsonant[]) {
-    setLanguage({...language, vowels, consonants});
+    // setLanguage({...language, vowels, consonants});
   }
   function selectPhonotactics(phonotactics: IPhonology) {
-    setLanguage({...language, phonology: phonotactics});
+    // setLanguage({...language, phonology: phonotactics});
   }
 
   const frontnessUsed = VOWELFRONTNESS.filter(x => language.vowels.find(y => y.frontness === x.key));
@@ -68,13 +53,18 @@ export function Language(props: {children?: any}) {
     <div>
       <SoundSelection language={language} show={isSelectingSounds} handleClose={(vowels, consonants) => {selectSounds(vowels, consonants); setIsSelectingSounds(false);}}></SoundSelection>
       <Phonotactics language={language} show={isEditingPhonotactics} handleClose={(phonotactics) => {selectPhonotactics(phonotactics); setIsEditingPhonotactics(false);}}></Phonotactics>
-      <Lexicon language={language} show={isEditingLexicon} handleClose={(language) => {setLanguage(language); setIsEditingLexicon(false);}}></Lexicon>
+      <Lexicon language={language} show={isEditingLexicon} handleClose={(language) => {
+        // setLanguage(language);
+          setIsEditingLexicon(false);
+        }}></Lexicon>
 
       {isEditingTitle ? (
-        <input autoFocus className='mb-3' value={language.name} onChange={ev => setLanguage({...language, name: ev.currentTarget.value})} onBlur={() => setIsEditingTitle(false)} />
+        <input autoFocus className='mb-3' value={language.name} onChange={ev => {}
+          // setLanguage({...language, name: ev.currentTarget.value})
+        } onBlur={() => setIsEditingTitle(false)} />
       ) : (
         <>
-          <h1 className='mt-0 mb-0 d-flex align-items-center'>
+          <h1 className='mb-0 d-flex align-items-center'>
             {language.type === 'Proto-language' ? 'Proto-' : ''}{language.name}{language.type === 'Family' ? ' Family' : ''}
             <button className='btn btn-link ms-1' onClick={() => setIsEditingTitle(true)}>Edit</button>
           </h1>

@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { CONSONANTS } from './consonants';
-import './Languages.scss';
-import { IConsonant, ILanguage, IVowel, MANNERS, PLACES, VOWELCLOSENESS, VOWELFRONTNESS } from './sounds.model';
-import { VOWELS } from './vowels';
+import { IConsonant, ILanguage, IVowel, MANNERS, PLACES, VOWELCLOSENESS, VOWELFRONTNESS } from '../models/sounds.model';
+import { VOWELS } from '../data/vowels';
+import { CONSONANTS } from '../data/consonants';
 
 
 import Modal from 'react-bootstrap/Modal';

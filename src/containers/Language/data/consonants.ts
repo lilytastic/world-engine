@@ -1,4 +1,4 @@
-import { IConsonant, Manner, Place } from "./sounds.model";
+import { IConsonant, Manner, Place } from "../models/sounds.model";
 
 export const CONSONANTS: IConsonant[] = [
 

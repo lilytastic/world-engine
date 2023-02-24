@@ -1,3 +1,8 @@
+$enable-shadows: true;
+$enable-rounded: true;
+$enable-gradients: true;
+$enable-transitions: true;
+$enable-smooth-scroll: true;
 
 @import './styles';
 @import "~bootstrap/scss/bootstrap";
@@ -39,6 +44,10 @@ ul {
 .offcanvas, .modal-content {
   box-shadow: 0 2px 10px -1px rgba(0,0,0,0.7);
 }
+
+.row {
+  --bs-gutter-x: 2rem;
+}
   /*
 .modal-header .btn-close {
   color: $color-text;
@@ -68,11 +77,3 @@ input:not([type="checkbox"]), textarea {
 textarea {
   min-height: 200px;
 }
-
-[data-bs-theme="dark"] {
-  --bs-body-bg: var(--bs-black);
-  --bs-body-color: var(--bs-white);
-  background-color: var(--bs-body-bg);
-  color: var(--bs-body-color);
-}
-

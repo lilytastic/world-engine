@@ -1,5 +1,5 @@
 import React from 'react';
-import { Language } from '../Languages/Language';
+import { Language } from '../Language/Language';
 import { Languages } from '../Languages/Languages';
 
 export const ROUTES = [
@@ -7,6 +7,5 @@ export const ROUTES = [
   {path: '/geography', title: 'Geography', icon: 'mountain', showInNav: true, element: <div></div>},
   {path: '/cultures', title: 'Cultures', icon: 'landmark', showInNav: true, element: <div></div>},
   {path: '/languages', title: 'Languages', icon: 'book', showInNav: true, element: <Languages />},
-  {path: '/languages/:id', icon: 'book', element: <Language />},
   {path: '/characters', title: 'Characters', icon: 'users', showInNav: true, element: <div></div>},
 ];
