@@ -20,16 +20,6 @@ const languageAdapter = createEntityAdapter<ILanguage>({
   sortComparer: (a, b) => a.name.localeCompare(b.name),
 })
 
-const storedLanguage = localStorage.getItem('language');
-let startingLanguage: ILanguage = DEFAULT_LANGUAGE;
-try {
-  if (storedLanguage) {
-    startingLanguage = {...DEFAULT_LANGUAGE, ...JSON.parse(storedLanguage)};
-  }
-} catch {
-  startingLanguage = DEFAULT_LANGUAGE;
-}
-
 // Define a type for the slice state
 interface LanguageState {
   languages: EntityState<ILanguage>;
@@ -37,7 +27,7 @@ interface LanguageState {
 
 // Define the initial state using that type
 const initialState: LanguageState = {
-  languages: languageAdapter.upsertMany(languageAdapter.getInitialState(), [ ...(storedLanguages || []), startingLanguage ]),
+  languages: storedLanguages || languageAdapter.getInitialState()
 }
 
 export const languageSlice = createSlice({
@@ -47,7 +37,9 @@ export const languageSlice = createSlice({
   reducers: {
     addNewLanguage: (state) => {
       const newLanguage = { ...DEFAULT_LANGUAGE, id: Math.max(...state.languages.ids.map(x => +x)) + 1 };
-      return {...state, languages: {...languageAdapter.upsertOne({...state.languages}, newLanguage)}}
+      const languages = languageAdapter.upsertOne({...state.languages}, newLanguage);
+      localStorage.setItem('languages', JSON.stringify(languages));
+      return {...state, languages: {...languages}}
     }
   },
 })
