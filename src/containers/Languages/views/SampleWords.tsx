@@ -1,19 +1,19 @@
 
 
 import React, { useEffect, useState } from 'react';
-import { ILanguage, IWord } from '../models/sounds.model';
+import { ILanguage } from '../models/sounds.model';
 
 import { getLanguages } from '../reducers/language.reducer';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router';
 
-import { getSampleWords, transcribeWord } from '../helpers/generators.helpers';
+import { getSampleWordsV2 } from '../helpers/generators.helpers';
 
 export function SampleWords(props: {children?: any}) {
 
   const languages = useSelector(getLanguages);
   const [language, setLanguage] = useState(undefined as ILanguage | undefined);
-  const [currentSampleWords, setSampleWords] = useState([] as IWord[]);
+  const [currentSampleWords, setSampleWords] = useState([] as string[]);
   const params = useParams();
 
   useEffect(() => {
@@ -21,6 +21,7 @@ export function SampleWords(props: {children?: any}) {
       const language = languages.entities[params.id];
       if (language) {
         setLanguage(language);
+        setSampleWords(getSampleWordsV2(language));
       }
     }
   }, [languages, params.id]);
@@ -33,10 +34,10 @@ export function SampleWords(props: {children?: any}) {
     <div>
       <h4>
         Samples
-        <button className='btn btn-link' onClick={() => setSampleWords(getSampleWords(language))}><i className='fas fa-rotate-right'></i></button>
+        <button className='btn btn-link' onClick={() => setSampleWords(getSampleWordsV2(language))}><i className='fas fa-rotate-right'></i></button>
       </h4>
       <div>
-        <i>{currentSampleWords.map(word => transcribeWord(language, word)).join(', ')}</i>
+        <i>{currentSampleWords.join(', ')}</i>
       </div>
     </div>
   );

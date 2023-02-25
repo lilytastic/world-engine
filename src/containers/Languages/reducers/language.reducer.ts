@@ -42,7 +42,7 @@ export const languageSlice = createSlice({
       return {...state, languages: {...languages}}
     },
     updateLanguage: (state, action) => {
-      console.log(action.payload);
+      // console.log(action.payload);
       const lang: ILanguage = action.payload;
       const languages = languageAdapter.updateOne({...state.languages}, { id: lang.id, changes: lang });
       localStorage.setItem('languages', JSON.stringify(languages));
