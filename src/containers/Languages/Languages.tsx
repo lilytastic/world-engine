@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import './Languages.scss';
 
 import Tab from 'react-bootstrap/Tab';
-import Nav from 'react-bootstrap/Nav';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
@@ -28,9 +27,9 @@ export function Languages(props: {children?: any}) {
     <div className="view py-4">
       <Tab.Container id="left-tabs-example" defaultActiveKey="first">
         <Row>
-          <Col sm={3}>
+          <Col sm={3} className='mb-4'>
             <label className='d-flex justify-content-between align-items-baseline'>
-              <div className='text-muted fw-bold'><i className='fas fa-fw fa-book me-2'></i>Languages</div>
+              <div className='text-muted'><i className='fas fa-fw fa-book me-2'></i>Languages</div>
               <Button className="rounded-pill px-0" variant='link' onClick={() => addNew()}>
                 <i className='fas fa-fw fa-file-circle-plus'></i>
               </Button>

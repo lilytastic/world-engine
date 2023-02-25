@@ -1,10 +1,15 @@
-import { getAffectedSounds, getSound, getSoundById, getTokens } from "./phonology.helpers";
+import { getAffectedSounds, getTokens } from "./phonology.helpers";
 import { ILanguage, ISound, ISoundRules, ISyllable, IWord, SoundPositions, TypedSound, IPhonologicalRule, IPhonologicalToken, IPhonotactic } from "../models/sounds.model";
 import { VOWELS } from "../data/vowels";
 import { CONSONANTS } from "../data/consonants";
 
 // TODO: Try to implement some of https://github.com/conlang-software-dev/Logopoeist
 // TODO: Also this https://www.vulgarlang.com/sound-changes
+
+export function getSoundByPhoneme(phoneme: string): TypedSound | null {
+  let sounds: TypedSound[] = [...VOWELS, ...CONSONANTS];
+  return sounds.find(x => x.phoneme === phoneme) || null;
+}
 
 function getRandomSound(sounds: ISound[]) {
   return sounds[Math.floor(Math.random() * sounds.length)];
@@ -51,6 +56,8 @@ export function checkForToken(tokens: IPhonologicalToken[], key: string) {
 }
 
 export type IPACollection = TypedSound[];
+export type IPhonemeClassDictionary = {[className: string]: IPhonemeClass};
+export type IWordPatternDictionary = {[patternName: string]: IWordPattern[]};
 
 export interface IPhonemeClass {
   className: string;
@@ -146,13 +153,14 @@ export function getSampleWordsV2(language: ILanguage) {
   // console.log('language', language);
   // console.log('phonemeClasses', phonemeClasses);
   // console.log('wordPatterns', wordPatterns);
+  console.log([...VOWELS, ...CONSONANTS]);
   for (let i = 0; i < 30; i++) {
     arr.push(generateWordV2(phonemeClasses, wordPatterns));
   }
   return arr;
 }
 
-export function getTokensFromWordPattern(phonemeClasses: {[id: string]: IPhonemeClass}, wordPattern: IWordPattern) {
+export function wordPatternToPhonemes(phonemeClasses: IPhonemeClassDictionary, wordPattern: IWordPattern, mapper?: (phoneme: string) => string | undefined) {
   // Expand every uppercase letter
   const { pattern } = wordPattern;
   let tokens = pattern; // Note -- these are syllables, whatever the tokens are initially.
@@ -160,16 +168,20 @@ export function getTokensFromWordPattern(phonemeClasses: {[id: string]: IPhoneme
     let token = tokens[i];
     if (token === token.toUpperCase() && phonemeClasses[token]) {
       const item = getRandomArrayItem(phonemeClasses[token].tokens);
-      tokens = [...tokens.slice(0, i), ...getStringArray(item), ...tokens.slice(i + 1)];
+      tokens = [...tokens.slice(0, i), ...getStringArray(mapper?.(item) ?? item), ...tokens.slice(i + 1)];
       i -= 1;
     }
   }
   return tokens;
 }
 
-export function generateWordV2(phonemeClasses: {[id: string]: IPhonemeClass}, wordPatterns: {[id: string]: IWordPattern[]}) {
+export function generateWordV2(phonemeClasses: IPhonemeClassDictionary, wordPatterns: IWordPatternDictionary) {
   const wordPattern = getRandomArrayItem(wordPatterns['word']);
-  const tokens = getTokensFromWordPattern(phonemeClasses, wordPattern);
+  const tokens = wordPatternToPhonemes(
+    phonemeClasses,
+    wordPattern,
+    (phoneme) => (getSoundByPhoneme(phoneme)?.romanization)
+  );
   return tokens.join('');
 }
 

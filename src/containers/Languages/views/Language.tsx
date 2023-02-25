@@ -136,10 +136,11 @@ export function Language(props: {children?: any}) {
           
         </Tab>
         <Tab eventKey="vocabulary" title="Vocabulary">
-          <Form.Group>
-            <Form.Label>Language name</Form.Label>
+          <Form.Group className='form-group'>
+            <Form.Label htmlFor='languageName'>Language name</Form.Label>
             <Form.Control
               as='input'
+              id='languageName'
               value={language.name}
               onChange={ev => dispatch(updateLanguage({...language, name: ev.currentTarget.value}))}
             />

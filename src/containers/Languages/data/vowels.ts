@@ -153,6 +153,13 @@ export const VOWELS: IVowel[] = [
   {
     openness: VowelLon.Open,
     frontness: VowelLat.Front,
+    phoneme: 'a:',
+    romanization: 'aa',
+    long: true
+  },
+  {
+    openness: VowelLon.Open,
+    frontness: VowelLat.Front,
     phoneme: 'ɶ',
     rounded: true
   },

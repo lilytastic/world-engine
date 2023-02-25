@@ -27,33 +27,36 @@ export function Root(props: {children?: any}) {
           <i className='fas fa-globe me-2'></i>
           <strong>World Engine</strong>
         </Navbar.Brand>
-        <Nav defaultActiveKey="/" activeKey={location.pathname} className='align-items-center'>
-          {ROUTES.filter(route => route.showInNav).map(route => (
-            <Nav.Item key={route.path} className="ms-3">
-              <Nav.Link as={NavLink} to={route.path}>
-                <i className={`fas fa-${route.icon} me-2`}></i>
-                <span>{route.title}</span>
-              </Nav.Link>
-            </Nav.Item>
-          ))}
-          <div className='d-flex ms-4 align-items-center'>
-            <div className="form-check form-switch">
-              <input className="form-check-input"
-                    type="checkbox"
-                    role="switch"
-                    id="flexSwitchCheckChecked"
-                    checked={theme === 'dark'}
-                    onChange={ev => setTheme(ev.currentTarget.checked ? 'dark' : 'light')}
-              />
-              <i className={`fas fa-fw me-1 fa-sm fa-moon`}></i>
+        <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+        <Navbar.Offcanvas id="responsive-navbar-nav">
+          <Nav defaultActiveKey="/" activeKey={location.pathname} className='align-items-center justify-content-end'>
+            {ROUTES.filter(route => route.showInNav).map(route => (
+              <Nav.Item key={route.path} className="ms-3">
+                <Nav.Link as={NavLink} to={route.path}>
+                  <i className={`fas fa-${route.icon} me-2`}></i>
+                  <span>{route.title}</span>
+                </Nav.Link>
+              </Nav.Item>
+            ))}
+            <div className='d-flex ms-4 align-items-center'>
+              <div className="form-check form-switch mt-1">
+                <input className="form-check-input"
+                      type="checkbox"
+                      role="switch"
+                      id="flexSwitchCheckChecked"
+                      checked={theme === 'dark'}
+                      onChange={ev => setTheme(ev.currentTarget.checked ? 'dark' : 'light')}
+                />
+                <i className={`fas fa-fw me-1 fa-sm fa-moon`}></i>
+              </div>
             </div>
-          </div>
-          {/*
-          <button className={`ms-3 px-2 rounded-pill align-self-center btn-link link-warning btn btn-${theme}`} onClick={ev => setTheme(theme === 'light' ? 'dark' : 'light')}>
-            <i className={`fas fa-fw fa-${theme === 'light' ? 'sun' : 'moon'}`}></i>
-          </button>
-          */}
-        </Nav>
+            {/*
+            <button className={`ms-3 px-2 rounded-pill align-self-center btn-link link-warning btn btn-${theme}`} onClick={ev => setTheme(theme === 'light' ? 'dark' : 'light')}>
+              <i className={`fas fa-fw fa-${theme === 'light' ? 'sun' : 'moon'}`}></i>
+            </button>
+            */}
+          </Nav>
+        </Navbar.Offcanvas>
       </Container>
     </Navbar>
     <Container fluid='sm'>

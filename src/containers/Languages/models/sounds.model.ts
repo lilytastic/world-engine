@@ -17,6 +17,7 @@ export interface IVowel extends ITypedSound<'vowel'> {
   frontness: string;
   openness: string;
   rounded?: boolean;
+  long?: boolean;
 }
 export interface IConsonant extends ITypedSound<'consonant'> {
   place: string;
