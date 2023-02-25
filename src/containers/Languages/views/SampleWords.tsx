@@ -31,7 +31,10 @@ export function SampleWords(props: {children?: any}) {
 
   return (
     <div>
-      <h4>Samples <button className='btn btn-link' onClick={() => setSampleWords(getSampleWords(language))}>Regenerate</button></h4>
+      <h4>
+        Samples
+        <button className='btn btn-link' onClick={() => setSampleWords(getSampleWords(language))}><i className='fas fa-rotate-right'></i></button>
+      </h4>
       <div>
         <i>{currentSampleWords.map(word => transcribeWord(language, word)).join(', ')}</i>
       </div>

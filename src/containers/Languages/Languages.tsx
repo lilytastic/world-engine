@@ -31,8 +31,8 @@ export function Languages(props: {children?: any}) {
                 </Nav.Item>
               ))}
               <hr className='invisible' />
-              <Nav.Item as={Button} className="text-start" variant='outline-success' onClick={() => dispatch(addNewLanguage())}>
-                <i className='fas fa-plus'></i> &nbsp;Create Language
+              <Nav.Item as={Button} className="text-start rounded-pill" variant='outline-success' onClick={() => dispatch(addNewLanguage())}>
+                <i className='fas fa-plus'></i> &nbsp;Add New
               </Nav.Item>
             </Nav>
           </Col>

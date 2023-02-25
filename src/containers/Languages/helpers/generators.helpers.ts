@@ -80,9 +80,9 @@ export function getPhonemeClasses(language: ILanguage): IPhonemeClass[] {
 
 export function getPhonemeClassDictionary(language: ILanguage) {
   const classes = getPhonemeClasses(language);
-  const dictionary: {[className: string]: string[]} = {};
+  const dictionary: {[className: string]: IPhonemeClass} = {};
   classes.forEach(c => {
-    dictionary[c.className] = c.tokens;
+    dictionary[c.className] = c;
   });
 
   return dictionary;
@@ -99,7 +99,7 @@ export function getWordPatterns(language: ILanguage): IWordPattern[] {
     const definitionIndex = token.indexOf('=');
     if (definitionIndex === -1) {
       wordPatterns.push({
-        patternName,
+        patternName: patternName || 'word',
         pattern: getStringArray(token.trim())
       });
     } else {
@@ -112,11 +112,11 @@ export function getWordPatterns(language: ILanguage): IWordPattern[] {
 
 export function getWordPatternDictionary(language: ILanguage) {
   const wordPatterns = getWordPatterns(language);
-  const dictionary: {[className: string]: string[][]} = {};
+  const dictionary: {[className: string]: IWordPattern[]} = {};
   wordPatterns.forEach(c => {
-    const index = c.patternName || 'word';
+    const index = c.patternName;
     const existing = dictionary[index];
-    dictionary[index] = [...(existing || []), c.pattern];
+    dictionary[index] = [...(existing || []), c];
   });
 
   return dictionary;
@@ -135,12 +135,13 @@ export function getSampleWords(language: ILanguage) {
   console.log('phonemeClasses', phonemeClasses);
   console.log('wordPatterns', wordPatterns);
   for (let i = 0; i < 30; i++) {
-    arr.push(generateWord(language, rules, phonemeClasses));
+    //arr.push(generateWord(language, rules, phonemeClasses));
+    generateWordV2(language, phonemeClasses, wordPatterns);
   }
   return arr;
 }
 
-export function generateWordV2(language: ILanguage, phonemeClasses: {[id: string]: IPhonemeClass}, wordPatterns: {[id: string]: IWordPattern}) {
+export function generateWordV2(language: ILanguage, phonemeClasses: {[id: string]: IPhonemeClass}, wordPatterns: {[id: string]: IWordPattern[]}) {
   return '';
 }
 
