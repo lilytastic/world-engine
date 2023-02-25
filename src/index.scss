@@ -1,6 +1,6 @@
 //$enable-shadows: true;
-$enable-rounded: true;
 //$enable-gradients: true;
+$enable-rounded: true;
 $enable-transitions: true;
 $enable-smooth-scroll: true;
 
@@ -41,12 +41,8 @@ ul {
   flex-direction: column;
 }
 
-.offcanvas, .modal-content {
-  box-shadow: 0 2px 10px -1px rgba(0,0,0,0.7);
-}
-
 .row {
-  --bs-gutter-x: 2rem;
+  --bs-gutter-x: 3rem;
 }
   /*
 .modal-header .btn-close {

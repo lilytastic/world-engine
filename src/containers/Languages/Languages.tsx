@@ -10,6 +10,7 @@ import Button from 'react-bootstrap/Button';
 import { addNewLanguage, getLanguages } from './reducers/language.reducer';
 import { Outlet, useLocation } from 'react-router';
 import { NavLink } from 'react-router-dom';
+import { ListGroup } from 'react-bootstrap';
 
 // console.log('loaded', JSON.parse(localStorage.getItem('_language') || '{}'));
 
@@ -19,29 +20,32 @@ export function Languages(props: {children?: any}) {
   const location = useLocation();
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    console.log(languages);
-  }, [languages]);
-
   const addNew = () => {
     dispatch(addNewLanguage());
   }
 
   return (
-    <div className="view pt-4">
+    <div className="view py-4">
       <Tab.Container id="left-tabs-example" defaultActiveKey="first">
         <Row>
           <Col sm={3}>
-            <Nav variant="pills" className="flex-column">
-              {languages.ids.map(id => (
-                <Nav.Item className="mb-2" key={id}>
-                  <Nav.Link as={NavLink} active={location.pathname === `/languages/${id}`} to={`/languages/${id}`}>{languages.entities[id]?.name}</Nav.Link>
-                </Nav.Item>
-              ))}
-              <Button className="rounded-pill mt-3 px-2" variant='success' onClick={() => addNew()}>
-                <i className='fas fa-fw fa-plus'></i>
+            <label className='d-flex justify-content-between align-items-baseline'>
+              <div className='text-muted fw-bold'><i className='fas fa-fw fa-book me-2'></i>Languages</div>
+              <Button className="rounded-pill px-0" variant='link' onClick={() => addNew()}>
+                <i className='fas fa-fw fa-file-circle-plus'></i>
               </Button>
-            </Nav>
+            </label>
+            <ListGroup className="flex-column mt-2 rounded-3 border overflow-hidden">
+              {languages.ids.map(id => (
+                <ListGroup.Item key={id}
+                                as={NavLink}
+                                className="rounded-0 border-0"
+                                active={location.pathname === `/languages/${id}`}
+                                to={`/languages/${id}`}>
+                  {languages.entities[id]?.name}
+                </ListGroup.Item>
+              ))}
+            </ListGroup>
           </Col>
           <Col sm={9}>
             <Outlet />

@@ -11,7 +11,7 @@ import { useParams } from 'react-router';
 import { PhonemeClasses } from './PhonemeClasses';
 import { WordPatterns } from './WordPatterns';
 import { SampleWords } from './SampleWords';
-import { Button, Dropdown } from 'react-bootstrap';
+import { Button, Dropdown, Form, FormGroup, FormLabel, ListGroup, Tab, Tabs } from 'react-bootstrap';
 
 export function Language(props: {children?: any}) {
 
@@ -76,9 +76,9 @@ export function Language(props: {children?: any}) {
         }}
       ></Lexicon>
 
-      <Dropdown className='position-absolute top-0 end-0 mt-4'>
-        <Dropdown.Toggle variant="secondary" id="dropdown-basic">
-          <i className="fas fa-gear"></i>
+      <Dropdown className='position-absolute top-0 end-0'>
+        <Dropdown.Toggle variant="outline-secondary" id="dropdown-basic">
+          Options&nbsp;
         </Dropdown.Toggle>
 
         <Dropdown.Menu>
@@ -114,16 +114,49 @@ export function Language(props: {children?: any}) {
         </>
       )}
       */}
-      <h1 className='mb-0 display-3 d-flex align-items-center'>
-        {language.type === 'Proto-language' ? 'Proto-' : ''}{language.name}{language.type === 'Family' ? ' Family' : ''}
+      <h1 className='mb-0 d-flex align-items-center lh-1 mb-1'>
+        {language.type === 'Proto-language' ? 'Proto-' : ''}{language.name || 'Untitled'}{language.type === 'Family' ? ' Family' : ''}
       </h1>
-      <h2 className='mb-4 mt-0 text-secondary small'>
+      <h2 className='mb-4 mt-0 h6 text-muted'>
         {!language.ancestor ? 'No ancestors' : `Dialect of ${language.ancestor.name}`}
       </h2>
       
       <SampleWords></SampleWords>
-      <PhonemeClasses></PhonemeClasses>
-      <WordPatterns></WordPatterns>
+
+      <Tabs
+        defaultActiveKey="profile"
+        id="uncontrolled-tab-example"
+        className="my-4"
+      >
+        <Tab eventKey="phonology" title="Phonology">
+          <PhonemeClasses></PhonemeClasses>
+          <WordPatterns></WordPatterns>
+        </Tab>
+        <Tab eventKey="spelling" title="Spelling">
+          
+        </Tab>
+        <Tab eventKey="vocabulary" title="Vocabulary">
+          <Form.Group>
+            <Form.Label>Language name</Form.Label>
+            <Form.Control
+              as='input'
+              value={language.name}
+              onChange={ev => dispatch(updateLanguage({...language, name: ev.currentTarget.value}))}
+            />
+          </Form.Group>
+          <hr />
+          <ListGroup>
+            <ListGroup.Item>Cras justo odio</ListGroup.Item>
+            <ListGroup.Item>Dapibus ac facilisis in</ListGroup.Item>
+            <ListGroup.Item>Morbi leo risus</ListGroup.Item>
+            <ListGroup.Item>Porta ac consectetur ac</ListGroup.Item>
+            <ListGroup.Item>Vestibulum at eros</ListGroup.Item>
+          </ListGroup>
+        </Tab>
+        <Tab eventKey="grammar" title="Grammar">
+          
+        </Tab>
+      </Tabs>
 
     </div>
   );

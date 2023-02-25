@@ -41,7 +41,7 @@ export interface ILanguage {
 }
 export const DEFAULT_LANGUAGE: ILanguage = {
   id: 1,
-  name: "Untitled",
+  name: "",
   type: 'language',
   vowels: [],
   consonants: [],

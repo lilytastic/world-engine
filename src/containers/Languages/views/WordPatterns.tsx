@@ -32,7 +32,7 @@ export function WordPatterns(props: {children?: any}) {
   }
 
   return (
-    <Form.Group className='my-3'>
+    <Form.Group className='my-3 form-group'>
       <Form.Label htmlFor="wordPatterns">Word Patterns</Form.Label>
       <Form.Control
         as='textarea'

@@ -32,7 +32,7 @@ export function PhonemeClasses(props: {children?: any}) {
   }
 
   return (
-    <Form.Group className='my-3'>
+    <Form.Group className='my-3 form-group'>
       <Form.Label htmlFor="phonemeClasses">Phoneme Classes</Form.Label>
       <Form.Control
         as='textarea'

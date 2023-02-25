@@ -27,7 +27,7 @@ export function Root(props: {children?: any}) {
           <i className='fas fa-globe me-2'></i>
           <strong>World Engine</strong>
         </Navbar.Brand>
-        <Nav defaultActiveKey="/" activeKey={location.pathname}>
+        <Nav defaultActiveKey="/" activeKey={location.pathname} className='align-items-center'>
           {ROUTES.filter(route => route.showInNav).map(route => (
             <Nav.Item key={route.path} className="ms-3">
               <Nav.Link as={NavLink} to={route.path}>
@@ -36,14 +36,28 @@ export function Root(props: {children?: any}) {
               </Nav.Link>
             </Nav.Item>
           ))}
-          <button className={`ms-3 px-2 rounded-pill align-self-center btn btn-${theme}`} onClick={ev => setTheme(theme === 'light' ? 'dark' : 'light')}>
+          <div className='d-flex ms-4 align-items-center'>
+            <div className="form-check form-switch">
+              <input className="form-check-input"
+                    type="checkbox"
+                    role="switch"
+                    id="flexSwitchCheckChecked"
+                    checked={theme === 'dark'}
+                    onChange={ev => setTheme(ev.currentTarget.checked ? 'dark' : 'light')}
+              />
+              <i className={`fas fa-fw me-1 fa-sm fa-moon`}></i>
+            </div>
+          </div>
+          {/*
+          <button className={`ms-3 px-2 rounded-pill align-self-center btn-link link-warning btn btn-${theme}`} onClick={ev => setTheme(theme === 'light' ? 'dark' : 'light')}>
             <i className={`fas fa-fw fa-${theme === 'light' ? 'sun' : 'moon'}`}></i>
           </button>
+          */}
         </Nav>
       </Container>
     </Navbar>
-    <Container fluid={'sm'}>
-      <div className="main pb-5">{props.children}</div>
+    <Container fluid='sm'>
+      <div className="main">{props.children}</div>
     </Container>
   </div>);
 }
