@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router';
 
 import Form from 'react-bootstrap/Form';
+import { Popover } from 'react-bootstrap';
 
 export function PhonemeClasses(props: {children?: any}) {
 

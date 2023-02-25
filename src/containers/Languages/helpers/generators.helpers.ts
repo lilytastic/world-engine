@@ -153,7 +153,6 @@ export function getSampleWordsV2(language: ILanguage) {
   // console.log('language', language);
   // console.log('phonemeClasses', phonemeClasses);
   // console.log('wordPatterns', wordPatterns);
-  console.log([...VOWELS, ...CONSONANTS]);
   for (let i = 0; i < 30; i++) {
     arr.push(generateWordV2(phonemeClasses, wordPatterns));
   }

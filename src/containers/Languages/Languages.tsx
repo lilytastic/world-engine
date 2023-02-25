@@ -29,7 +29,10 @@ export function Languages(props: {children?: any}) {
         <Row>
           <Col sm={3} className='mb-4'>
             <label className='d-flex justify-content-between align-items-baseline'>
-              <div className='text-muted'><i className='fas fa-fw fa-book me-2'></i>Languages</div>
+              <div className='text-muted small'>
+                <i className='fas fa-sm fa-book me-2'></i>
+                Languages
+              </div>
               <Button className="rounded-pill px-0" variant='link' onClick={() => addNew()}>
                 <i className='fas fa-fw fa-file-circle-plus'></i>
               </Button>

@@ -11,7 +11,8 @@ import { useParams } from 'react-router';
 import { PhonemeClasses } from './PhonemeClasses';
 import { WordPatterns } from './WordPatterns';
 import { SampleWords } from './SampleWords';
-import { Button, Dropdown, Form, FormGroup, FormLabel, ListGroup, Tab, Tabs } from 'react-bootstrap';
+import { Breadcrumb, Button, Dropdown, Form, FormGroup, FormLabel, ListGroup, Tab, Tabs } from 'react-bootstrap';
+import { NavLink } from 'react-router-dom';
 
 export function Language(props: {children?: any}) {
 
@@ -75,6 +76,17 @@ export function Language(props: {children?: any}) {
           setIsEditingLexicon(false);
         }}
       ></Lexicon>
+      
+      <Breadcrumb>
+        <Breadcrumb.Item linkAs={NavLink} linkProps={{to: '/languages'}}>Languages</Breadcrumb.Item>
+        <Breadcrumb.Item active>{language.name}</Breadcrumb.Item>
+      </Breadcrumb>
+      <h1 className='mb-0 d-flex align-items-center lh-1 mb-1'>
+        {language.type === 'Proto-language' ? 'Proto-' : ''}{language.name || 'Untitled'}{language.type === 'Family' ? ' Family' : ''}
+      </h1>
+      <h2 className='mb-4 mt-0 h6 text-muted'>
+        {!language.ancestor ? 'No ancestors' : `Dialect of ${language.ancestor.name}`}
+      </h2>
 
       <Dropdown className='position-absolute top-0 end-0'>
         <Dropdown.Toggle variant="outline-secondary" id="dropdown-basic">
@@ -114,12 +126,6 @@ export function Language(props: {children?: any}) {
         </>
       )}
       */}
-      <h1 className='mb-0 d-flex align-items-center lh-1 mb-1'>
-        {language.type === 'Proto-language' ? 'Proto-' : ''}{language.name || 'Untitled'}{language.type === 'Family' ? ' Family' : ''}
-      </h1>
-      <h2 className='mb-4 mt-0 h6 text-muted'>
-        {!language.ancestor ? 'No ancestors' : `Dialect of ${language.ancestor.name}`}
-      </h2>
       
       <SampleWords></SampleWords>
 
