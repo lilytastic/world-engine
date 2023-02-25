@@ -21,27 +21,25 @@ export function Root(props: {children?: any}) {
 
   return (<div>
     {/*<Nav routes={ROUTES.filter(x => x.path !== '/')} />*/}
-    <Navbar expand="lg">
+    <Navbar sticky="top" expand="lg">
       <Container>
         <Navbar.Brand href="/">
           <i className='fas fa-globe me-2'></i>
           <strong>World Engine</strong>
         </Navbar.Brand>
-        <div className='d-flex'>
-          <Nav defaultActiveKey="/" activeKey={location.pathname}>
-            {ROUTES.filter(route => route.showInNav).map(route => (
-              <Nav.Item key={route.path} className="ms-3">
-                <Nav.Link as={NavLink} to={route.path}>
-                  <i className={`fas fa-${route.icon} me-2`}></i>
-                  <span>{route.title}</span>
-                </Nav.Link>
-              </Nav.Item>
-            ))}
-          </Nav>
+        <Nav defaultActiveKey="/" activeKey={location.pathname}>
+          {ROUTES.filter(route => route.showInNav).map(route => (
+            <Nav.Item key={route.path} className="ms-3">
+              <Nav.Link as={NavLink} to={route.path}>
+                <i className={`fas fa-${route.icon} me-2`}></i>
+                <span>{route.title}</span>
+              </Nav.Link>
+            </Nav.Item>
+          ))}
           <button className={`ms-3 rounded-pill btn btn-${theme}`} onClick={ev => setTheme(theme === 'light' ? 'dark' : 'light')}>
             <i className={`fas fa-fw fa-${theme === 'light' ? 'sun' : 'moon'}`}></i>
           </button>
-        </div>
+        </Nav>
       </Container>
     </Navbar>
     <Container fluid={'sm'}>

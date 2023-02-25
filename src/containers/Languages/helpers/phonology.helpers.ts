@@ -1,3 +1,5 @@
+import { CONSONANTS } from "../data/consonants";
+import { VOWELS } from "../data/vowels";
 import { BOUNDARY_MARKERS, ILanguage, IPhonologicalToken, PhonologicalTokenCollectionTypes, PhonologicalTokens, TypedSound } from "../models/sounds.model";
 
 /*
@@ -11,6 +13,10 @@ Ideal Syntax:
 */
 
 
+export function getSoundById(phoneme: string): TypedSound | null {
+  let sounds = [...VOWELS, ...CONSONANTS];
+  return sounds.find(x => x.phoneme === phoneme) || null;
+}
 export function getSound(language: ILanguage, phoneme: string) {
   let sounds = [...language.vowels, ...language.consonants];
   return sounds.find(x => x.phoneme === phoneme);

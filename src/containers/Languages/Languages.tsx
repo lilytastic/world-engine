@@ -25,15 +25,15 @@ export function Languages(props: {children?: any}) {
         <Row>
           <Col sm={3}>
             <Nav variant="pills" className="flex-column">
-              <Nav.Item as={Button} className="align-left" variant={'outline-success'} onClick={() => dispatch(addNewLanguage())}>
-                Create Language
-              </Nav.Item>
-              <hr/>
               {languages.ids.map(id => (
                 <Nav.Item className="mb-2" key={id}>
                   <Nav.Link as={NavLink} active={location.pathname === `/languages/${id}`} to={`/languages/${id}`}>{languages.entities[id]?.name}</Nav.Link>
                 </Nav.Item>
               ))}
+              <hr className='invisible' />
+              <Nav.Item as={Button} className="text-start" variant='outline-success' onClick={() => dispatch(addNewLanguage())}>
+                <i className='fas fa-plus'></i> &nbsp;Create Language
+              </Nav.Item>
             </Nav>
           </Col>
           <Col sm={9}>

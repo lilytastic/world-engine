@@ -3,7 +3,7 @@ import type { RootState } from '../../App/store'
 import { createSelector } from 'reselect'
 import { DEFAULT_LANGUAGE, ILanguage } from '../models/sounds.model'
 
-let storedLanguages = [];
+let storedLanguages = null;
 try {
   const _x = localStorage.getItem('languages');
   if (_x) {

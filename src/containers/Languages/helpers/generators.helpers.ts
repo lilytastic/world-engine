@@ -1,4 +1,4 @@
-import { getAffectedSounds, getTokens } from "./phonology.helpers";
+import { getAffectedSounds, getSound, getSoundById, getTokens } from "./phonology.helpers";
 import { ILanguage, ISound, ISoundRules, ISyllable, IWord, SoundPositions, TypedSound, IPhonologicalRule, IPhonologicalToken, IPhonotactic } from "../models/sounds.model";
 import { VOWELS } from "../data/vowels";
 import { CONSONANTS } from "../data/consonants";
@@ -18,17 +18,6 @@ export function transcribeWord(language: ILanguage, word: IWord) {
       x?.romanization || x?.phoneme || ''
     )
   ).flat().join('');
-}
-
-export function getSampleWords(language: ILanguage) {
-  let arr: IWord[] = [];
-  if (language.vowels.length === 0 || language.consonants.length === 0) { return arr; }
-  const rules = generateRules(language.phonology.phonotactics);
-  //console.log('rules', rules);
-  for (let i = 0; i < 30; i++) {
-    arr.push(generateWord(language, rules));
-  }
-  return arr;
 }
 
 export function getDefaultPositions(language: ILanguage, phoneme: string): SoundPositions[] {
@@ -57,7 +46,105 @@ export function checkForToken(tokens: IPhonologicalToken[], key: string) {
   return tokens.find(x => !!x.items.find(x => x.toLowerCase() === key));
 }
 
-export function generateWord(language: ILanguage, rules: IPhonologicalRule[]) {
+export type IPACollection = TypedSound[];
+
+export interface IPhonemeClass {
+  className: string;
+  tokens: string[];
+}
+export interface IWordPattern {
+  patternName: string;
+  pattern: string[];
+}
+
+export function getStringArray(str: string) {
+  let arr: string[] = [];
+  for (let i = 0; i < str.length; i++) {
+    arr.push(str[i]);
+  }
+  return arr.filter(x => x !== ' ');
+}
+
+export function getPhonemeClasses(language: ILanguage): IPhonemeClass[] {
+  return language.phonology.phonemeClasses.split('\n').map(token => {
+    const splitOnIndex = token.indexOf('=');
+    if (splitOnIndex !== -1) {
+      return {
+        className: token.slice(0, splitOnIndex).trim(),
+        tokens: token.slice(splitOnIndex + 1).split(' ').filter(x => x.trim() !== '')
+      }
+    }
+    return undefined;
+  }).filter(x => !!x) as IPhonemeClass[];
+}
+
+export function getPhonemeClassDictionary(language: ILanguage) {
+  const classes = getPhonemeClasses(language);
+  const dictionary: {[className: string]: string[]} = {};
+  classes.forEach(c => {
+    dictionary[c.className] = c.tokens;
+  });
+
+  return dictionary;
+}
+
+export function getWordPatterns(language: ILanguage): IWordPattern[] {
+  const tokens = language.phonology.wordPatterns.split('\n');
+  let wordPatterns: IWordPattern[] = [];
+  
+  let patternName = '';
+  for (let i = 0; i < tokens.length; i++) {
+    const token = tokens[i];
+    if (token.trim() === '') { continue; }
+    const definitionIndex = token.indexOf('=');
+    if (definitionIndex === -1) {
+      wordPatterns.push({
+        patternName,
+        pattern: getStringArray(token.trim())
+      });
+    } else {
+      patternName = token.slice(0, definitionIndex - 1).trim();
+    }
+  }
+
+  return wordPatterns;
+}
+
+export function getWordPatternDictionary(language: ILanguage) {
+  const wordPatterns = getWordPatterns(language);
+  const dictionary: {[className: string]: string[][]} = {};
+  wordPatterns.forEach(c => {
+    const index = c.patternName || 'word';
+    const existing = dictionary[index];
+    dictionary[index] = [...(existing || []), c.pattern];
+  });
+
+  return dictionary;
+}
+
+export function getSampleWords(language: ILanguage) {
+  let arr: IWord[] = [];
+  if (language.vowels.length === 0 || language.consonants.length === 0) { return arr; }
+
+  const rules = generateRules(language.phonology.phonotactics);
+  //console.log('rules', rules);
+  
+  const phonemeClasses = getPhonemeClassDictionary(language);
+  const wordPatterns = getWordPatternDictionary(language);
+  console.log('language', language);
+  console.log('phonemeClasses', phonemeClasses);
+  console.log('wordPatterns', wordPatterns);
+  for (let i = 0; i < 30; i++) {
+    arr.push(generateWord(language, rules, phonemeClasses));
+  }
+  return arr;
+}
+
+export function generateWordV2(language: ILanguage, phonemeClasses: {[id: string]: IPhonemeClass}, wordPatterns: {[id: string]: IWordPattern}) {
+  return '';
+}
+
+export function generateWord(language: ILanguage, rules: IPhonologicalRule[], phonemeClasses: any) {
   let length = 1 + Math.floor(Math.random() * 3);
   const splitSyllableShape = language.phonology.syllableShape.split('\n');
   let syllables: ISyllable[] = [];

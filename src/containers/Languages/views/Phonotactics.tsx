@@ -20,6 +20,7 @@ export function Phonotactics(props: {children?: any, language: ILanguage, show: 
 
   const compilePhonology = (): IPhonology => {
     return {
+      ...props.language.phonology,
       syllableShape: morphology,
       phonotactics,
       phonemeClasses,

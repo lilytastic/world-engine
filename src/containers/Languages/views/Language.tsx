@@ -1,29 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import { getSampleWords, transcribeWord } from '../helpers/generators.helpers';
+import { getSampleWords } from '../helpers/generators.helpers';
 
 import { Lexicon } from './Lexicon';
 import { Phonotactics } from './Phonotactics';
-import { SoundSelection } from './Sounds';
-import { IConsonant, IVowel, ILanguage, MANNERS, PLACES, VOWELCLOSENESS, VOWELFRONTNESS, IWord, IPhonology } from '../models/sounds.model';
+import { SoundSelection } from './SoundSelection';
+import { IConsonant, IVowel, ILanguage, IWord, IPhonology } from '../models/sounds.model';
 import { useDispatch, useSelector } from 'react-redux';
 import { getLanguages, updateLanguage } from '../reducers/language.reducer';
 import { useParams } from 'react-router';
+import { PhonemeClasses } from './PhonemeClasses';
+import { WordPatterns } from './WordPatterns';
+import { SampleWords } from './SampleWords';
 
 export function Language(props: {children?: any}) {
 
-  const languages = useSelector(getLanguages);
-  const params = useParams();
   const dispatch = useDispatch();
-
-  const [isSelectingSounds, setIsSelectingSounds] = useState(false);
-  const [isEditingPhonotactics, setIsEditingPhonotactics] = useState(false);
-  const [isEditingLexicon, setIsEditingLexicon] = useState(false);
-  const [isEditingTitle, setIsEditingTitle] = useState(false);
-
-  const [sampleWords, setSampleWords] = useState([] as IWord[]);
+  const languages = useSelector(getLanguages);
   const [language, setLanguage] = useState(undefined as ILanguage | undefined);
-
-  const [title, setTitle] = useState('');
+  const params = useParams();
 
   useEffect(() => {
     if (params.id) {
@@ -31,11 +25,15 @@ export function Language(props: {children?: any}) {
     }
   }, [languages, params.id]);
 
-  useEffect(() => {
-    if (!!language) {
-      setSampleWords(getSampleWords(language));
-    }
-  }, []);
+  const [isSelectingSounds, setIsSelectingSounds] = useState(false);
+  const [isEditingPhonotactics, setIsEditingPhonotactics] = useState(false);
+  const [isEditingLexicon, setIsEditingLexicon] = useState(false);
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+
+  const [sampleWords, setSampleWords] = useState([] as IWord[]);
+
+  const [title, setTitle] = useState('');
+
 
   useEffect(() => {
     if (!!language) {
@@ -58,23 +56,8 @@ export function Language(props: {children?: any}) {
   }
 
 
-  const frontnessUsed = VOWELFRONTNESS.filter(x => language.vowels.find(y => y.frontness === x.key));
-  const opennessUsed = VOWELCLOSENESS.filter(x => language.vowels.find(y => y.openness === x.key));
-
-  const placesUsed = PLACES.filter(x => language.consonants.find(y => y.place === x.key));
-  const mannersUsed = MANNERS.filter(x => language.consonants.find(y => y.manner === x.key));
-
-
   return (
     <div>
-      <SoundSelection
-        language={language}
-        show={isSelectingSounds}
-        handleClose={(vowels, consonants) => {
-          selectSounds(vowels, consonants);
-          setIsSelectingSounds(false);
-        }}
-      ></SoundSelection>
       <Phonotactics
         language={language}
         show={isEditingPhonotactics}
@@ -116,27 +99,16 @@ export function Language(props: {children?: any}) {
           </div>
         </>
       )}
-      {/*
-      <div className="form-check position-relative">
-        <input className="form-check-input" checked={language.isProtoLanguage ? true : false} onChange={ev => setLanguage({...language, isProtoLanguage: ev.currentTarget.checked})} type="checkbox" id="flexCheckDefault" />
-        <label className="form-check-label" htmlFor="flexCheckDefault">
-          Is proto-language?
-        </label>
-      </div>
-      */}
-      {/*
-      <Dropdown className='mt-3' onSelect={ev => !!ev ? setLanguage({...language, type: ev}) : null}>
-        <Dropdown.Toggle variant="dark" id="dropdown-basic">
-          {language.type}
-        </Dropdown.Toggle>
+      
+      <SampleWords></SampleWords>
+      <PhonemeClasses></PhonemeClasses>
+      <WordPatterns></WordPatterns>
 
-        <Dropdown.Menu>
-          <Dropdown.Item eventKey="Language">Language</Dropdown.Item>
-          <Dropdown.Item eventKey="Family">Family</Dropdown.Item>
-          <Dropdown.Item eventKey="Proto-language">Proto-language</Dropdown.Item>
-        </Dropdown.Menu>
-      </Dropdown>
-      */}
+    </div>
+  );
+}
+
+/*
 
       <h2>Lexicon <button className='btn btn-link' onClick={() => setIsEditingLexicon(true)}>Edit</button></h2>
       <div>
@@ -162,56 +134,4 @@ export function Language(props: {children?: any}) {
         ))}
       </ul>
 
-      <h2>Sounds <button className='btn btn-link' onClick={() => setIsSelectingSounds(true)}>Edit</button></h2>
-      <h4>Vowels</h4>
-      {language.vowels.length === 0 && (<i>None yet!</i>)}
-      <table>
-        <thead>
-          <tr>
-            <th></th>
-            {frontnessUsed.map(place => (<th key={place.key}>{place.name}</th>))}
-          </tr>
-        </thead>
-        <tbody>
-          {opennessUsed.map((openness) => (
-            <tr key={openness.key}>
-              <td>{openness.name}</td>
-              {frontnessUsed.map(frontness => (
-                <td key={frontness.key}>
-                  {language.vowels.filter(sound => sound.frontness === frontness.key && sound.openness === openness.key).map(sound => (
-                    sound.phoneme
-                  )).join(' ')}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      <h4>Pulmonic Consonants</h4>
-      {language.consonants.length === 0 && (<i>None yet!</i>)}
-      <table>
-        <thead>
-          <tr>
-            <th></th>
-            {placesUsed.map(place => (<th key={place.key}>{place.name}</th>))}
-          </tr>
-        </thead>
-        <tbody>
-          {mannersUsed.map((manner) => (
-            <tr key={manner.key}>
-              <td>{manner.name}</td>
-              {placesUsed.map(place => (
-                <td key={place.key}>
-                  {language.consonants.filter(sound => sound.manner === manner.key && sound.place === place.key).map(sound => (
-                    sound.phoneme
-                  )).join(' ')}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
+*/
