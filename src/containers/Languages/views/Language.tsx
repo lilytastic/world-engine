@@ -11,6 +11,7 @@ import { useParams } from 'react-router';
 import { PhonemeClasses } from './PhonemeClasses';
 import { WordPatterns } from './WordPatterns';
 import { SampleWords } from './SampleWords';
+import { Button, Dropdown } from 'react-bootstrap';
 
 export function Language(props: {children?: any}) {
 
@@ -57,7 +58,7 @@ export function Language(props: {children?: any}) {
 
 
   return (
-    <div>
+    <div className='position-relative'>
       <Phonotactics
         language={language}
         show={isEditingPhonotactics}
@@ -75,10 +76,30 @@ export function Language(props: {children?: any}) {
         }}
       ></Lexicon>
 
+      <Dropdown className='position-absolute top-0 end-0 mt-4'>
+        <Dropdown.Toggle variant="secondary" id="dropdown-basic">
+          <i className="fas fa-gear"></i>
+        </Dropdown.Toggle>
+
+        <Dropdown.Menu>
+          <Dropdown.Item>Edit</Dropdown.Item>
+          <Dropdown.Divider />
+          <Dropdown.Item as={Button}
+                         onClick={ev => {}}
+                         className='btn btn-link text-danger'>
+            Delete
+          </Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown>
+      {/*
+      <button className='position-absolute btn btn-link ms-1 top-0 end-0'
+              onClick={() => setIsEditingTitle(true)}>
+        <i className="fa-solid fa-pen-to-square"></i>
+      </button>
       {isEditingTitle ? (
         <input
           autoFocus
-          className='mb-3'
+          className='my-1'
           value={title}
           onChange={ev => setTitle(ev.currentTarget.value)}
           onBlur={ev => {
@@ -87,18 +108,18 @@ export function Language(props: {children?: any}) {
           }} />
       ) : (
         <>
-          <h1 className='mb-0 d-flex align-items-center'>
+          <h1 className='mb-0 display-1 d-flex align-items-center'>
             {language.type === 'Proto-language' ? 'Proto-' : ''}{language.name}{language.type === 'Family' ? ' Family' : ''}
-            <button className='btn btn-link ms-1'
-                    onClick={() => setIsEditingTitle(true)}>
-                Edit
-            </button>
           </h1>
-          <div className='mb-0 mt-0 text-secondary'>
-            {!language.ancestor ? 'No ancestors' : `Dialect of ${language.ancestor.name}`}
-          </div>
         </>
       )}
+      */}
+      <h1 className='mb-0 display-3 d-flex align-items-center'>
+        {language.type === 'Proto-language' ? 'Proto-' : ''}{language.name}{language.type === 'Family' ? ' Family' : ''}
+      </h1>
+      <h2 className='mb-4 mt-0 text-secondary small'>
+        {!language.ancestor ? 'No ancestors' : `Dialect of ${language.ancestor.name}`}
+      </h2>
       
       <SampleWords></SampleWords>
       <PhonemeClasses></PhonemeClasses>

@@ -36,7 +36,7 @@ export const languageSlice = createSlice({
   initialState,
   reducers: {
     addNewLanguage: (state) => {
-      const newLanguage = { ...DEFAULT_LANGUAGE, id: Math.max(...state.languages.ids.map(x => +x)) + 1 };
+      const newLanguage = { ...DEFAULT_LANGUAGE, id: Math.max(0, Math.max(...state.languages.ids.map(x => +x)) + 1) };
       const languages = languageAdapter.upsertOne({...state.languages}, newLanguage);
       localStorage.setItem('languages', JSON.stringify(languages));
       return {...state, languages: {...languages}}

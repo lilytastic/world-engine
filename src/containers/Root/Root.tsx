@@ -21,7 +21,7 @@ export function Root(props: {children?: any}) {
 
   return (<div>
     {/*<Nav routes={ROUTES.filter(x => x.path !== '/')} />*/}
-    <Navbar sticky="top" expand="lg">
+    <Navbar className='bg-body' sticky="top" expand="lg">
       <Container>
         <Navbar.Brand href="/">
           <i className='fas fa-globe me-2'></i>
@@ -36,7 +36,7 @@ export function Root(props: {children?: any}) {
               </Nav.Link>
             </Nav.Item>
           ))}
-          <button className={`ms-3 rounded-pill btn btn-${theme}`} onClick={ev => setTheme(theme === 'light' ? 'dark' : 'light')}>
+          <button className={`ms-3 px-2 rounded-pill align-self-center btn btn-${theme}`} onClick={ev => setTheme(theme === 'light' ? 'dark' : 'light')}>
             <i className={`fas fa-fw fa-${theme === 'light' ? 'sun' : 'moon'}`}></i>
           </button>
         </Nav>

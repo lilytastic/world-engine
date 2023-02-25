@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import './Languages.scss';
 
@@ -19,8 +19,16 @@ export function Languages(props: {children?: any}) {
   const location = useLocation();
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    console.log(languages);
+  }, [languages]);
+
+  const addNew = () => {
+    dispatch(addNewLanguage());
+  }
+
   return (
-    <div className="pt-4">
+    <div className="view pt-4">
       <Tab.Container id="left-tabs-example" defaultActiveKey="first">
         <Row>
           <Col sm={3}>
@@ -30,10 +38,9 @@ export function Languages(props: {children?: any}) {
                   <Nav.Link as={NavLink} active={location.pathname === `/languages/${id}`} to={`/languages/${id}`}>{languages.entities[id]?.name}</Nav.Link>
                 </Nav.Item>
               ))}
-              <hr className='invisible' />
-              <Nav.Item as={Button} className="text-start rounded-pill" variant='outline-success' onClick={() => dispatch(addNewLanguage())}>
-                <i className='fas fa-plus'></i> &nbsp;Add New
-              </Nav.Item>
+              <Button className="rounded-pill mt-3 px-2" variant='success' onClick={() => addNew()}>
+                <i className='fas fa-fw fa-plus'></i>
+              </Button>
             </Nav>
           </Col>
           <Col sm={9}>

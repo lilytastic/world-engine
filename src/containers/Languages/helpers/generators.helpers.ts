@@ -70,7 +70,7 @@ export function getStringArray(str: string) {
 }
 
 export function getPhonemeClasses(language: ILanguage): IPhonemeClass[] {
-  return language.phonology.phonemeClasses.split('\n').map(token => {
+  return language.phonology.phonemeClasses?.split('\n').map(token => {
     const splitOnIndex = token.indexOf('=');
     if (splitOnIndex !== -1) {
       return {
@@ -155,7 +155,7 @@ export function getSampleWordsV2(language: ILanguage) {
 export function getTokensFromWordPattern(phonemeClasses: {[id: string]: IPhonemeClass}, wordPattern: IWordPattern) {
   // Expand every uppercase letter
   const { pattern } = wordPattern;
-  let tokens = pattern;
+  let tokens = pattern; // Note -- these are syllables, whatever the tokens are initially.
   for (let i = 0; i < tokens.length; i++) {
     let token = tokens[i];
     if (token === token.toUpperCase() && phonemeClasses[token]) {
@@ -169,7 +169,6 @@ export function getTokensFromWordPattern(phonemeClasses: {[id: string]: IPhoneme
 
 export function generateWordV2(phonemeClasses: {[id: string]: IPhonemeClass}, wordPatterns: {[id: string]: IWordPattern[]}) {
   const wordPattern = getRandomArrayItem(wordPatterns['word']);
-  // console.log('generating from pattern', wordPattern.pattern);
   const tokens = getTokensFromWordPattern(phonemeClasses, wordPattern);
   return tokens.join('');
 }
