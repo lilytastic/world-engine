@@ -15,6 +15,27 @@ import { CONSONANTS } from './data/consonants';
 
 // console.log('loaded', JSON.parse(localStorage.getItem('_language') || '{}'));
 
+const ARTICULATIONS: {phoneme: string, name: string}[] = [
+  {name: 'Aspirated', phoneme: 'ʰ'},
+  {name: 'Labialized', phoneme: 'ʷ'},
+  {name: 'Palatalized', phoneme: 'ʲ'},
+  {name: 'Velarized', phoneme: 'ˠ'},
+  {name: 'Pharyngealized', phoneme: 'ˤ'},
+  {name: 'Lateral release', phoneme: 'ˡ'},
+  {name: 'Nasal release', phoneme: 'ⁿ'},
+  {name: 'Advanced', phoneme: '˖'},
+  {name: 'Retracted', phoneme: '˗'},
+];
+const TONES: {phoneme: string, name: string}[] = [
+  {name: 'Top', phoneme: '꜒'},
+  {name: 'High', phoneme: '꜓'},
+  {name: 'Mid', phoneme: '꜔'},
+  {name: 'Low', phoneme: '꜕'},
+  {name: 'Bottom', phoneme: '꜖'},
+  {name: 'Downstep', phoneme: 'ꜜ'},
+  {name: 'Upstep', phoneme: 'ꜛ'},
+];
+
 export function Languages(props: {children?: any}) {
 
   const languages = useSelector(getLanguages);
@@ -36,7 +57,7 @@ export function Languages(props: {children?: any}) {
   };
   
   const addNew = () => {
-    dispatch(addNewLanguage());
+    dispatch(addNewLanguage({}));
   }
 
   const typeCharacter = (ev: MouseEvent, str: string) => {
@@ -81,9 +102,9 @@ export function Languages(props: {children?: any}) {
             <Outlet />
           </Col>
           <Col sm={3} className="position-relative">
-            <div className="position-absolute" style={{top: `${scrollPosition}px`}}>
+            <div className="position-absolute" style={{transition: 'transform .35s ease-out', transform: `translateY(${scrollPosition}px)`}}>
               <label className='text-muted'>Vowels</label>
-              <div className='mt-1 mb-3'>
+              <div className='mt-1'>
                 {VOWELS.map(vowel => 
                   <Button key={vowel.phoneme}
                           className='d-inline p-0 me-1 text-decoration-none lh-1'
@@ -93,8 +114,9 @@ export function Languages(props: {children?: any}) {
                   </Button>
                 )}
               </div>
+              <hr />
               <label className='text-muted'>Consonants</label>
-              <div className='mt-1 mb-3'>
+              <div className='mt-1'>
                 {CONSONANTS.map(consonant =>
                   <Button key={consonant.phoneme}
                           className='d-inline p-0 me-1 text-decoration-none lh-1'
@@ -103,6 +125,30 @@ export function Languages(props: {children?: any}) {
                     {consonant.phoneme}
                   </Button>
                 )}
+              </div>
+              <hr />
+              <label className='text-muted'>Articulation</label>
+              <div className='mt-1 lh-1 align-middle'>
+                {ARTICULATIONS.map((sound, i) => <div className='d-inline' key={sound.phoneme}>
+                  <Button className='d-inline p-0 me-1 text-decoration-none'
+                          onMouseDown={ev => typeCharacter(ev, sound.phoneme)}
+                          variant='link'>
+                    {sound.name}
+                  </Button>
+                  {i < ARTICULATIONS.length - 1 && <>∙&nbsp;</>}
+                </div>)}
+              </div>
+              <hr />
+              <label className='text-muted'>Tones</label>
+              <div className='mt-1 lh-1 align-middle'>
+                {TONES.map((sound, i) => <div className='d-inline' key={sound.phoneme}>
+                  <Button className='d-inline p-0 me-1 text-decoration-none'
+                          onMouseDown={ev => typeCharacter(ev, sound.phoneme)}
+                          variant='link'>
+                    {sound.name}
+                  </Button>
+                  {i < TONES.length - 1 && <>∙&nbsp;</>}
+                </div>)}
               </div>
             </div>
           </Col>

@@ -3,16 +3,6 @@ import type { RootState } from '../../App/store'
 import { createSelector } from 'reselect'
 import { DEFAULT_LANGUAGE, ILanguage } from '../models/sounds.model'
 
-let storedLanguages = null;
-try {
-  const _x = localStorage.getItem('languages');
-  if (_x) {
-    storedLanguages = JSON.parse(_x);
-  }
-} catch {
-  
-}
-
 const languageAdapter = createEntityAdapter<ILanguage>({
   // Assume IDs are stored in a field other than `book.id`
   selectId: (book) => book.id,
@@ -25,6 +15,17 @@ interface LanguageState {
   languages: EntityState<ILanguage>;
 }
 
+let storedLanguages = null;
+try {
+  const _x = localStorage.getItem('languages');
+  if (_x) {
+    storedLanguages = JSON.parse(_x) as EntityState<ILanguage>;
+    // const langs = storedLanguages;
+    // storedLanguages = languageAdapter.removeMany(langs, langs.ids.filter(id => langs.entities[id]?.name === ''));
+  }
+} catch {
+  
+}
 // Define the initial state using that type
 const initialState: LanguageState = {
   languages: storedLanguages || languageAdapter.getInitialState()
@@ -35,8 +36,8 @@ export const languageSlice = createSlice({
   // `createSlice` will infer the state type from the `initialState` argument
   initialState,
   reducers: {
-    addNewLanguage: (state) => {
-      const newLanguage = { ...DEFAULT_LANGUAGE, id: Math.max(0, Math.max(...state.languages.ids.map(x => +x)) + 1) };
+    addNewLanguage: (state, action) => {
+      const newLanguage = { ...DEFAULT_LANGUAGE, ...(action.payload || {}), id: Math.max(0, Math.max(...state.languages.ids.map(x => +x)) + 1) };
       const languages = languageAdapter.upsertOne({...state.languages}, newLanguage);
       localStorage.setItem('languages', JSON.stringify(languages));
       return {...state, languages: {...languages}}
