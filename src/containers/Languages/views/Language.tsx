@@ -77,12 +77,12 @@ export function Language(props: {children?: any}) {
         className="my-4"
       >
         <Tab eventKey="phonology" title="Phonology">
-          <Form.Group className='form-group mb-4'>
+          <Form.Group className='mb-4'>
             <PhonemeClasses></PhonemeClasses>
             <hr />
             <WordPatterns></WordPatterns>
           </Form.Group>
-          <Form.Group className='form-group'>
+          <Form.Group className=''>
             <ForbiddenCombinations></ForbiddenCombinations>
           </Form.Group>
         </Tab>

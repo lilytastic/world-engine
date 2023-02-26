@@ -50,12 +50,12 @@ export function Root(props: {children?: any}) {
 
             <div className='d-flex ms-2 align-items-center justify-content-end'>
               <div className="form-check form-switch mt-1">
-                <input className="form-check-input"
+                <input className="form-check-input bg-warning border-0"
                       type="checkbox"
                       role="switch"
                       id="flexSwitchCheckChecked"
-                      checked={theme === 'dark'}
-                      onChange={ev => setTheme(ev.currentTarget.checked ? 'dark' : 'light')}
+                      checked={theme === 'light'}
+                      onChange={ev => setTheme(!ev.currentTarget.checked ? 'dark' : 'light')}
                 />
                 <i className={`fas fa-fw me-1 fa-sm fa-${theme === 'dark' ? 'moon' : 'sun'}`}></i>
               </div>
