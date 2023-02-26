@@ -8,9 +8,10 @@ import { useParams } from 'react-router';
 import { PhonemeClasses } from './PhonemeClasses';
 import { WordPatterns } from './WordPatterns';
 import { SampleWords } from './SampleWords';
-import { Form, Tab, Tabs } from 'react-bootstrap';
+import { Breadcrumb, Form, Tab, Tabs } from 'react-bootstrap';
 import { ForbiddenCombinations } from './ForbiddenCombinations';
 import { LanguageOptions } from './LanguageOptions';
+import { NavLink } from 'react-router-dom';
 
 export function Language(props: {children?: any}) {
 
@@ -44,15 +45,16 @@ export function Language(props: {children?: any}) {
   }
 
   return (
-    <div className='position-relative'>
-      {/*
+    <div className='position-relative pb-5 mb-5'>
       <Breadcrumb>
         <Breadcrumb.Item linkAs={NavLink} linkProps={{to: '/languages'}}>Languages</Breadcrumb.Item>
         <Breadcrumb.Item active>{language.name || 'Untitled'}</Breadcrumb.Item>
       </Breadcrumb>
-      */}
-      <h1 className='mb-4 d-flex align-items-center lh-1 mb-1'>
+
+      <h1 className='mb-4 d-flex align-items-center position-relative lh-1 mb-1'>
         {language.type === 'Proto-language' ? 'Proto-' : ''}{language.name || 'Untitled'}{language.type === 'Family' ? ' Family' : ''}
+
+        <LanguageOptions language={language} className='position-absolute top-0 end-0'></LanguageOptions>
       </h1>
       {/*
       <h2 className='mb-4 mt-0 h6 text-muted'>
@@ -65,8 +67,6 @@ export function Language(props: {children?: any}) {
         </ul>
       </Card>
       */}
-
-      <LanguageOptions language={language} className='position-absolute top-0 end-0'></LanguageOptions>
       
       <SampleWords></SampleWords>
 
@@ -77,12 +77,12 @@ export function Language(props: {children?: any}) {
         className="my-4"
       >
         <Tab eventKey="phonology" title="Phonology">
-          <Form.Group className='form-group border mb-4'>
+          <Form.Group className='form-group mb-4'>
             <PhonemeClasses></PhonemeClasses>
             <hr />
             <WordPatterns></WordPatterns>
           </Form.Group>
-          <Form.Group className='form-group border'>
+          <Form.Group className='form-group'>
             <ForbiddenCombinations></ForbiddenCombinations>
           </Form.Group>
         </Tab>

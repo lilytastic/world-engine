@@ -1,5 +1,5 @@
 import React, { MouseEvent, useState } from 'react';
-import { Button, ButtonGroup, Form } from "react-bootstrap";
+import { Button, ButtonGroup, Dropdown, Form } from "react-bootstrap";
 import { CONSONANTS } from '../data/consonants';
 import { VOWELS } from '../data/vowels';
 import { MANNERS, PLACES } from '../models/sounds.model';
@@ -58,15 +58,21 @@ export const PhoneticKeyboard = (props: {children?: any}) => {
     <hr />
     <label className='text-muted d-flex justify-content-between align-items-center'>
       Consonants
-      <ButtonGroup size='sm'>
-        <Button variant='link' onClick={ev => setConsonantViewType('place')}>place</Button>
-        <Button variant='link' onClick={ev => setConsonantViewType('manner')}>manner</Button>
-      </ButtonGroup>
+      <Dropdown>
+        <Dropdown.Toggle size='sm' variant='link'>
+          <i className='fas fa-sort'></i>
+        </Dropdown.Toggle>
+        <Dropdown.Menu>
+          <Dropdown.Item active={consonantViewType === 'place'} variant='link' onClick={ev => setConsonantViewType('place')}>Place</Dropdown.Item>
+          <Dropdown.Item active={consonantViewType === 'manner'} variant='link' onClick={ev => setConsonantViewType('manner')}>Manner</Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown>
     </label>
     <div className='mt-1'>
       {consonantViewType === 'place' ? (
         PLACES.map(place => (
-          <div key={place.key}>
+          <div key={place.key} className='d-flex align-items-center'>
+            <label className='small me-2 overflow-hidden' style={{width: '25%', whiteSpace: 'nowrap', textOverflow: 'ellipsis'}}>{place.name}</label>
             {CONSONANTS.filter(x => x.place === place.key).map(consonant =>
               <Button key={consonant.phoneme}
                       className='d-inline p-0 me-1 text-decoration-none lh-1'
@@ -78,8 +84,9 @@ export const PhoneticKeyboard = (props: {children?: any}) => {
           </div>
         ))
       ) : (
-        MANNERS.map(manner => (
-          <div key={manner.key}>
+        MANNERS.filter(manner => CONSONANTS.filter(x => x.manner === manner.key).length > 0).map(manner => (
+          <div key={manner.key} className='d-flex align-items-center'>
+            <label className='small me-2 overflow-hidden' style={{width: '25%', whiteSpace: 'nowrap', textOverflow: 'ellipsis'}}>{manner.name}</label>
             {CONSONANTS.filter(x => x.manner === manner.key).map(consonant =>
               <Button key={consonant.phoneme}
                       className='d-inline p-0 me-1 text-decoration-none lh-1'

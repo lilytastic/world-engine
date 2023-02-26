@@ -1,6 +1,7 @@
 import React from 'react';
 import { Language } from '../Languages/views/Language';
 import { Languages } from '../Languages/Languages';
+import { LanguagePicker } from '../Languages/views/LanguagePicker';
 
 export const ROUTES = [
   {
@@ -29,10 +30,13 @@ export const ROUTES = [
     element: <Languages />,
     routes: [
       { 
+        path: '',
+        title: 'Languages',
+        element: <LanguagePicker />
+      },
+      { 
         path: '/languages/:id',
         title: 'Language',
-        icon: 'book',
-        showInNav: true,
         element: <Language />
       }
     ]

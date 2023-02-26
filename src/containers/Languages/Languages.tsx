@@ -11,15 +11,14 @@ import { Outlet, useLocation } from 'react-router';
 import { NavLink } from 'react-router-dom';
 import { ListGroup } from 'react-bootstrap';
 import { PhoneticKeyboard } from './views/PhoneticKeyboard';
+import { LanguagePicker } from './views/LanguagePicker';
 
 // console.log('loaded', JSON.parse(localStorage.getItem('_language') || '{}'));
 
 
 export function Languages(props: {children?: any}) {
 
-  const languages = useSelector(getLanguages);
   const location = useLocation();
-  const dispatch = useDispatch();
   const [scrollPosition, setScrollPosition] = useState(0);
 
   useEffect(() => {
@@ -34,40 +33,15 @@ export function Languages(props: {children?: any}) {
       const position = window.pageYOffset;
       setScrollPosition(position);
   };
-  
-  const addNew = () => {
-    dispatch(addNewLanguage({}));
-  }
 
   return (
     <div className="view py-4">
       <Tab.Container id="left-tabs-example" defaultActiveKey="first">
         <Row>
-          <Col sm={3} className='mb-4'>
-            <label className='d-flex justify-content-between align-items-baseline'>
-              <div className='text-muted'>
-                Languages
-              </div>
-              <Button className="rounded-pill px-0 py-0" variant='link' onClick={() => addNew()}>
-                <i className='fas fa-fw fa-file-circle-plus'></i>
-              </Button>
-            </label>
-            <ListGroup className="flex-column mt-2 rounded-3 border overflow-hidden">
-              {languages.ids.map(id => (
-                <ListGroup.Item key={id}
-                                as={NavLink}
-                                className="rounded-0 border-0"
-                                active={location.pathname === `/languages/${id}`}
-                                to={`/languages/${id}`}>
-                  {languages.entities[id]?.name || 'Untitled'}
-                </ListGroup.Item>
-              ))}
-            </ListGroup>
-          </Col>
-          <Col sm={6}>
+          <Col xs={12} lg={8}>
             <Outlet />
           </Col>
-          <Col sm={3} className="position-relative overflow-hidden">
+          <Col sm={6} md={4} className="position-relative overflow-hidden d-none d-md-block">
             <div style={{transition: 'transform .35s ease-out', transform: `translateY(${scrollPosition}px)`}}>
               <PhoneticKeyboard />
             </div>
