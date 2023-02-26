@@ -23,3 +23,14 @@ td:not(:first-of-type) {
     white-space: nowrap;
 }
 
+.card .nav-tabs {
+    margin-left: -1px;
+    margin-top: -1px;
+    margin-right: -1px;
+
+    .nav-link {
+        border-top-right-radius: 0;
+        border-top-left-radius: 0;
+    }
+}
+

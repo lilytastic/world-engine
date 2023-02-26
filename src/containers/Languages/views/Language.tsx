@@ -11,8 +11,10 @@ import { useParams } from 'react-router';
 import { PhonemeClasses } from './PhonemeClasses';
 import { WordPatterns } from './WordPatterns';
 import { SampleWords } from './SampleWords';
-import { Breadcrumb, Button, Dropdown, Form, FormGroup, FormLabel, ListGroup, Tab, Tabs } from 'react-bootstrap';
+import { Breadcrumb, Button, Card, Dropdown, Form, FormGroup, FormLabel, ListGroup, Tab, Tabs } from 'react-bootstrap';
 import { NavLink } from 'react-router-dom';
+import { VOWELS } from '../data/vowels';
+import { CONSONANTS } from '../data/consonants';
 
 export function Language(props: {children?: any}) {
 
@@ -79,9 +81,9 @@ export function Language(props: {children?: any}) {
       
       <Breadcrumb>
         <Breadcrumb.Item linkAs={NavLink} linkProps={{to: '/languages'}}>Languages</Breadcrumb.Item>
-        <Breadcrumb.Item active>{language.name}</Breadcrumb.Item>
+        <Breadcrumb.Item active>{language.name || 'Untitled'}</Breadcrumb.Item>
       </Breadcrumb>
-      <h1 className='mb-0 d-flex align-items-center lh-1 mb-1'>
+      <h1 className='mb-1 d-flex align-items-center lh-1 mb-1'>
         {language.type === 'Proto-language' ? 'Proto-' : ''}{language.name || 'Untitled'}{language.type === 'Family' ? ' Family' : ''}
       </h1>
       <h2 className='mb-4 mt-0 h6 text-muted'>
@@ -89,7 +91,7 @@ export function Language(props: {children?: any}) {
       </h2>
 
       <Dropdown className='position-absolute top-0 end-0'>
-        <Dropdown.Toggle variant="outline-secondary" id="dropdown-basic">
+        <Dropdown.Toggle size="sm" variant="dark" id="dropdown-basic">
           Options&nbsp;
         </Dropdown.Toggle>
 
@@ -103,34 +105,12 @@ export function Language(props: {children?: any}) {
           </Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
-      {/*
-      <button className='position-absolute btn btn-link ms-1 top-0 end-0'
-              onClick={() => setIsEditingTitle(true)}>
-        <i className="fa-solid fa-pen-to-square"></i>
-      </button>
-      {isEditingTitle ? (
-        <input
-          autoFocus
-          className='my-1'
-          value={title}
-          onChange={ev => setTitle(ev.currentTarget.value)}
-          onBlur={ev => {
-            dispatch(updateLanguage({...language, name: title}));
-            setIsEditingTitle(false);
-          }} />
-      ) : (
-        <>
-          <h1 className='mb-0 display-1 d-flex align-items-center'>
-            {language.type === 'Proto-language' ? 'Proto-' : ''}{language.name}{language.type === 'Family' ? ' Family' : ''}
-          </h1>
-        </>
-      )}
-      */}
       
       <SampleWords></SampleWords>
 
+
       <Tabs
-        defaultActiveKey="profile"
+        defaultActiveKey="phonology"
         id="uncontrolled-tab-example"
         className="my-4"
       >
@@ -151,14 +131,6 @@ export function Language(props: {children?: any}) {
               onChange={ev => dispatch(updateLanguage({...language, name: ev.currentTarget.value}))}
             />
           </Form.Group>
-          <hr />
-          <ListGroup>
-            <ListGroup.Item>Cras justo odio</ListGroup.Item>
-            <ListGroup.Item>Dapibus ac facilisis in</ListGroup.Item>
-            <ListGroup.Item>Morbi leo risus</ListGroup.Item>
-            <ListGroup.Item>Porta ac consectetur ac</ListGroup.Item>
-            <ListGroup.Item>Vestibulum at eros</ListGroup.Item>
-          </ListGroup>
         </Tab>
         <Tab eventKey="grammar" title="Grammar">
           

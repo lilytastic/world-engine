@@ -15,8 +15,26 @@ function getRandomSound(sounds: ISound[]) {
   return sounds[Math.floor(Math.random() * sounds.length)];
 }
 
-function getRandomArrayItem<T>(arr: T[]) {
-  return arr[Math.floor(Math.random() * arr.length)];
+export enum ProbabilityType {
+  FastDropoff,
+  MediumDropoff,
+  Equiprobable
+}
+
+function getRandomArrayItem<T>(arr: T[], probabilityType?: ProbabilityType) {
+  let range = arr.length;
+  let probability = Math.random() * 1.0;
+  switch (probabilityType) {
+    case ProbabilityType.FastDropoff:
+      range = arr.length * probability;
+      break;
+    case ProbabilityType.MediumDropoff:
+      range = arr.length * (probability * 1.5);
+      break;
+    default:
+      break;
+  }
+  return arr[Math.floor(Math.random() * range)];
 }
 
 export function transcribeWord(language: ILanguage, word: IWord) {
@@ -166,7 +184,7 @@ export function wordPatternToPhonemes(phonemeClasses: IPhonemeClassDictionary, w
   for (let i = 0; i < tokens.length; i++) {
     let token = tokens[i];
     if (token === token.toUpperCase() && phonemeClasses[token]) {
-      const item = getRandomArrayItem(phonemeClasses[token].tokens);
+      const item = getRandomArrayItem(phonemeClasses[token].tokens, ProbabilityType.FastDropoff);
       tokens = [...tokens.slice(0, i), ...getStringArray(mapper?.(item) ?? item), ...tokens.slice(i + 1)];
       i -= 1;
     }

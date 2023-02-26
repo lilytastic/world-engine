@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { MouseEvent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import './Languages.scss';
 
@@ -10,6 +10,8 @@ import { addNewLanguage, getLanguages } from './reducers/language.reducer';
 import { Outlet, useLocation } from 'react-router';
 import { NavLink } from 'react-router-dom';
 import { ListGroup } from 'react-bootstrap';
+import { VOWELS } from './data/vowels';
+import { CONSONANTS } from './data/consonants';
 
 // console.log('loaded', JSON.parse(localStorage.getItem('_language') || '{}'));
 
@@ -23,17 +25,29 @@ export function Languages(props: {children?: any}) {
     dispatch(addNewLanguage());
   }
 
+  const typeCharacter = (ev: MouseEvent, str: string) => {
+    const activeElement = document.activeElement as HTMLInputElement | HTMLTextAreaElement;
+    const {value, selectionStart, selectionEnd} = activeElement;
+    if (value) {
+      if (selectionStart) {
+        activeElement.value = value.slice(0, selectionStart) + str + activeElement.value.slice(selectionEnd || selectionStart);
+        activeElement.selectionStart = selectionStart + str.length;
+        activeElement.selectionEnd = activeElement.selectionStart;
+      }
+    }
+    ev.preventDefault();
+  }
+
   return (
     <div className="view py-4">
       <Tab.Container id="left-tabs-example" defaultActiveKey="first">
         <Row>
           <Col sm={3} className='mb-4'>
             <label className='d-flex justify-content-between align-items-baseline'>
-              <div className='text-muted small'>
-                <i className='fas fa-sm fa-book me-2'></i>
+              <div className='text-muted'>
                 Languages
               </div>
-              <Button className="rounded-pill px-0" variant='link' onClick={() => addNew()}>
+              <Button className="rounded-pill px-0 py-0" variant='link' onClick={() => addNew()}>
                 <i className='fas fa-fw fa-file-circle-plus'></i>
               </Button>
             </label>
@@ -44,13 +58,37 @@ export function Languages(props: {children?: any}) {
                                 className="rounded-0 border-0"
                                 active={location.pathname === `/languages/${id}`}
                                 to={`/languages/${id}`}>
-                  {languages.entities[id]?.name}
+                  {languages.entities[id]?.name || 'Untitled'}
                 </ListGroup.Item>
               ))}
             </ListGroup>
           </Col>
-          <Col sm={9}>
+          <Col sm={6}>
             <Outlet />
+          </Col>
+          <Col sm={3}>
+            <label className='text-muted'>Vowels</label>
+            <div className='mt-1 mb-3'>
+              {VOWELS.map(vowel => 
+                <Button key={vowel.phoneme}
+                        className='d-inline p-0 me-1 text-decoration-none lh-1'
+                        onMouseDown={ev => typeCharacter(ev, vowel.phoneme)}
+                        variant='link'>
+                  {vowel.phoneme}
+                </Button>
+              )}
+            </div>
+            <label className='text-muted'>Consonants</label>
+            <div className='mt-1 mb-3'>
+              {CONSONANTS.map(consonant =>
+                <Button key={consonant.phoneme}
+                        className='d-inline p-0 me-1 text-decoration-none lh-1'
+                        onMouseDown={ev => typeCharacter(ev, consonant.phoneme)}
+                        variant='link'>
+                  {consonant.phoneme}
+                </Button>
+              )}
+            </div>
           </Col>
         </Row>
       </Tab.Container>

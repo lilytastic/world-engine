@@ -21,7 +21,7 @@ export function Root(props: {children?: any}) {
 
   return (<div>
     {/*<Nav routes={ROUTES.filter(x => x.path !== '/')} />*/}
-    <Navbar className='bg-body' sticky="top" expand="lg">
+    <Navbar className='bg-body' expand="lg">
       <Container>
         <Navbar.Brand href="/">
           <i className='fas fa-globe me-2'></i>
