@@ -31,23 +31,21 @@ export function WordPatterns(props: {children?: any}) {
     dispatch(updateLanguage({...language, phonology: {...language?.phonology, wordPatterns}}));
   }
 
-  return (
-    <Form.Group className='my-3 form-group'>
-      <Form.Label htmlFor="wordPatterns">Word Patterns</Form.Label>
-      <Form.Control
-        as='textarea'
-        id='wordPatterns'
-        value={currentWordPatterns}
-        onChange={ev => setWordPatterns(ev.currentTarget.value)}
-        onBlur={ev => updateWordPatterns(ev.currentTarget.value)}
-      />
-      <Form.Text>
-        <ul className='list mt-2'>
-          <li>Word patterns are made of classes or actual phonemes, eg: zVC means the word will always start with z, then a random choice of V and C.</li>
-          <li>Use brackets for optional patterns: CV(zV) means the zV pattern occurs 20% of the time. Manually change the probability by writing it after the brackets: CV(zV)50%.</li>
-          <li>Patterns for particular parts-of-speech can be added after the default patterns, eg: part-of-speech = ...</li>
-        </ul>
-      </Form.Text>
-    </Form.Group>
-  );
+  return (<>
+    <Form.Label htmlFor="wordPatterns">Word Patterns</Form.Label>
+    <Form.Control
+      as='textarea'
+      id='wordPatterns'
+      value={currentWordPatterns}
+      onChange={ev => setWordPatterns(ev.currentTarget.value)}
+      onBlur={ev => updateWordPatterns(ev.currentTarget.value)}
+    />
+    <Form.Text>
+      <ul className='list mt-2'>
+        <li>Word patterns are made of classes or actual phonemes, eg: zVC means the word will always start with z, then a random choice of V and C.</li>
+        <li>Use brackets for optional patterns: CV(zV) means the zV pattern occurs 20% of the time. Manually change the probability by writing it after the brackets: CV(zV)50%.</li>
+        <li>Patterns for particular parts-of-speech can be added after the default patterns, eg: part-of-speech = ...</li>
+      </ul>
+    </Form.Text>
+  </>);
 }

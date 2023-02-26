@@ -1,4 +1,4 @@
-import React, { MouseEvent } from 'react';
+import React, { MouseEvent, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import './Languages.scss';
 
@@ -20,7 +20,21 @@ export function Languages(props: {children?: any}) {
   const languages = useSelector(getLanguages);
   const location = useLocation();
   const dispatch = useDispatch();
+  const [scrollPosition, setScrollPosition] = useState(0);
 
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
+  const handleScroll = () => {
+      const position = window.pageYOffset;
+      setScrollPosition(position);
+  };
+  
   const addNew = () => {
     dispatch(addNewLanguage());
   }
@@ -66,28 +80,30 @@ export function Languages(props: {children?: any}) {
           <Col sm={6}>
             <Outlet />
           </Col>
-          <Col sm={3}>
-            <label className='text-muted'>Vowels</label>
-            <div className='mt-1 mb-3'>
-              {VOWELS.map(vowel => 
-                <Button key={vowel.phoneme}
-                        className='d-inline p-0 me-1 text-decoration-none lh-1'
-                        onMouseDown={ev => typeCharacter(ev, vowel.phoneme)}
-                        variant='link'>
-                  {vowel.phoneme}
-                </Button>
-              )}
-            </div>
-            <label className='text-muted'>Consonants</label>
-            <div className='mt-1 mb-3'>
-              {CONSONANTS.map(consonant =>
-                <Button key={consonant.phoneme}
-                        className='d-inline p-0 me-1 text-decoration-none lh-1'
-                        onMouseDown={ev => typeCharacter(ev, consonant.phoneme)}
-                        variant='link'>
-                  {consonant.phoneme}
-                </Button>
-              )}
+          <Col sm={3} className="position-relative">
+            <div className="position-absolute" style={{top: `${scrollPosition}px`}}>
+              <label className='text-muted'>Vowels</label>
+              <div className='mt-1 mb-3'>
+                {VOWELS.map(vowel => 
+                  <Button key={vowel.phoneme}
+                          className='d-inline p-0 me-1 text-decoration-none lh-1'
+                          onMouseDown={ev => typeCharacter(ev, vowel.phoneme)}
+                          variant='link'>
+                    {vowel.phoneme}
+                  </Button>
+                )}
+              </div>
+              <label className='text-muted'>Consonants</label>
+              <div className='mt-1 mb-3'>
+                {CONSONANTS.map(consonant =>
+                  <Button key={consonant.phoneme}
+                          className='d-inline p-0 me-1 text-decoration-none lh-1'
+                          onMouseDown={ev => typeCharacter(ev, consonant.phoneme)}
+                          variant='link'>
+                    {consonant.phoneme}
+                  </Button>
+                )}
+              </div>
             </div>
           </Col>
         </Row>

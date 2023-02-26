@@ -32,24 +32,22 @@ export function PhonemeClasses(props: {children?: any}) {
     dispatch(updateLanguage({...language, phonology: {...language?.phonology, phonemeClasses}}));
   }
 
-  return (
-    <Form.Group className='my-3 form-group'>
-      <Form.Label htmlFor="phonemeClasses">Phoneme Classes</Form.Label>
-      <Form.Control
-        as='textarea'
-        id='phonemeClasses'
-        value={currentPhonemeClasses}
-        onChange={ev => setPhonemeClasses(ev.currentTarget.value)}
-        onBlur={ev => updatePhonemeClasses(ev.currentTarget.value)}
-      />
-      <Form.Text>
-        <ul className='list mt-2'>
-          <li>Assign phonemes to classes (uppercase letters), which act as placeholders for Word Patterns</li>
-          <li>The uppercase letters don't inherently mean anything, and any phoneme can be assigned to any class</li>
-          <li>Classes contain sequences of phonemes (A = ion lar mel) and sequences of other classes (S = CV VC)</li>
-          <li>If you need more than 26 classes, the following Greek letters can be used: ΓΔΘΛΞΠΣΦΨΩ</li>
-        </ul>
-      </Form.Text>
-    </Form.Group>
-  );
+  return (<>
+    <Form.Label htmlFor="phonemeClasses">Phoneme Classes</Form.Label>
+    <Form.Control
+      as='textarea'
+      id='phonemeClasses'
+      value={currentPhonemeClasses}
+      onChange={ev => setPhonemeClasses(ev.currentTarget.value)}
+      onBlur={ev => updatePhonemeClasses(ev.currentTarget.value)}
+    />
+    <Form.Text>
+      <ul className='list mt-2'>
+        <li>Assign phonemes to classes (uppercase letters), which act as placeholders for Word Patterns</li>
+        <li>The uppercase letters don't inherently mean anything, and any phoneme can be assigned to any class</li>
+        <li>Classes contain sequences of phonemes (A = ion lar mel) and sequences of other classes (S = CV VC)</li>
+        <li>If you need more than 26 classes, the following Greek letters can be used: ΓΔΘΛΞΠΣΦΨΩ</li>
+      </ul>
+    </Form.Text>
+  </>);
 }

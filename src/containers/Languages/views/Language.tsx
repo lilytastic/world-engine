@@ -15,6 +15,7 @@ import { Breadcrumb, Button, Card, Dropdown, Form, FormGroup, FormLabel, ListGro
 import { NavLink } from 'react-router-dom';
 import { VOWELS } from '../data/vowels';
 import { CONSONANTS } from '../data/consonants';
+import { ForbiddenCombinations } from './ForbiddenCombinations';
 
 export function Language(props: {children?: any}) {
 
@@ -62,23 +63,6 @@ export function Language(props: {children?: any}) {
 
   return (
     <div className='position-relative'>
-      <Phonotactics
-        language={language}
-        show={isEditingPhonotactics}
-        handleClose={(phonotactics) => {
-          selectPhonotactics(phonotactics);
-          setIsEditingPhonotactics(false);
-        }}
-      ></Phonotactics>
-      <Lexicon
-        language={language}
-        show={isEditingLexicon}
-        handleClose={(language) => {
-          dispatch(updateLanguage(language));
-          setIsEditingLexicon(false);
-        }}
-      ></Lexicon>
-      
       <Breadcrumb>
         <Breadcrumb.Item linkAs={NavLink} linkProps={{to: '/languages'}}>Languages</Breadcrumb.Item>
         <Breadcrumb.Item active>{language.name || 'Untitled'}</Breadcrumb.Item>
@@ -115,8 +99,14 @@ export function Language(props: {children?: any}) {
         className="my-4"
       >
         <Tab eventKey="phonology" title="Phonology">
-          <PhonemeClasses></PhonemeClasses>
-          <WordPatterns></WordPatterns>
+          <Form.Group className='form-group border mb-4'>
+            <PhonemeClasses></PhonemeClasses>
+            <hr />
+            <WordPatterns></WordPatterns>
+          </Form.Group>
+          <Form.Group className='form-group border'>
+            <ForbiddenCombinations></ForbiddenCombinations>
+          </Form.Group>
         </Tab>
         <Tab eventKey="spelling" title="Spelling">
           

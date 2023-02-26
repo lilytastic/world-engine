@@ -31,7 +31,7 @@ export function SampleWords(props: {children?: any}) {
   }
 
   return (
-    <div>
+    <div style={{minHeight: '9em'}}>
       <h3>
         Samples
         <button className='btn btn-link' onClick={() => setSampleWords(getSampleWordsV2(language))}><i className='fas fa-rotate-right'></i></button>
