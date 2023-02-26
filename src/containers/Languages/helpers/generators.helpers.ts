@@ -1,41 +1,14 @@
-import { getAffectedSounds, getTokens } from "./phonology.helpers";
-import { ILanguage, ISound, ISoundRules, ISyllable, IWord, SoundPositions, TypedSound, IPhonologicalRule, IPhonologicalToken, IPhonotactic } from "../models/sounds.model";
+import { generateRules } from "./phonology.helpers";
+import { ILanguage, ISyllable, IWord, TypedSound, IPhonologicalRule, IPhonologicalToken, IPhonemeClassDictionary, IPhonemeClass } from "../models/sounds.model";
 import { VOWELS } from "../data/vowels";
 import { CONSONANTS } from "../data/consonants";
+import { getAffectedSounds, getSoundByPhoneme } from "./sounds.helpers";
+import { getWordPatternDictionary, IWordPatternDictionary, wordPatternToPhonemes } from "./word-patterns.helpers";
+import { getRandomArrayItem } from "./logic.helpers";
 
 // TODO: Try to implement some of https://github.com/conlang-software-dev/Logopoeist
 // TODO: Also this https://www.vulgarlang.com/sound-changes
 
-export function getSoundByPhoneme(phoneme: string): TypedSound | null {
-  let sounds: TypedSound[] = [...VOWELS, ...CONSONANTS];
-  return sounds.find(x => x.phoneme === phoneme) || null;
-}
-
-function getRandomSound(sounds: ISound[]) {
-  return sounds[Math.floor(Math.random() * sounds.length)];
-}
-
-export enum ProbabilityType {
-  FastDropoff,
-  MediumDropoff,
-  Equiprobable
-}
-
-function getRandomArrayItem<T>(arr: T[], probabilityType?: ProbabilityType) {
-  let range = arr.length;
-  let probability = Math.random() * 1.0;
-  switch (probabilityType) {
-    case ProbabilityType.FastDropoff:
-      range = arr.length * probability;
-      break;
-    case ProbabilityType.MediumDropoff:
-      range = arr.length * (probability * 1.5);
-      break;
-    default:
-      break;
-  }
-  return arr[Math.floor(Math.random() * range)];
-}
 
 export function transcribeWord(language: ILanguage, word: IWord) {
   return word.syllables.map(syllable => 
@@ -46,44 +19,8 @@ export function transcribeWord(language: ILanguage, word: IWord) {
     )
   ).flat().join('');
 }
-
-export function getDefaultPositions(language: ILanguage, phoneme: string): SoundPositions[] {
-  if (!!VOWELS.find(x => x.phoneme === phoneme)) {
-    return [SoundPositions.Close, SoundPositions.Nucleus, SoundPositions.Start];
-  }
-  return [SoundPositions.Close, SoundPositions.Coda, SoundPositions.Onset, SoundPositions.Start];
-}
-
-export function generateDefaultRule(language: ILanguage, sound: ISound): ISoundRules {
-  const defaultPositions = getDefaultPositions(language, sound.phoneme);
-  return {positionsAllowed: defaultPositions, canCluster: false};
-}
-
-
-export const generateRules = (phonotactics: IPhonotactic[]): IPhonologicalRule[] => {
-  return phonotactics.map(tactic => {
-    let type = tactic.description;
-    let script = tactic.script;
-    const tokens = getTokens(script);
-    return {type, script, tokens};
-  });
-}
-
 export function checkForToken(tokens: IPhonologicalToken[], key: string) {
   return tokens.find(x => !!x.items.find(x => x.toLowerCase() === key));
-}
-
-export type IPACollection = TypedSound[];
-export type IPhonemeClassDictionary = {[className: string]: IPhonemeClass};
-export type IWordPatternDictionary = {[patternName: string]: IWordPattern[]};
-
-export interface IPhonemeClass {
-  className: string;
-  tokens: string[];
-}
-export interface IWordPattern {
-  patternName: string;
-  pattern: string[];
 }
 
 export function getStringArray(str: string) {
@@ -117,39 +54,6 @@ export function getPhonemeClassDictionary(language: ILanguage) {
   return dictionary;
 }
 
-export function getWordPatterns(language: ILanguage): IWordPattern[] {
-  const tokens = language.phonology.wordPatterns.split('\n');
-  let wordPatterns: IWordPattern[] = [];
-  
-  let patternName = '';
-  for (let i = 0; i < tokens.length; i++) {
-    const token = tokens[i];
-    if (token.trim() === '') { continue; }
-    const definitionIndex = token.indexOf('=');
-    if (definitionIndex === -1) {
-      wordPatterns.push({
-        patternName: patternName || 'word',
-        pattern: getStringArray(token.trim())
-      });
-    } else {
-      patternName = token.slice(0, definitionIndex - 1).trim();
-    }
-  }
-
-  return wordPatterns;
-}
-
-export function getWordPatternDictionary(language: ILanguage) {
-  const wordPatterns = getWordPatterns(language);
-  const dictionary: {[className: string]: IWordPattern[]} = {};
-  wordPatterns.forEach(c => {
-    const index = c.patternName;
-    const existing = dictionary[index];
-    dictionary[index] = [...(existing || []), c];
-  });
-
-  return dictionary;
-}
 
 export function getSampleWords(language: ILanguage) {
   let arr: IWord[] = [];
@@ -176,22 +80,6 @@ export function getSampleWordsV2(language: ILanguage) {
   }
   return arr;
 }
-
-export function wordPatternToPhonemes(phonemeClasses: IPhonemeClassDictionary, wordPattern: IWordPattern, mapper?: (phoneme: string) => string | undefined) {
-  // Expand every uppercase letter
-  const { pattern } = wordPattern;
-  let tokens = pattern; // Note -- these are syllables, whatever the tokens are initially.
-  for (let i = 0; i < tokens.length; i++) {
-    let token = tokens[i];
-    if (token === token.toUpperCase() && phonemeClasses[token]) {
-      const item = getRandomArrayItem(phonemeClasses[token].tokens, ProbabilityType.FastDropoff);
-      tokens = [...tokens.slice(0, i), ...getStringArray(mapper?.(item) ?? item), ...tokens.slice(i + 1)];
-      i -= 1;
-    }
-  }
-  return tokens;
-}
-
 export function generateWordV2(phonemeClasses: IPhonemeClassDictionary, wordPatterns: IWordPatternDictionary) {
   const wordPattern = getRandomArrayItem(wordPatterns['word']);
   const tokens = wordPatternToPhonemes(
@@ -295,7 +183,7 @@ export function generateWord(language: ILanguage, rules: IPhonologicalRule[]) {
       });
 
       if (permitted.length > 0) {
-        const sound = getRandomSound(permitted);
+        const sound = getRandomArrayItem(permitted);
         if (token === 'c' && Math.random() * 100 < 50) {
           // ...
         } else {
@@ -312,18 +200,4 @@ export function generateWord(language: ILanguage, rules: IPhonologicalRule[]) {
     syllables
   };
   return word;
-}
-
-
-export const printListExclusive = (list: any[]) => {
-  if (list.length === 0) {
-    return;
-  }
-  if (list.length === 1) {
-    return list[0];
-  }
-  if (list.length === 2) {
-    return list[0] + ' or ' + list[1];
-  }
-  return list.slice(0, list.length - 1).join(', ') + ', or ' + list[list.length - 1];
 }

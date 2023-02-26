@@ -211,3 +211,15 @@ export const VOWELFRONTNESS = [
   {key: VowelLat.Central, name: 'Central'},
   {key: VowelLat.Back, name: 'Back'}
 ];
+
+export type IPACollection = TypedSound[];
+export type IPhonemeClassDictionary = {[className: string]: IPhonemeClass};
+
+export interface IPhonemeClass {
+  className: string;
+  tokens: string[];
+}
+export interface IWordPattern {
+  patternName: string;
+  pattern: string[];
+}

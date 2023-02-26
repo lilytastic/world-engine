@@ -8,7 +8,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router';
 
 import Form from 'react-bootstrap/Form';
-import { Button, ButtonGroup, InputGroup } from 'react-bootstrap';
 
 export function ForbiddenCombinations(props: {children?: any}) {
 

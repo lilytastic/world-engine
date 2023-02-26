@@ -3,14 +3,14 @@ import { getSampleWords } from '../helpers/generators.helpers';
 
 import { ILanguage, IWord } from '../models/sounds.model';
 import { useDispatch, useSelector } from 'react-redux';
-import { addNewLanguage, getLanguages, updateLanguage } from '../reducers/language.reducer';
+import { getLanguages, updateLanguage } from '../reducers/language.reducer';
 import { useParams } from 'react-router';
 import { PhonemeClasses } from './PhonemeClasses';
 import { WordPatterns } from './WordPatterns';
 import { SampleWords } from './SampleWords';
-import { Breadcrumb, Button, Card, Dropdown, Form, Tab, Tabs } from 'react-bootstrap';
-import { NavLink } from 'react-router-dom';
+import { Form, Tab, Tabs } from 'react-bootstrap';
 import { ForbiddenCombinations } from './ForbiddenCombinations';
+import { LanguageOptions } from './LanguageOptions';
 
 export function Language(props: {children?: any}) {
 
@@ -45,48 +45,28 @@ export function Language(props: {children?: any}) {
 
   return (
     <div className='position-relative'>
+      {/*
       <Breadcrumb>
         <Breadcrumb.Item linkAs={NavLink} linkProps={{to: '/languages'}}>Languages</Breadcrumb.Item>
         <Breadcrumb.Item active>{language.name || 'Untitled'}</Breadcrumb.Item>
       </Breadcrumb>
-      <h1 className='mb-1 d-flex align-items-center lh-1 mb-1'>
+      */}
+      <h1 className='mb-4 d-flex align-items-center lh-1 mb-1'>
         {language.type === 'Proto-language' ? 'Proto-' : ''}{language.name || 'Untitled'}{language.type === 'Family' ? ' Family' : ''}
       </h1>
       {/*
       <h2 className='mb-4 mt-0 h6 text-muted'>
         {!language.ancestor ? 'No ancestors' : `Dialect of ${language.ancestor.name}`}
       </h2>
-      */}
 
       <Card color='dark' className='my-4 mb-5 p-3'>
         <ul className='list m-0'>
           <li>Proto-language</li>
         </ul>
       </Card>
+      */}
 
-      <Dropdown className='position-absolute top-0 end-0'>
-        <Dropdown.Toggle size="sm" variant='outline-secondary' split={true} id="dropdown-basic">
-          Options&nbsp;&nbsp;
-        </Dropdown.Toggle>
-
-        <Dropdown.Menu>
-          <Dropdown.Item>
-            <i className='fas fa-user-group fa-sm fa-fw me-2'></i>
-            Change Parent
-          </Dropdown.Item>
-          <Dropdown.Item onClick={ev => dispatch(addNewLanguage({name: 'Old ' + language.name, parent: language.id}))}>
-            <i className='fas fa-user-plus fa-sm fa-fw me-2'></i>
-            Add Child
-          </Dropdown.Item>
-          <Dropdown.Divider />
-          <Dropdown.Item as={Button}
-                         onClick={ev => {}}
-                         className='btn btn-link text-danger'>
-            <i className='fas fa-trash fa-fw fa-sm me-2'></i>
-            Delete
-          </Dropdown.Item>
-        </Dropdown.Menu>
-      </Dropdown>
+      <LanguageOptions language={language} className='position-absolute top-0 end-0'></LanguageOptions>
       
       <SampleWords></SampleWords>
 

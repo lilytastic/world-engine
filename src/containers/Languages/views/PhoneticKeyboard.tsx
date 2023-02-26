@@ -1,7 +1,8 @@
-import React, { MouseEvent } from 'react';
-import { Button } from "react-bootstrap";
+import React, { MouseEvent, useState } from 'react';
+import { Button, ButtonGroup, Form } from "react-bootstrap";
 import { CONSONANTS } from '../data/consonants';
 import { VOWELS } from '../data/vowels';
+import { MANNERS, PLACES } from '../models/sounds.model';
 
 const ARTICULATIONS: {phoneme: string, name: string}[] = [
   {name: 'Aspirated', phoneme: 'ʰ'},
@@ -25,6 +26,8 @@ const TONES: {phoneme: string, name: string}[] = [
 ];
 
 export const PhoneticKeyboard = (props: {children?: any}) => {
+
+  const [consonantViewType, setConsonantViewType] = useState('manner');
 
   const typeCharacter = (ev: MouseEvent, str: string) => {
     const activeElement = document.activeElement as HTMLInputElement | HTMLTextAreaElement;
@@ -53,17 +56,40 @@ export const PhoneticKeyboard = (props: {children?: any}) => {
       )}
     </div>
     <hr />
-    <label className='text-muted'>
+    <label className='text-muted d-flex justify-content-between align-items-center'>
       Consonants
+      <ButtonGroup size='sm'>
+        <Button variant='link' onClick={ev => setConsonantViewType('place')}>place</Button>
+        <Button variant='link' onClick={ev => setConsonantViewType('manner')}>manner</Button>
+      </ButtonGroup>
     </label>
     <div className='mt-1'>
-      {CONSONANTS.map(consonant =>
-        <Button key={consonant.phoneme}
-                className='d-inline p-0 me-1 text-decoration-none lh-1'
-                onMouseDown={ev => typeCharacter(ev, consonant.phoneme)}
-                variant='link'>
-          {consonant.phoneme}
-        </Button>
+      {consonantViewType === 'place' ? (
+        PLACES.map(place => (
+          <div key={place.key}>
+            {CONSONANTS.filter(x => x.place === place.key).map(consonant =>
+              <Button key={consonant.phoneme}
+                      className='d-inline p-0 me-1 text-decoration-none lh-1'
+                      onMouseDown={ev => typeCharacter(ev, consonant.phoneme)}
+                      variant='link'>
+                {consonant.phoneme}
+              </Button>
+            )}
+          </div>
+        ))
+      ) : (
+        MANNERS.map(manner => (
+          <div key={manner.key}>
+            {CONSONANTS.filter(x => x.manner === manner.key).map(consonant =>
+              <Button key={consonant.phoneme}
+                      className='d-inline p-0 me-1 text-decoration-none lh-1'
+                      onMouseDown={ev => typeCharacter(ev, consonant.phoneme)}
+                      variant='link'>
+                {consonant.phoneme}
+              </Button>
+            )}
+          </div>
+        ))
       )}
     </div>
     <hr />
@@ -74,6 +100,7 @@ export const PhoneticKeyboard = (props: {children?: any}) => {
       {ARTICULATIONS.map((sound, i) => <div className='d-inline' key={sound.phoneme}>
         <Button className='d-inline p-0 me-1 text-decoration-none'
                 onMouseDown={ev => typeCharacter(ev, sound.phoneme)}
+                size='sm'
                 variant='link'>
           {sound.name}
         </Button>
@@ -88,6 +115,7 @@ export const PhoneticKeyboard = (props: {children?: any}) => {
       {TONES.map((sound, i) => <div className='d-inline' key={sound.phoneme}>
         <Button className='d-inline p-0 me-1 text-decoration-none'
                 onMouseDown={ev => typeCharacter(ev, sound.phoneme)}
+                size='sm'
                 variant='link'>
           {sound.name}
         </Button>
