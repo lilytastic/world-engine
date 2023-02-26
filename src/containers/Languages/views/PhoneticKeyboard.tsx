@@ -2,7 +2,7 @@ import React, { MouseEvent, useState } from 'react';
 import { Button, ButtonGroup, Dropdown, Form } from "react-bootstrap";
 import { CONSONANTS } from '../data/consonants';
 import { VOWELS } from '../data/vowels';
-import { MANNERS, PLACES } from '../models/sounds.model';
+import { MANNERS, PLACES, VOWELCLOSENESS, VOWELFRONTNESS } from '../models/sounds.model';
 
 const ARTICULATIONS: {phoneme: string, name: string}[] = [
   {name: 'Aspirated', phoneme: 'ʰ'},
@@ -27,7 +27,8 @@ const TONES: {phoneme: string, name: string}[] = [
 
 export const PhoneticKeyboard = (props: {children?: any}) => {
 
-  const [consonantViewType, setConsonantViewType] = useState('manner');
+  const [consonantViewType, setConsonantViewType] = useState('Place');
+  const [vowelViewType, setVowelViewType] = useState('Frontness');
 
   const typeCharacter = (ev: MouseEvent, str: string) => {
     const activeElement = document.activeElement as HTMLInputElement | HTMLTextAreaElement;
@@ -42,59 +43,99 @@ export const PhoneticKeyboard = (props: {children?: any}) => {
     ev.preventDefault();
   }
   return (<>
-    <label className='text-muted'>
+    <label className='text-muted d-flex justify-content-between align-items-center'>
       Vowels
+      <Dropdown>
+        <Dropdown.Toggle size='sm' variant='link' className='link-secondary text-decoration-none'>
+          {vowelViewType} <i className='fas fa-list ms-2'></i>
+        </Dropdown.Toggle>
+        <Dropdown.Menu defaultValue={'Closeness'}>
+          <Dropdown.Header className='pt-0 pb-1'>View by</Dropdown.Header>
+          <Dropdown.Item active={vowelViewType === 'Closeness'} variant='link' onClick={ev => setVowelViewType('Closeness')}>Closeness</Dropdown.Item>
+          <Dropdown.Item active={vowelViewType === 'Frontness'} variant='link' onClick={ev => setVowelViewType('Frontness')}>Frontness</Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown>
     </label>
-    <div className='mt-1'>
-      {VOWELS.map(vowel => 
-        <Button key={vowel.phoneme}
-                className='d-inline p-0 me-1 text-decoration-none lh-1'
-                onMouseDown={ev => typeCharacter(ev, vowel.phoneme)}
-                variant='link'>
-          {vowel.phoneme}
-        </Button>
+    <div>    
+      {vowelViewType === 'Closeness' ? (
+        VOWELCLOSENESS.map(t => (
+          <div key={t.key} className='d-grid align-items-start' style={{gridTemplateColumns: '25% 1fr', gridAutoFlow: 'row'}}>
+            <label className='small me-2 overflow-hidden' style={{marginTop: '0.2em', whiteSpace: 'nowrap', textOverflow: 'ellipsis'}}>{t.name}</label>
+            <div>
+              {VOWELS.filter(x => x.openness === t.key).reverse().map(sound =>
+                <Button key={sound.phoneme}
+                        className='d-inline p-0 me-1 text-decoration-none lh-1'
+                        onMouseDown={ev => typeCharacter(ev, sound.phoneme)}
+                        variant='link'>
+                  {sound.phoneme}
+                </Button>
+              )}
+            </div>
+          </div>
+        ))
+      ) : (
+        VOWELFRONTNESS.map(t => (
+          <div key={t.key} className='d-grid align-items-start' style={{gridTemplateColumns: '25% 1fr', gridAutoFlow: 'row'}}>
+            <label className='small me-2 overflow-hidden' style={{marginTop: '0.2em', whiteSpace: 'nowrap', textOverflow: 'ellipsis'}}>{t.name}</label>
+            <div>
+              {VOWELS.filter(x => x.frontness === t.key).reverse().map(sound =>
+                <Button key={sound.phoneme}
+                        className='d-inline p-0 me-1 text-decoration-none lh-1'
+                        onMouseDown={ev => typeCharacter(ev, sound.phoneme)}
+                        variant='link'>
+                  {sound.phoneme}
+                </Button>
+              )}
+            </div>
+          </div>
+        ))
       )}
     </div>
     <hr />
     <label className='text-muted d-flex justify-content-between align-items-center'>
       Consonants
       <Dropdown>
-        <Dropdown.Toggle size='sm' variant='link'>
-          <i className='fas fa-sort'></i>
+        <Dropdown.Toggle size='sm' variant='link' className='link-secondary text-decoration-none'>
+          {consonantViewType} <i className='fas fa-list ms-2'></i>
         </Dropdown.Toggle>
         <Dropdown.Menu>
-          <Dropdown.Item active={consonantViewType === 'place'} variant='link' onClick={ev => setConsonantViewType('place')}>Place</Dropdown.Item>
-          <Dropdown.Item active={consonantViewType === 'manner'} variant='link' onClick={ev => setConsonantViewType('manner')}>Manner</Dropdown.Item>
+          <Dropdown.Header className='pt-0 pb-1'>View by</Dropdown.Header>
+          <Dropdown.Item active={consonantViewType === 'Place'} variant='link' onClick={ev => setConsonantViewType('Place')}>Place</Dropdown.Item>
+          <Dropdown.Item active={consonantViewType === 'Manner'} variant='link' onClick={ev => setConsonantViewType('Manner')}>Manner</Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
     </label>
-    <div className='mt-1'>
-      {consonantViewType === 'place' ? (
+    <div>
+      {consonantViewType === 'Place' ? (
         PLACES.map(place => (
-          <div key={place.key} className='d-flex align-items-center'>
-            <label className='small me-2 overflow-hidden' style={{width: '25%', whiteSpace: 'nowrap', textOverflow: 'ellipsis'}}>{place.name}</label>
-            {CONSONANTS.filter(x => x.place === place.key).map(consonant =>
-              <Button key={consonant.phoneme}
-                      className='d-inline p-0 me-1 text-decoration-none lh-1'
-                      onMouseDown={ev => typeCharacter(ev, consonant.phoneme)}
-                      variant='link'>
-                {consonant.phoneme}
-              </Button>
-            )}
+          <div key={place.key} className='d-grid align-items-start' style={{gridTemplateColumns: '25% 1fr', gridAutoFlow: 'row'}}>
+            <label className='small me-2 overflow-hidden' style={{marginTop: '0.2em', whiteSpace: 'nowrap', textOverflow: 'ellipsis'}}>{place.name}</label>
+            <div>
+              {CONSONANTS.filter(x => x.place === place.key).map(consonant =>
+                <Button key={consonant.phoneme}
+                        className='d-inline p-0 me-1 text-decoration-none lh-1'
+                        onMouseDown={ev => typeCharacter(ev, consonant.phoneme)}
+                        variant='link'>
+                  {consonant.phoneme}
+                </Button>
+              )}
+            </div>
           </div>
         ))
       ) : (
         MANNERS.filter(manner => CONSONANTS.filter(x => x.manner === manner.key).length > 0).map(manner => (
-          <div key={manner.key} className='d-flex align-items-center'>
-            <label className='small me-2 overflow-hidden' style={{width: '25%', whiteSpace: 'nowrap', textOverflow: 'ellipsis'}}>{manner.name}</label>
-            {CONSONANTS.filter(x => x.manner === manner.key).map(consonant =>
-              <Button key={consonant.phoneme}
-                      className='d-inline p-0 me-1 text-decoration-none lh-1'
-                      onMouseDown={ev => typeCharacter(ev, consonant.phoneme)}
-                      variant='link'>
-                {consonant.phoneme}
-              </Button>
-            )}
+          <div key={manner.key} className='d-grid align-items-start' style={{gridTemplateColumns: '25% 1fr', gridAutoFlow: 'row'}}>
+            <label className='small me-2 overflow-hidden' style={{marginTop: '0.2em', whiteSpace: 'nowrap', textOverflow: 'ellipsis'}}>{manner.name}</label>
+            <div>
+              {CONSONANTS.filter(x => x.manner === manner.key).map(consonant =>
+                <Button key={consonant.phoneme}
+                        className='d-inline p-0 me-1 text-decoration-none lh-1'
+                        onMouseDown={ev => typeCharacter(ev, consonant.phoneme)}
+                        variant='link'>
+                  {consonant.phoneme}
+                </Button>
+              )}
+            </div>
           </div>
         ))
       )}

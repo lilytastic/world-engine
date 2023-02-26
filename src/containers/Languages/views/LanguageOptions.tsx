@@ -12,17 +12,20 @@ export const LanguageOptions = (props: {children?: any, language: ILanguage, cla
   const dispatch = useDispatch();
 
   return (
-    <Dropdown className={props.className}>
+    <Dropdown className={props.className} placement='auto-end'>
       <Dropdown.Toggle variant='outline-secondary' className='rounded-pill' id="dropdown-basic">
         <i className='fas fa-gear me-2'></i>Options
       </Dropdown.Toggle>
 
       <Dropdown.Menu>
-        <Dropdown.Item>
+        <Dropdown.Item as={Button}
+                       className='btn btn-link'>
           <i className='fas fa-user-group fa-sm fa-fw me-2'></i>
           Change Parent
         </Dropdown.Item>
-        <Dropdown.Item onClick={ev => dispatch(addNewLanguage({name: language.name, parent: language.id}))}>
+        <Dropdown.Item onClick={ev => dispatch(addNewLanguage({name: language.name, parent: language.id}))}
+                       as={Button}
+                       className='btn btn-link'>
           <i className='fas fa-user-plus fa-sm fa-fw me-2'></i>
           Add Child
         </Dropdown.Item>

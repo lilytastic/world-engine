@@ -36,7 +36,7 @@ export function Root(props: {children?: any}) {
               {ROUTES.filter(route => route.showInNav).map(route => (
                 <Nav.Item key={route.path} className="ms-3">
                   <Nav.Link as={NavLink} to={route.path}>
-                    <i className={`fas fa-${route.icon} me-2`}></i>
+                    <i className={`d-none fas fa-${route.icon} me-2`}></i>
                     <span>{route.title}</span>
                   </Nav.Link>
                 </Nav.Item>
@@ -50,14 +50,14 @@ export function Root(props: {children?: any}) {
 
             <div className='d-flex ms-2 align-items-center justify-content-end'>
               <div className="form-check form-switch mt-1">
-                <input className="form-check-input bg-warning border-0"
+                <input className={`form-check-input bg-${theme === 'light' ? 'dark' : 'light'} border-0`}
                       type="checkbox"
                       role="switch"
                       id="flexSwitchCheckChecked"
                       checked={theme === 'light'}
                       onChange={ev => setTheme(!ev.currentTarget.checked ? 'dark' : 'light')}
                 />
-                <i className={`fas fa-fw me-1 fa-sm fa-${theme === 'dark' ? 'moon' : 'sun'}`}></i>
+                <i className={`fas fa-fw me-1 fa-sm text-${theme === 'light' ? 'dark' : 'light'} fa-${theme === 'dark' ? 'moon' : 'sun'}`}></i>
               </div>
             </div>
           </div>
