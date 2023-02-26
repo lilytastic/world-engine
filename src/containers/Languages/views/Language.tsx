@@ -46,15 +46,15 @@ export function Language(props: {children?: any}) {
 
   return (
     <div className='position-relative pb-5 mb-5'>
-      <Breadcrumb>
+      <Breadcrumb className='mb-2 pb-1'>
         <Breadcrumb.Item linkAs={NavLink} linkProps={{to: '/languages'}}>Languages</Breadcrumb.Item>
         <Breadcrumb.Item active>{language.name || 'Untitled'}</Breadcrumb.Item>
       </Breadcrumb>
 
-      <h1 className='mb-4 d-flex align-items-center position-relative lh-1 mb-1'>
+      <h1 className='d-flex align-items-start position-relative lh-1 mb-5'>
         {language.type === 'Proto-language' ? 'Proto-' : ''}{language.name || 'Untitled'}{language.type === 'Family' ? ' Family' : ''}
 
-        <LanguageOptions language={language} className='position-absolute top-0 end-0'></LanguageOptions>
+        <LanguageOptions language={language} className='position-absolute top-0 end-0 d-flex'></LanguageOptions>
       </h1>
       {/*
       <h2 className='mb-4 mt-0 h6 text-muted'>
@@ -74,7 +74,9 @@ export function Language(props: {children?: any}) {
       <Tabs
         defaultActiveKey="phonology"
         id="uncontrolled-tab-example"
-        className="mt-4 mb-5"
+        variant='pills'
+        className="mt-4 mb-5 mx-auto"
+        style={{width: 'fit-content'}}
       >
         <Tab eventKey="phonology" title="Phonology">
           <Form.Group className='mb-5'>
@@ -90,7 +92,7 @@ export function Language(props: {children?: any}) {
           
         </Tab>
         <Tab eventKey="vocabulary" title="Vocabulary">
-          <Form.Group className='form-group'>
+          <Form.Group>
             <Form.Label htmlFor='languageName'>Language name</Form.Label>
             <Form.Control
               as='input'

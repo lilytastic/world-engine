@@ -42,7 +42,7 @@ export function Languages(props: {children?: any}) {
             <Outlet />
           </Col>
           <Col sm={6} md={4} className="position-relative overflow-hidden d-none d-md-block">
-            <div style={{transition: 'transform .35s ease-out', transform: `translateY(${scrollPosition}px)`}}>
+            <div style={{transition: 'transform .5s ease-in-out .03s', transform: `translateY(${scrollPosition}px)`}}>
               <PhoneticKeyboard />
             </div>
           </Col>

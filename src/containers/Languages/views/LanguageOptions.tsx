@@ -12,9 +12,9 @@ export const LanguageOptions = (props: {children?: any, language: ILanguage, cla
   const dispatch = useDispatch();
 
   return (
-    <Dropdown className={props.className} placement='auto-end'>
-      <Dropdown.Toggle variant='outline-secondary' className='rounded-pill' id="dropdown-basic">
-        <i className='fas fa-gear me-2'></i>Options
+    <Dropdown className={props.className}>
+      <Dropdown.Toggle variant='secondary' id="dropdown-basic">
+        <i className='fas fa-file-pen fa-sm me-2'></i>Edit<i className='fas fa-caret-down fa-sm ms-2'></i>
       </Dropdown.Toggle>
 
       <Dropdown.Menu>
