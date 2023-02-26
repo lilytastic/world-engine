@@ -67,8 +67,8 @@ export function Languages(props: {children?: any}) {
           <Col sm={6}>
             <Outlet />
           </Col>
-          <Col sm={3} className="position-relative">
-            <div className="position-absolute" style={{transition: 'transform .35s ease-out', transform: `translateY(${scrollPosition}px)`}}>
+          <Col sm={3} className="position-relative overflow-hidden">
+            <div style={{transition: 'transform .35s ease-out', transform: `translateY(${scrollPosition}px)`}}>
               <PhoneticKeyboard />
             </div>
           </Col>

@@ -22,7 +22,7 @@ export function Root(props: {children?: any}) {
   return (<div>
     {/*<Nav routes={ROUTES.filter(x => x.path !== '/')} />*/}
     <Navbar className='bg-body' sticky="top" expand="lg">
-      <Container fluid='lg'>
+      <Container fluid='sm'>
         <Navbar.Brand href="/">
           <i className='fas fa-globe me-2'></i>
           <strong>World Engine</strong>
@@ -59,7 +59,7 @@ export function Root(props: {children?: any}) {
         </Navbar.Offcanvas>
       </Container>
     </Navbar>
-    <Container fluid='lg'>
+    <Container fluid='sm'>
       <div className="main">{props.children}</div>
     </Container>
   </div>);
