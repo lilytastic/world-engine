@@ -51,7 +51,7 @@ export function Language(props: {children?: any}) {
         <Breadcrumb.Item active>{language.name || 'Untitled'}</Breadcrumb.Item>
       </Breadcrumb>
 
-      <h1 className='d-flex align-items-start position-relative lh-1 mb-5'>
+      <h1 className='d-flex align-items-start position-relative lh-1 mb-4'>
         {language.type === 'Proto-language' ? 'Proto-' : ''}{language.name || 'Untitled'}{language.type === 'Family' ? ' Family' : ''}
 
         <LanguageOptions language={language} className='position-absolute top-0 end-0 d-flex'></LanguageOptions>
@@ -70,21 +70,20 @@ export function Language(props: {children?: any}) {
       
       <SampleWords></SampleWords>
 
-
       <Tabs
         defaultActiveKey="phonology"
         id="uncontrolled-tab-example"
         variant='pills'
-        className="mt-4 mb-5 mx-auto"
+        className="mt-4 mb-4 mx-auto border rounded-3"
         style={{width: 'fit-content'}}
       >
         <Tab eventKey="phonology" title="Phonology">
-          <Form.Group className='mb-5'>
+          <Form.Group className='mb-5 form-group border'>
             <PhonemeClasses></PhonemeClasses>
             <hr className='my-4' />
             <WordPatterns></WordPatterns>
           </Form.Group>
-          <Form.Group className=''>
+          <Form.Group className='form-group border'>
             <ForbiddenCombinations></ForbiddenCombinations>
           </Form.Group>
         </Tab>
@@ -92,7 +91,7 @@ export function Language(props: {children?: any}) {
           
         </Tab>
         <Tab eventKey="vocabulary" title="Vocabulary">
-          <Form.Group>
+          <Form.Group className='form-group border'>
             <Form.Label htmlFor='languageName'>Language name</Form.Label>
             <Form.Control
               as='input'

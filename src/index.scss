@@ -105,6 +105,18 @@ textarea {
   margin-bottom: 0;
 }
 
+.nav-pills {
+  overflow: hidden;
+  .nav-link {
+    margin: 0 0 0 -1px;
+    border-radius: 0;
+    border-left: solid 1px var(--bs-border-color);
+    &:not(:last-child) {
+      border-right: solid 1px var(--bs-border-color);
+    }
+  }
+}
+
 [data-bs-theme="dark"] {
   //--bs-form-control-bg: var(--bs-body-bg);
   --bs-form-control-bg: #fafafa;

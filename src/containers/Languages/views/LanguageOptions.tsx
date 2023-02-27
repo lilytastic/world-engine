@@ -13,7 +13,7 @@ export const LanguageOptions = (props: {children?: any, language: ILanguage, cla
 
   return (
     <Dropdown className={props.className}>
-      <Dropdown.Toggle variant='secondary' id="dropdown-basic">
+      <Dropdown.Toggle variant='primary' id="dropdown-basic">
         <i className='fas fa-file-pen fa-sm me-2'></i>Edit<i className='fas fa-caret-down fa-sm ms-2'></i>
       </Dropdown.Toggle>
 

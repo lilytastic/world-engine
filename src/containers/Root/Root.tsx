@@ -29,7 +29,9 @@ export function Root(props: {children?: any}) {
           <strong>World Engine</strong>
         </Navbar.Brand>
 
-        <Navbar.Toggle aria-controls="responsive-navbar-nav" className='border-0' />
+        <Navbar.Toggle aria-controls="responsive-navbar-nav" className='border-0'>
+          <i className='fas fa-bars'></i>
+        </Navbar.Toggle>
         <Navbar.Offcanvas id="responsive-navbar-nav">
           <div className='d-block d-md-flex'>
             <Nav defaultActiveKey="/" activeKey={location.pathname} className='align-items-center justify-content-end mx-auto'>

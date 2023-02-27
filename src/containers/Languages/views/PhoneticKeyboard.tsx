@@ -42,7 +42,7 @@ export const PhoneticKeyboard = (props: {children?: any}) => {
     }
     ev.preventDefault();
   }
-  return (<>
+  return (<div>
     <label className='text-muted d-flex justify-content-between align-items-center'>
       Vowels
       <Dropdown>
@@ -170,5 +170,5 @@ export const PhoneticKeyboard = (props: {children?: any}) => {
         {i < TONES.length - 1 && <>∙&nbsp;</>}
       </div>)}
     </div>
-  </>);
+  </div>);
 }
