@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, ButtonGroup, Form, ListGroup } from 'react-bootstrap';
+import { Button, ButtonGroup, CloseButton, Form, ListGroup, OverlayTrigger, Popover } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { ProbabilityType } from '../helpers/logic.helpers';
@@ -12,7 +12,7 @@ export const ProbabilityDropoff = (props: {children?: any, className?: string}) 
   const languages = useSelector(getLanguages);
   const dispatch = useDispatch();
   const [language, setLanguage] = useState(undefined as ILanguage | undefined);
-  const [currentProbabilityDropoff, setProbabilityDropoff] = useState(undefined as ProbabilityType | undefined);
+  const [currentDropoffRate, setDropoffRate] = useState(undefined as ProbabilityType | undefined);
   const params = useParams();
 
   useEffect(() => {
@@ -20,42 +20,57 @@ export const ProbabilityDropoff = (props: {children?: any, className?: string}) 
       const language = languages.entities[params.id];
       if (language) {
         setLanguage(language);
-        setProbabilityDropoff(language.phonology.probabilityDropoff);  
+        setDropoffRate(language.phonology.dropoffRate);  
       }
     }
   }, [languages, params.id]);
 
-  const updateProbabilityDropoff = (probabilityDropoff: ProbabilityType) => {
-    dispatch(updateLanguage({...language, phonology: {...language?.phonology, probabilityDropoff}}));
+  const updateDropoffRate = (dropoffRate: ProbabilityType) => {
+    dispatch(updateLanguage({...language, phonology: {...language?.phonology, dropoffRate}}));
   }
 
+  const popover = (
+    <Popover id="popover-basic">
+      <Popover.Body>
+        <ul className='list'>
+          <li>Phonemes are ranked by frequency from left (most frequent) to right (least frequent).</li>
+          <li><b>Fast</b> rate makes frequent phonemes even more frequent, <b>Medium</b> creates a more even spread, and <b>Equiprobable</b> creates a perfectly even spread.</li>
+          <li>When using Equiprobable, phonemes can be custom weighted by writing *multiplier. For example, p*10 makes p ten times more common than a phoneme without a multiplier. To make it less likely, multiply by a decimal: p*0.4.</li>
+        </ul>
+      </Popover.Body>
+    </Popover>
+  );
+
   return (<>
-    <Form.Label htmlFor="probabilityDropoff">Probability Dropoff Rate</Form.Label>
+    <Form.Label htmlFor="dropoffRate" className='d-flex align-items-center'>
+      Probability Dropoff Rate
+      <OverlayTrigger trigger="click" placement='bottom' overlay={popover}>
+        <Button variant='link' className='p-0 small text-secondary'>
+          <i className='fas fa-circle-question small ms-2'></i>
+        </Button>
+      </OverlayTrigger>
+    </Form.Label>
     <div className='mb-2'>
       <ButtonGroup className='w-100'>
-        <Button active={currentProbabilityDropoff === ProbabilityType.FastDropoff}
-                onClick={ev => updateProbabilityDropoff(ProbabilityType.FastDropoff)}
+        <Button active={currentDropoffRate === ProbabilityType.FastDropoff}
+                onClick={ev => updateDropoffRate(ProbabilityType.FastDropoff)}
+                variant='secondary'
                 className='w-100'>
           Fast
         </Button>
-        <Button active={currentProbabilityDropoff === ProbabilityType.MediumDropoff}
-                onClick={ev => updateProbabilityDropoff(ProbabilityType.MediumDropoff)}
+        <Button active={currentDropoffRate === ProbabilityType.MediumDropoff}
+                onClick={ev => updateDropoffRate(ProbabilityType.MediumDropoff)}
+                variant='secondary'
                 className='w-100'>
           Medium
         </Button>
-        <Button active={currentProbabilityDropoff === ProbabilityType.Equiprobable}
-                onClick={ev => updateProbabilityDropoff(ProbabilityType.Equiprobable)}
+        <Button active={currentDropoffRate === ProbabilityType.Equiprobable}
+                onClick={ev => updateDropoffRate(ProbabilityType.Equiprobable)}
+                variant='secondary'
                 className='w-100'>
           Equiprobable
         </Button>
       </ButtonGroup>
     </div>
-    <Form.Text>
-      <ul className='list'>
-        <li>Phonemes are ranked by frequency from left (most frequent) to right (least frequent).</li>
-        <li><b>Fast</b> rate makes frequent phonemes even more frequent, <b>Medium</b> creates a more even spread, and <b>Equiprobable</b> creates a perfectly even spread.</li>
-        <li>When using Equiprobable, phonemes can be custom weighted by writing *multiplier. For example, p*10 makes p ten times more common than a phoneme without a multiplier. To make it less likely, multiply by a decimal: p*0.4.</li>
-      </ul>
-    </Form.Text>
   </>);
 }

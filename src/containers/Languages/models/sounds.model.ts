@@ -49,7 +49,7 @@ export interface IPhonology {
   forbiddenCombinations: string;
   phonemeClasses: string;
   phonotactics: IPhonotactic[];
-  probabilityDropoff: ProbabilityType;
+  dropoffRate: ProbabilityType;
 }
 
 export const DEFAULT_LANGUAGE: ILanguage = {
@@ -63,7 +63,7 @@ export const DEFAULT_LANGUAGE: ILanguage = {
     phonemeClasses: 'C = b k p t d r s v w q g\nL = l m n\nV = a e i o u\nS = CV CVL VC',
     wordPatterns: 'S\nSS\nSSS\n\narticle = \nS\nV\n\npronoun = \nS\nSS\n\ndeterminer = \nS',
     forbiddenCombinations: '',
-    probabilityDropoff: ProbabilityType.FastDropoff,
+    dropoffRate: ProbabilityType.FastDropoff,
     stressSystem: '',
     phonotactics: []
   }

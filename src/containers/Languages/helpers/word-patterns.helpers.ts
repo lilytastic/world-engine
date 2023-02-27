@@ -46,7 +46,7 @@ export function wordPatternToPhonemes(language: ILanguage, wordPattern: IWordPat
   for (let i = 0; i < tokens.length; i++) {
     let token = tokens[i];
     if (token === token.toUpperCase() && phonemeClasses[token]) {
-      const item = getRandomArrayItem(phonemeClasses[token].tokens, language.phonology.probabilityDropoff || ProbabilityType.FastDropoff);
+      const item = getRandomArrayItem(phonemeClasses[token].tokens, language.phonology.dropoffRate || ProbabilityType.FastDropoff);
       if (item) {
         tokens = [...tokens.slice(0, i), ...getStringArray(mapper?.(item) ?? item), ...tokens.slice(i + 1)];
         i -= 1;
