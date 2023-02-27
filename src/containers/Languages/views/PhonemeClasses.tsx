@@ -49,7 +49,7 @@ export function PhonemeClasses(props: {children?: any}) {
     <Form.Label htmlFor="phonemeClasses" className='d-flex justify-content-between align-items-center'>
       <div className='d-flex align-items-center'>
         Phoneme Classes
-        <OverlayTrigger trigger="click" placement='bottom' overlay={popover}>
+        <OverlayTrigger trigger="focus" placement='bottom' overlay={popover}>
           <Button variant='link' className='p-0 small text-secondary'>
             <i className='fas fa-circle-question small ms-2'></i>
           </Button>

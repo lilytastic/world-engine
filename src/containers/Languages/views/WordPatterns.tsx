@@ -48,7 +48,7 @@ export function WordPatterns(props: {children?: any}) {
     <Form.Label htmlFor="wordPatterns">
       <div className='d-flex align-items-center'>
         Word Patterns
-        <OverlayTrigger trigger="click" placement='bottom' overlay={popover}>
+        <OverlayTrigger trigger="focus" placement='bottom' overlay={popover}>
           <Button variant='link' className='p-0 small text-secondary'>
             <i className='fas fa-circle-question small ms-2'></i>
           </Button>

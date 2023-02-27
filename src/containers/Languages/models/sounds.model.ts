@@ -47,6 +47,8 @@ export interface IPhonology {
   stressSystem: string;
   wordPatterns: string;
   forbiddenCombinations: string;
+  banSameVowels: boolean;
+  banSameConsonants: boolean;
   phonemeClasses: string;
   phonotactics: IPhonotactic[];
   dropoffRate: ProbabilityType;
@@ -63,6 +65,8 @@ export const DEFAULT_LANGUAGE: ILanguage = {
     phonemeClasses: 'C = b k p t d r s v w q g\nL = l m n\nV = a e i o u\nS = CV CVL VC',
     wordPatterns: 'S\nSS\nSSS\n\narticle = \nS\nV\n\npronoun = \nS\nSS\n\ndeterminer = \nS',
     forbiddenCombinations: '',
+    banSameVowels: true,
+    banSameConsonants: false,
     dropoffRate: ProbabilityType.FastDropoff,
     stressSystem: '',
     phonotactics: []

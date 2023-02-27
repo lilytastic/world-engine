@@ -30,6 +30,16 @@ export function ForbiddenCombinations(props: {children?: any}) {
   const updateForbiddenCombinations = (forbiddenCombinations: string) => {
     dispatch(updateLanguage({...language, phonology: {...language?.phonology, forbiddenCombinations}}));
   }
+  const updateBanSameVowels = (banSameVowels: boolean) => {
+    dispatch(updateLanguage({...language, phonology: {...language?.phonology, banSameVowels}}));
+  }
+  const updateBanSameConsonants = (banSameConsonants: boolean) => {
+    dispatch(updateLanguage({...language, phonology: {...language?.phonology, banSameConsonants}}));
+  }
+  
+  if (!language) {
+    return <></>;
+  }
 
   return (<>
     <Form.Label htmlFor="forbiddenCombinations">Forbidden Combinations</Form.Label>
@@ -41,19 +51,21 @@ export function ForbiddenCombinations(props: {children?: any}) {
       onBlur={ev => updateForbiddenCombinations(ev.currentTarget.value)}
     />
 
-    <div key='inline-checkbox' className="mt-3">
+    <div className="mt-3">
       <Form.Check
-        inline
         label="Ban two of the same vowels in a row"
         name="group1"
         type='checkbox'
+        checked={language.phonology.banSameVowels}
+        onChange={ev => updateBanSameVowels(ev.currentTarget.checked)}
         id='inline-type-1'
       />
       <Form.Check
-        inline
         label="Ban two of the same consonants in a row"
         name="group1"
         type='checkbox'
+        checked={language.phonology.banSameConsonants}
+        onChange={ev => updateBanSameConsonants(ev.currentTarget.checked)}
         id='inline-type-2'
       />
     </div>

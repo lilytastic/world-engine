@@ -51,8 +51,8 @@ export function Root(props: {children?: any}) {
             </Nav>
 
             <div className={`d-flex ms-2 align-items-center justify-content-end`}>
-              <i className={`fas fa-fw me-2 fa-sm fa-sun text-${theme === 'light' ? 'dark' : 'light'} `} style={{opacity: theme === 'light' ? 1 : 0.5}}></i>
-              <div className="form-check form-switch d-flex mt-1">
+              <i className={`fas fa-fw me-2 fa-sm fa-sun text-${theme === 'light' ? 'dark' : 'light'} `} style={{opacity: theme === 'light' ? 1 : 0.3}}></i>
+              <div className="form-check form-switch d-flex" style={{marginTop: '3px', marginLeft: '-1px'}}>
                 <input className={`form-check-input bg-${theme === 'light' ? 'dark' : 'light'} border-0`}
                       type="checkbox"
                       role="switch"
@@ -61,7 +61,7 @@ export function Root(props: {children?: any}) {
                       onChange={ev => setTheme(!ev.currentTarget.checked ? 'light' : 'dark')}
                 />
               </div>
-              <i className={`fas fa-fw fa-sm fa-moon text-${theme === 'light' ? 'dark' : 'light'} `} style={{opacity: theme === 'dark' ? 1 : 0.5}}></i>
+              <i className={`fas fa-fw fa-sm fa-moon text-${theme === 'light' ? 'dark' : 'light'} `} style={{opacity: theme === 'dark' ? 1 : 0.3}}></i>
             </div>
           </div>
         </Navbar.Offcanvas>

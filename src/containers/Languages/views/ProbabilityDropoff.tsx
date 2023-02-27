@@ -44,13 +44,38 @@ export const ProbabilityDropoff = (props: {children?: any, className?: string}) 
   return (<>
     <Form.Label htmlFor="dropoffRate" className='d-flex align-items-center'>
       Probability Dropoff Rate
-      <OverlayTrigger trigger="click" placement='bottom' overlay={popover}>
+      <OverlayTrigger trigger="focus" placement='bottom' overlay={popover}>
         <Button variant='link' className='p-0 small text-secondary'>
           <i className='fas fa-circle-question small ms-2'></i>
         </Button>
       </OverlayTrigger>
     </Form.Label>
     <div className='mb-2'>
+      <Form.Check
+        label="Fast dropoff"
+        checked={currentDropoffRate === ProbabilityType.FastDropoff}
+        onChange={ev => updateDropoffRate(ProbabilityType.FastDropoff)}
+        name="group1"
+        type='radio'
+        id='inline-type-1'
+      />
+      <Form.Check
+        label="Medium dropoff"
+        checked={currentDropoffRate === ProbabilityType.MediumDropoff}
+        onChange={ev => updateDropoffRate(ProbabilityType.MediumDropoff)}
+        name="group1"
+        type='radio'
+        id='inline-type-2'
+      />
+      <Form.Check
+        label="Equiprobable"
+        checked={currentDropoffRate === ProbabilityType.Equiprobable}
+        onChange={ev => updateDropoffRate(ProbabilityType.Equiprobable)}
+        name="group1"
+        type='radio'
+        id='inline-type-3'
+      />
+      {/*
       <ButtonGroup className='w-100'>
         <Button active={currentDropoffRate === ProbabilityType.FastDropoff}
                 onClick={ev => updateDropoffRate(ProbabilityType.FastDropoff)}
@@ -71,6 +96,7 @@ export const ProbabilityDropoff = (props: {children?: any, className?: string}) 
           Equiprobable
         </Button>
       </ButtonGroup>
+      */}
     </div>
   </>);
 }
