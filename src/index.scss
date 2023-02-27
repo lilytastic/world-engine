@@ -86,7 +86,7 @@ input:not([type="checkbox"]), textarea {
   border-radius: var(--bs-border-radius);
   background-color: var(--bs-secondary-bg);
   // border: solid 1px var(--bs-border-color);
-  box-shadow: var(--bs-box-shadow);
+  //box-shadow: var(--bs-box-shadow);
 }
 
 .list {
@@ -105,7 +105,7 @@ textarea {
   margin-bottom: 0;
 }
 
-.nav-pills {
+.nav-pills.border {
   overflow: hidden;
   .nav-link {
     margin: 0 0 0 -1px;

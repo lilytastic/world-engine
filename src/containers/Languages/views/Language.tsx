@@ -74,16 +74,16 @@ export function Language(props: {children?: any}) {
         defaultActiveKey="phonology"
         id="uncontrolled-tab-example"
         variant='pills'
-        className="mt-4 mb-4 mx-auto border rounded-3"
+        className="mt-4 mb-4 mx-auto rounded"
         style={{width: 'fit-content'}}
       >
         <Tab eventKey="phonology" title="Phonology">
-          <Form.Group className='mb-5 form-group border'>
+          <Form.Group className='mb-4 form-group'>
             <PhonemeClasses></PhonemeClasses>
             <hr className='my-4' />
             <WordPatterns></WordPatterns>
           </Form.Group>
-          <Form.Group className='form-group border'>
+          <Form.Group className='form-group'>
             <ForbiddenCombinations></ForbiddenCombinations>
           </Form.Group>
         </Tab>
@@ -91,7 +91,7 @@ export function Language(props: {children?: any}) {
           
         </Tab>
         <Tab eventKey="vocabulary" title="Vocabulary">
-          <Form.Group className='form-group border'>
+          <Form.Group className='form-group'>
             <Form.Label htmlFor='languageName'>Language name</Form.Label>
             <Form.Control
               as='input'
