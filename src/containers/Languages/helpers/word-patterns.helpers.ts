@@ -1,5 +1,5 @@
 import { ILanguage, IPhonemeClassDictionary, IWordPattern } from "../models/sounds.model";
-import { getStringArray } from "./generators.helpers";
+import { getPhonemeClassDictionary, getStringArray } from "./generators.helpers";
 import { getRandomArrayItem, ProbabilityType } from "./logic.helpers";
 
 export type IWordPatternDictionary = {[patternName: string]: IWordPattern[]};
@@ -38,16 +38,21 @@ export function getWordPatternDictionary(language: ILanguage) {
   return dictionary;
 }
 
-export function wordPatternToPhonemes(phonemeClasses: IPhonemeClassDictionary, wordPattern: IWordPattern, mapper?: (phoneme: string) => string | undefined) {
+export function wordPatternToPhonemes(language: ILanguage, wordPattern: IWordPattern, mapper?: (phoneme: string) => string | undefined) {
   // Expand every uppercase letter
   const { pattern } = wordPattern;
+  const phonemeClasses = getPhonemeClassDictionary(language);
   let tokens = pattern; // Note -- these are syllables, whatever the tokens are initially.
   for (let i = 0; i < tokens.length; i++) {
     let token = tokens[i];
     if (token === token.toUpperCase() && phonemeClasses[token]) {
-      const item = getRandomArrayItem(phonemeClasses[token].tokens, ProbabilityType.FastDropoff);
-      tokens = [...tokens.slice(0, i), ...getStringArray(mapper?.(item) ?? item), ...tokens.slice(i + 1)];
-      i -= 1;
+      const item = getRandomArrayItem(phonemeClasses[token].tokens, language.phonology.probabilityDropoff || ProbabilityType.FastDropoff);
+      if (item) {
+        tokens = [...tokens.slice(0, i), ...getStringArray(mapper?.(item) ?? item), ...tokens.slice(i + 1)];
+        i -= 1;
+      } else {
+        console.error('no item');
+      }
     }
   }
   return tokens;

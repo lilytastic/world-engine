@@ -9,6 +9,7 @@ import { PhonemeClasses } from './PhonemeClasses';
 import { WordPatterns } from './WordPatterns';
 import { SampleWords } from './SampleWords';
 import { Breadcrumb, Form, Tab, Tabs } from 'react-bootstrap';
+import { ProbabilityDropoff } from './ProbabilityDropoff';
 import { ForbiddenCombinations } from './ForbiddenCombinations';
 import { LanguageOptions } from './LanguageOptions';
 import { NavLink } from 'react-router-dom';
@@ -80,6 +81,8 @@ export function Language(props: {children?: any}) {
         <Tab eventKey="phonology" title="Phonology">
           <Form.Group className='mb-4 form-group'>
             <PhonemeClasses></PhonemeClasses>
+            <hr className='my-4' />
+            <ProbabilityDropoff></ProbabilityDropoff>
             <hr className='my-4' />
             <WordPatterns></WordPatterns>
           </Form.Group>

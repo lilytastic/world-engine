@@ -1,9 +1,9 @@
 import { generateRules } from "./phonology.helpers";
-import { ILanguage, ISyllable, IWord, TypedSound, IPhonologicalRule, IPhonologicalToken, IPhonemeClassDictionary, IPhonemeClass } from "../models/sounds.model";
+import { ILanguage, ISyllable, IWord, TypedSound, IPhonologicalRule, IPhonologicalToken, IPhonemeClass } from "../models/sounds.model";
 import { VOWELS } from "../data/vowels";
 import { CONSONANTS } from "../data/consonants";
 import { getAffectedSounds, getSoundByPhoneme } from "./sounds.helpers";
-import { getWordPatternDictionary, IWordPatternDictionary, wordPatternToPhonemes } from "./word-patterns.helpers";
+import { getWordPatternDictionary, wordPatternToPhonemes } from "./word-patterns.helpers";
 import { getRandomArrayItem } from "./logic.helpers";
 
 // TODO: Try to implement some of https://github.com/conlang-software-dev/Logopoeist
@@ -70,20 +70,19 @@ export function getSampleWords(language: ILanguage) {
 
 export function getSampleWordsV2(language: ILanguage) {
   let arr: string[] = [];
-  const phonemeClasses = getPhonemeClassDictionary(language);
-  const wordPatterns = getWordPatternDictionary(language);
   // console.log('language', language);
   // console.log('phonemeClasses', phonemeClasses);
   // console.log('wordPatterns', wordPatterns);
   for (let i = 0; i < 30; i++) {
-    arr.push(generateWordV2(phonemeClasses, wordPatterns));
+    arr.push(generateWordV2(language));
   }
   return arr;
 }
-export function generateWordV2(phonemeClasses: IPhonemeClassDictionary, wordPatterns: IWordPatternDictionary) {
+export function generateWordV2(language: ILanguage) {
+  const wordPatterns = getWordPatternDictionary(language);
   const wordPattern = getRandomArrayItem(wordPatterns['word']);
   const tokens = wordPatternToPhonemes(
-    phonemeClasses,
+    language, // phonemeClasses,
     wordPattern,
     (phoneme) => (getSoundByPhoneme(phoneme)?.romanization)
   );

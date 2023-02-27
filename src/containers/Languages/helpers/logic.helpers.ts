@@ -18,5 +18,5 @@ export function getRandomArrayItem<T>(arr: T[], probabilityType?: ProbabilityTyp
     default:
       break;
   }
-  return arr[Math.floor(Math.random() * range)];
+  return arr[Math.min(arr.length - 1, Math.floor(Math.random() * range))];
 }

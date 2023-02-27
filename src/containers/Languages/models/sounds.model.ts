@@ -1,3 +1,4 @@
+import { ProbabilityType } from "../helpers/logic.helpers";
 
 export interface ISound {
   type: string;
@@ -40,6 +41,17 @@ export interface ILanguage {
   ancestor?: ILanguage;
   type: string;
 }
+
+export interface IPhonology {
+  syllableShape: string;
+  stressSystem: string;
+  wordPatterns: string;
+  forbiddenCombinations: string;
+  phonemeClasses: string;
+  phonotactics: IPhonotactic[];
+  probabilityDropoff: ProbabilityType;
+}
+
 export const DEFAULT_LANGUAGE: ILanguage = {
   id: 1,
   name: "",
@@ -51,18 +63,10 @@ export const DEFAULT_LANGUAGE: ILanguage = {
     phonemeClasses: 'C = b k p t d r s v w q g\nL = l m n\nV = a e i o u\nS = CV CVL VC',
     wordPatterns: 'S\nSS\nSSS\n\narticle = \nS\nV\n\npronoun = \nS\nSS\n\ndeterminer = \nS',
     forbiddenCombinations: '',
+    probabilityDropoff: ProbabilityType.FastDropoff,
     stressSystem: '',
     phonotactics: []
   }
-}
-
-export interface IPhonology {
-  syllableShape: string;
-  stressSystem: string;
-  wordPatterns: string;
-  forbiddenCombinations: string;
-  phonemeClasses: string;
-  phonotactics: IPhonotactic[];
 }
 
 export interface IPhonotactic {
