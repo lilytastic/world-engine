@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, Dropdown } from 'react-bootstrap';
 import { useDispatch } from 'react-redux';
-import { ILanguage } from '../models/sounds.model';
+import { ILanguage } from '../models/language.model';
 import { addNewLanguage } from '../reducers/language.reducer';
 
 

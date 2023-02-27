@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Button, ButtonGroup, CloseButton, Form, ListGroup, OverlayTrigger, Popover } from 'react-bootstrap';
+import { Button, Form, OverlayTrigger, Popover } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { ProbabilityType } from '../helpers/logic.helpers';
-import { ILanguage } from '../models/sounds.model';
+import { ILanguage } from '../models/language.model';
 import { getLanguages, updateLanguage } from '../reducers/language.reducer';
 
 

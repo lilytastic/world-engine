@@ -1,10 +1,12 @@
 import { generateRules } from "./phonology.helpers";
-import { ILanguage, ISyllable, IWord, TypedSound, IPhonologicalRule, IPhonologicalToken, IPhonemeClass } from "../models/sounds.model";
+import { TypedSound, IPhonemeClass } from "../models/sounds.model";
 import { VOWELS } from "../data/vowels";
 import { CONSONANTS } from "../data/consonants";
 import { getAffectedSounds, getSoundByPhoneme } from "./sounds.helpers";
 import { getWordPatternDictionary, wordPatternToPhonemes } from "./word-patterns.helpers";
 import { getRandomArrayItem } from "./logic.helpers";
+import { ILanguage, ISyllable, IWord } from "../models/language.model";
+import { IPhonologicalRule, IPhonologicalToken } from "../models/phonology.model";
 
 // TODO: Try to implement some of https://github.com/conlang-software-dev/Logopoeist
 // TODO: Also this https://www.vulgarlang.com/sound-changes

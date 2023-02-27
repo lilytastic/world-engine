@@ -1,7 +1,7 @@
 import { createSlice, createEntityAdapter, EntityState } from '@reduxjs/toolkit'
 import type { RootState } from '../../App/store'
 import { createSelector } from 'reselect'
-import { DEFAULT_LANGUAGE, ILanguage } from '../models/sounds.model'
+import { DEFAULT_LANGUAGE, ILanguage } from '../models/language.model';
 
 const languageAdapter = createEntityAdapter<ILanguage>({
   // Assume IDs are stored in a field other than `book.id`

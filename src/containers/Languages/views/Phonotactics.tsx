@@ -1,12 +1,12 @@
 
 
 import React, { useState } from 'react';
-import { ILanguage, IPhonology } from '../models/sounds.model';
 
 
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import CloseButton from 'react-bootstrap/CloseButton';
 import { Phonotactic } from './Phonotactic';
+import { ILanguage, IPhonology } from '../models/language.model';
 
 export function Phonotactics(props: {children?: any, language: ILanguage, show: boolean, handleClose?: (arg0: IPhonology) => void}) {
 

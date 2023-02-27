@@ -1,6 +1,8 @@
 import { CONSONANTS } from "../data/consonants";
 import { VOWELS } from "../data/vowels";
-import { ILanguage, IPhonologicalToken, ISound, PhonologicalTokenCollectionTypes, TypedSound } from "../models/sounds.model";
+import { ILanguage } from "../models/language.model";
+import { IPhonologicalToken, PhonologicalTokenCollectionTypes } from "../models/phonology.model";
+import { ISound, TypedSound } from "../models/sounds.model";
 
 
 export function getSoundByPhoneme(phoneme: string): TypedSound | null {

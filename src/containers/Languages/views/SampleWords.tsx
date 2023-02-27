@@ -1,7 +1,7 @@
 
 
 import React, { useEffect, useState } from 'react';
-import { ILanguage } from '../models/sounds.model';
+import { ILanguage } from '../models/language.model';
 
 import { getLanguages } from '../reducers/language.reducer';
 import { useSelector } from 'react-redux';

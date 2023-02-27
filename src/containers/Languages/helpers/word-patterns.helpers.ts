@@ -1,4 +1,5 @@
-import { ILanguage, IPhonemeClassDictionary, IWordPattern } from "../models/sounds.model";
+import { ILanguage } from "../models/language.model";
+import { IWordPattern } from "../models/sounds.model";
 import { getPhonemeClassDictionary, getStringArray } from "./generators.helpers";
 import { getRandomArrayItem, ProbabilityType } from "./logic.helpers";
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getSampleWords } from '../helpers/generators.helpers';
 
-import { ILanguage, IWord } from '../models/sounds.model';
+import { ILanguage, IWord } from '../models/language.model';
 import { useDispatch, useSelector } from 'react-redux';
 import { getLanguages, updateLanguage } from '../reducers/language.reducer';
 import { useParams } from 'react-router';

@@ -1,7 +1,6 @@
 
 
 import React, { useEffect, useState } from 'react';
-import { ILanguage } from '../models/sounds.model';
 
 import { getLanguages, updateLanguage } from '../reducers/language.reducer';
 import { useDispatch, useSelector } from 'react-redux';
@@ -9,6 +8,7 @@ import { useParams } from 'react-router';
 
 import Form from 'react-bootstrap/Form';
 import { Button, OverlayTrigger, Popover } from 'react-bootstrap';
+import { ILanguage } from '../models/language.model';
 
 export function PhonemeClasses(props: {children?: any}) {
 

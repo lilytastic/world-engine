@@ -1,13 +1,14 @@
 
 
 import React, { useEffect, useState } from 'react';
-import { ILanguage, MANNERS, PLACES, TypedSound, VOWELCLOSENESS, VOWELFRONTNESS } from '../models/sounds.model';
+import { MANNERS, PLACES, TypedSound, VOWELCLOSENESS, VOWELFRONTNESS } from '../models/sounds.model';
 
 import { getLanguages, updateLanguage } from '../reducers/language.reducer';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router';
 
 import { SoundSelection } from './SoundSelection';
+import { ILanguage } from '../models/language.model';
 
 export function WordPatterns(props: {children?: any}) {
 

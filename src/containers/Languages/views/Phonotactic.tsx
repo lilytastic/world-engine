@@ -1,11 +1,11 @@
 
 
 import React, { useEffect, useState } from 'react';
-import { ILanguage, IPhonotactic } from '../models/sounds.model';
 
-import Dropdown from 'react-bootstrap/Dropdown';
 import Modal from 'react-bootstrap/Modal';
 import CloseButton from 'react-bootstrap/CloseButton';
+import { IPhonotactic } from '../models/phonology.model';
+import { ILanguage } from '../models/language.model';
 
 export function Phonotactic(props: {children?: any, language: ILanguage, phonotactic?: IPhonotactic, show: boolean, handleClose?: (arg0: IPhonotactic) => void}) {
 

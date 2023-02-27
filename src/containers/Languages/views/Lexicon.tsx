@@ -1,8 +1,7 @@
 
 
 import React, { useState } from 'react';
-import { ILanguage } from '../models/sounds.model';
-
+import { ILanguage } from '../models/language.model';
 
 import Modal from 'react-bootstrap/Modal';
 import CloseButton from 'react-bootstrap/CloseButton';

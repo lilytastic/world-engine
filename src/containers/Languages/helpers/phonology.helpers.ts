@@ -1,5 +1,7 @@
 import { VOWELS } from "../data/vowels";
-import { BOUNDARY_MARKERS, ILanguage, IPhonologicalRule, IPhonologicalToken, IPhonotactic, ISound, ISoundRules, PhonologicalTokenCollectionTypes, PhonologicalTokens, SoundPositions, TypedSound } from "../models/sounds.model";
+import { ILanguage } from "../models/language.model";
+import { BOUNDARY_MARKERS, IPhonologicalRule, IPhonologicalToken, IPhonotactic, ISoundRules, PhonologicalTokenCollectionTypes, PhonologicalTokens, SoundPositions } from "../models/phonology.model";
+import { ISound } from "../models/sounds.model";
 
 
 

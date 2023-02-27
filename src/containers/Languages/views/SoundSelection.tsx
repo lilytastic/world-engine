@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { IConsonant, ILanguage, IVowel, MANNERS, PLACES, VOWELCLOSENESS, VOWELFRONTNESS } from '../models/sounds.model';
+import { IConsonant, IVowel, MANNERS, PLACES, VOWELCLOSENESS, VOWELFRONTNESS } from '../models/sounds.model';
 import { VOWELS } from '../data/vowels';
 import { CONSONANTS } from '../data/consonants';
 
 
 import Modal from 'react-bootstrap/Modal';
 import CloseButton from 'react-bootstrap/CloseButton';
+import { ILanguage } from '../models/language.model';
 
 export function SoundSelection(props: {children?: any, language: ILanguage, show: boolean, handleClose?: (vowels: IVowel[], consonants: IConsonant[]) => void}) {
 
