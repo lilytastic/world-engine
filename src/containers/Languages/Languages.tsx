@@ -28,6 +28,8 @@ export function Languages(props: {children?: any}) {
 
   return (
     <div className="view py-3">
+      <Outlet />
+      {/*
       <Tab.Container id="left-tabs-example" defaultActiveKey="first">
         <Row>
           <Col xs={12} lg={8}>
@@ -40,6 +42,7 @@ export function Languages(props: {children?: any}) {
           </Col>
         </Row>
       </Tab.Container>
+      */}
     </div>
   );
 }

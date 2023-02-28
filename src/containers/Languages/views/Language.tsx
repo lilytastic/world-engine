@@ -8,11 +8,12 @@ import { useParams } from 'react-router';
 import { PhonemeClasses } from '../components/PhonemeClasses';
 import { WordPatterns } from '../components/WordPatterns';
 import { SampleWords } from '../components/SampleWords';
-import { Breadcrumb, Form, Tab, Tabs } from 'react-bootstrap';
+import { Breadcrumb, Col, Form, Row, Tab, Tabs } from 'react-bootstrap';
 import { ProbabilityDropoff } from '../components/ProbabilityDropoff';
 import { ForbiddenCombinations } from '../components/ForbiddenCombinations';
 import { LanguageOptions } from '../components/LanguageOptions';
 import { NavLink } from 'react-router-dom';
+import { PhoneticKeyboard } from '../components/PhoneticKeyboard';
 
 export function Language(props: {children?: any}) {
 
@@ -30,6 +31,21 @@ export function Language(props: {children?: any}) {
   const [sampleWords, setSampleWords] = useState([] as IWord[]);
   const [title, setTitle] = useState('');
 
+  const [scrollPosition, setScrollPosition] = useState(0);
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
+  const handleScroll = () => {
+    const position = window.pageYOffset;
+    setScrollPosition(position);
+  };
+
   useEffect(() => {
     if (!!language) {
       localStorage.setItem('language', JSON.stringify(language));
@@ -43,7 +59,20 @@ export function Language(props: {children?: any}) {
     return <div></div>;
   }
 
-  return (
+  const returnLayout = (children: JSX.Element) => (
+    <Row>
+      <Col xs={12} lg={8}>
+        {children}
+      </Col>
+      <Col sm={6} md={4} className="position-relative overflow-hidden d-none d-lg-block">
+        <div style={{transition: 'transform .5s ease-in-out .03s', transform: `translateY(${scrollPosition}px)`}}>
+          <PhoneticKeyboard />
+        </div>
+      </Col>
+    </Row>
+  );
+
+  return returnLayout(
     <div className='position-relative pb-5 mb-5'>
       <Breadcrumb className='mb-2 pb-1'>
         <Breadcrumb.Item linkAs={NavLink} linkProps={{to: '/languages'}}>Languages</Breadcrumb.Item>
@@ -70,7 +99,7 @@ export function Language(props: {children?: any}) {
       <SampleWords></SampleWords>
 
       <Tabs
-        defaultActiveKey="phonology"
+        defaultActiveKey="vocabulary"
         id="uncontrolled-tab-example"
         variant='pills'
         className="mt-4 mb-4 mx-auto rounded"
