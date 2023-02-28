@@ -1,24 +1,16 @@
-import React, { MouseEvent, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useEffect, useState } from 'react';
 import './Languages.scss';
 
 import Tab from 'react-bootstrap/Tab';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import Button from 'react-bootstrap/Button';
-import { addNewLanguage, getLanguages } from './reducers/language.reducer';
-import { Outlet, useLocation } from 'react-router';
-import { NavLink } from 'react-router-dom';
-import { ListGroup } from 'react-bootstrap';
-import { PhoneticKeyboard } from './views/PhoneticKeyboard';
-import { LanguagePicker } from './views/LanguagePicker';
+import { Outlet } from 'react-router';
+import { PhoneticKeyboard } from './components/PhoneticKeyboard';
 
 // console.log('loaded', JSON.parse(localStorage.getItem('_language') || '{}'));
 
-
 export function Languages(props: {children?: any}) {
 
-  const location = useLocation();
   const [scrollPosition, setScrollPosition] = useState(0);
 
   useEffect(() => {

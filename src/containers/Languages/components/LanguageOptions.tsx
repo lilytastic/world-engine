@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button, Dropdown } from 'react-bootstrap';
 import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { ILanguage } from '../models/language.model';
 import { addNewLanguage } from '../reducers/language.reducer';
 
@@ -10,6 +11,7 @@ export const LanguageOptions = (props: {children?: any, language: ILanguage, cla
   const {language} = props;
 
   const dispatch = useDispatch();
+  const history = useNavigate();
 
   return (
     <Dropdown className={props.className}>
@@ -23,7 +25,7 @@ export const LanguageOptions = (props: {children?: any, language: ILanguage, cla
           <i className='fas fa-user-group fa-sm fa-fw me-2'></i>
           Change Parent
         </Dropdown.Item>
-        <Dropdown.Item onClick={ev => dispatch(addNewLanguage({name: language.name, parent: language.id}))}
+        <Dropdown.Item onClick={ev => dispatch(addNewLanguage({language: {name: language.name, parent: language.id}, history}))}
                        as={Button}
                        className='btn btn-link'>
           <i className='fas fa-user-plus fa-sm fa-fw me-2'></i>

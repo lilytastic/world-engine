@@ -1,7 +1,7 @@
 import React from 'react';
 import { Language } from '../Languages/views/Language';
 import { Languages } from '../Languages/Languages';
-import { LanguagePicker } from '../Languages/views/LanguagePicker';
+import { LanguagePicker } from '../Languages/components/LanguagePicker';
 
 export const ROUTES = [
   {

@@ -2,6 +2,7 @@ import { createSlice, createEntityAdapter, EntityState } from '@reduxjs/toolkit'
 import type { RootState } from '../../App/store'
 import { createSelector } from 'reselect'
 import { DEFAULT_LANGUAGE, ILanguage } from '../models/language.model';
+import { NavigateFunction, Navigation } from 'react-router';
 
 const languageAdapter = createEntityAdapter<ILanguage>({
   // Assume IDs are stored in a field other than `book.id`
@@ -23,8 +24,8 @@ try {
     // const langs = storedLanguages;
     // storedLanguages = languageAdapter.removeMany(langs, langs.ids.filter(id => langs.entities[id]?.name === ''));
   }
-} catch {
-  
+} catch (err) {
+  console.error(err);
 }
 // Define the initial state using that type
 const initialState: LanguageState = {
@@ -37,24 +38,28 @@ export const languageSlice = createSlice({
   initialState,
   reducers: {
     addNewLanguage: (state, action) => {
-      const newLanguage = { ...DEFAULT_LANGUAGE, ...(action.payload || {}), id: Math.max(0, Math.max(...state.languages.ids.map(x => +x)) + 1) };
+      const newLanguage = { ...DEFAULT_LANGUAGE, ...(action.payload.language || {}), id: Math.max(0, Math.max(...state.languages.ids.map(x => +x)) + 1) };
       const languages = languageAdapter.upsertOne({...state.languages}, newLanguage);
       localStorage.setItem('languages', JSON.stringify(languages));
-      return {...state, languages: {...languages}}
+      if (action.payload.history) {
+        const history = action.payload.history as NavigateFunction;
+        history('/languages/' + newLanguage.id);
+      }
+      return {...state, languages: {...languages}};
     },
     updateLanguage: (state, action) => {
       // console.log(action.payload);
       const lang: ILanguage = action.payload;
       const languages = languageAdapter.updateOne({...state.languages}, { id: lang.id, changes: lang });
       localStorage.setItem('languages', JSON.stringify(languages));
-      return {...state, languages}
+      return {...state, languages};
     }
   }
 })
 
-export const { addNewLanguage, updateLanguage } = languageSlice.actions
+export const { addNewLanguage, updateLanguage } = languageSlice.actions;
 
 export const getLanguages = createSelector((state: RootState) => state.language, (state) => state.languages);
 
 
-export default languageSlice.reducer
+export default languageSlice.reducer;

@@ -2,7 +2,6 @@ import { ProbabilityType } from "../helpers/logic.helpers";
 import { IPhonotactic } from "./phonology.model";
 import { IConsonant, IVowel } from "./sounds.model";
 
-
 export interface ILanguage {
   id: number;
   name: string;
@@ -25,13 +24,6 @@ export interface IPhonology {
   dropoffRate: ProbabilityType;
 }
 
-export interface IWord {
-  syllables: ISyllable[];
-}
-export interface ISyllable {
-  sounds: string[];
-}
-
 export const DEFAULT_LANGUAGE: ILanguage = {
   id: 1,
   name: "",
@@ -49,4 +41,12 @@ export const DEFAULT_LANGUAGE: ILanguage = {
     stressSystem: '',
     phonotactics: []
   }
+}
+
+export interface IWord {
+  syllables: ISyllable[];
+}
+
+export interface ISyllable {
+  sounds: string[];
 }

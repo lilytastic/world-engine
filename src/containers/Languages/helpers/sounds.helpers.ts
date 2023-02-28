@@ -56,14 +56,12 @@ export function doesSoundMatchToken(sound: TypedSound, token: string) {
       } else {
         return false;
       }
-      break;
     case 'consonants':
       if (sound.type === "consonant") {
         return true;
       } else {
         return false;
       }
-      break;
     case 'fricatives':
       if (sound.type === "consonant") {
         return sound.manner.toLowerCase().includes('fricative');

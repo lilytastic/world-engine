@@ -5,13 +5,13 @@ import { ILanguage, IWord } from '../models/language.model';
 import { useDispatch, useSelector } from 'react-redux';
 import { getLanguages, updateLanguage } from '../reducers/language.reducer';
 import { useParams } from 'react-router';
-import { PhonemeClasses } from './PhonemeClasses';
-import { WordPatterns } from './WordPatterns';
-import { SampleWords } from './SampleWords';
+import { PhonemeClasses } from '../components/PhonemeClasses';
+import { WordPatterns } from '../components/WordPatterns';
+import { SampleWords } from '../components/SampleWords';
 import { Breadcrumb, Form, Tab, Tabs } from 'react-bootstrap';
-import { ProbabilityDropoff } from './ProbabilityDropoff';
-import { ForbiddenCombinations } from './ForbiddenCombinations';
-import { LanguageOptions } from './LanguageOptions';
+import { ProbabilityDropoff } from '../components/ProbabilityDropoff';
+import { ForbiddenCombinations } from '../components/ForbiddenCombinations';
+import { LanguageOptions } from '../components/LanguageOptions';
 import { NavLink } from 'react-router-dom';
 
 export function Language(props: {children?: any}) {
@@ -28,9 +28,7 @@ export function Language(props: {children?: any}) {
   }, [languages, params.id]);
 
   const [sampleWords, setSampleWords] = useState([] as IWord[]);
-
   const [title, setTitle] = useState('');
-
 
   useEffect(() => {
     if (!!language) {

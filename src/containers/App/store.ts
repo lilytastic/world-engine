@@ -5,6 +5,15 @@ export const store = configureStore({
   reducer: {
     language: languageReducer,
   },
+  middleware(getDefaultMiddleware) {
+    console.log(getDefaultMiddleware);
+    return getDefaultMiddleware({
+      serializableCheck: {
+        // Ignore these field paths in all actions
+        ignoredActionPaths: ['payload.history'],
+      },
+    })
+  },
 })
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
