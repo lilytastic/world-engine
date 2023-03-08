@@ -1,5 +1,3 @@
-import { ProbabilityType } from "../helpers/logic.helpers";
-
 export interface ISound {
   type: string;
   phoneme: string;

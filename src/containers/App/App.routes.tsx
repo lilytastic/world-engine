@@ -6,20 +6,21 @@ import { LanguagePicker } from '../Languages/components/LanguagePicker';
 export const ROUTES = [
   {
     path: '/', 
-    itle: '',
-    element: <div></div> },
+    title: '',
+    element: <div></div>
+  },
   { 
     path: '/geography',
     title: 'Geography',
     icon: 'mountain',
-    showInNav: true,
+    showInNav: false,
     element: <div></div>
   },
   { 
     path: '/cultures',
     title: 'Cultures',
     icon: 'landmark',
-    showInNav: true,
+    showInNav: false,
     element: <div></div>
   },
   { 
@@ -45,6 +46,13 @@ export const ROUTES = [
     path: '/characters',
     title: 'Characters',
     icon: 'users',
+    showInNav: false,
+    element: <div></div>
+  },
+  { 
+    path: '/simulator',
+    title: 'Simulator',
+    icon: 'gamepad',
     showInNav: true,
     element: <div></div>
   },

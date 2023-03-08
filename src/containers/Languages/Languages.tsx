@@ -1,30 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import './Languages.scss';
 
-import Tab from 'react-bootstrap/Tab';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 import { Outlet } from 'react-router';
-import { PhoneticKeyboard } from './components/PhoneticKeyboard';
 
 // console.log('loaded', JSON.parse(localStorage.getItem('_language') || '{}'));
 
 export function Languages(props: {children?: any}) {
-
-  const [scrollPosition, setScrollPosition] = useState(0);
-
-  useEffect(() => {
-    window.addEventListener('scroll', handleScroll, { passive: true });
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
-
-  const handleScroll = () => {
-      const position = window.pageYOffset;
-      setScrollPosition(position);
-  };
 
   return (
     <div className="view py-3">

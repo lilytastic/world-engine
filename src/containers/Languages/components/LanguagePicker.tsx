@@ -1,8 +1,7 @@
 import React from 'react';
-import { Button, Col, ListGroup, Row } from 'react-bootstrap';
+import { Col, ListGroup, Row } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux'
-import { useNavigate } from 'react-router-dom';
-import { NavLink, useLocation } from 'react-router-dom';
+import { useNavigate, NavLink, useLocation } from 'react-router-dom';
 import { addNewLanguage, getLanguages } from '../reducers/language.reducer';
 
 
@@ -14,10 +13,10 @@ export const LanguagePicker = (props: {children?: any, className?: string}) => {
   const history = useNavigate();
 
   return (<div>
-    <label className='d-flex justify-content-between align-items-baseline mb-2 pb-1'>
+    <label className='mb-2 pb-1'>
       &nbsp;
     </label>
-    <h1 className='d-flex justify-content-between align-items-center lh-1 mb-3'>
+    <h1 className='lh-1 mb-3'>
       Languages
     </h1>
     <Row className='mt-2'>

@@ -14,6 +14,7 @@ import { ForbiddenCombinations } from '../components/ForbiddenCombinations';
 import { LanguageOptions } from '../components/LanguageOptions';
 import { NavLink } from 'react-router-dom';
 import { PhoneticKeyboard } from '../components/PhoneticKeyboard';
+import { SoundChanges } from '../components/SoundChanges';
 
 export function Language(props: {children?: any}) {
 
@@ -113,8 +114,11 @@ export function Language(props: {children?: any}) {
             <div className='my-1'>&nbsp;</div>
             <ProbabilityDropoff></ProbabilityDropoff>
           </Form.Group>
-          <Form.Group className='form-group'>
+          <Form.Group className='mb-4 form-group'>
             <ForbiddenCombinations></ForbiddenCombinations>
+          </Form.Group>
+          <Form.Group className='form-group'>
+            <SoundChanges></SoundChanges>
           </Form.Group>
         </Tab>
         <Tab eventKey="spelling" title="Spelling">

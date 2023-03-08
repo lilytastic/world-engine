@@ -42,10 +42,14 @@ export function ForbiddenCombinations(props: {children?: any}) {
   }
 
   return (<>
-    <Form.Label htmlFor="forbiddenCombinations">Forbidden Combinations</Form.Label>
+    <Form.Label htmlFor="forbiddenCombinations">
+      Forbidden Combinations
+    </Form.Label>
+    
     <Form.Control
       as='input'
       id='forbiddenCombinations'
+      placeholder='#ŋ dt'
       value={currentForbiddenCombinations}
       onChange={ev => setForbiddenCombinations(ev.currentTarget.value)}
       onBlur={ev => updateForbiddenCombinations(ev.currentTarget.value)}

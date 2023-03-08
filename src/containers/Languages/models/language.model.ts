@@ -16,6 +16,7 @@ export interface IPhonology {
   syllableShape: string;
   stressSystem: string;
   wordPatterns: string;
+  soundChanges: string;
   forbiddenCombinations: string;
   banSameVowels: boolean;
   banSameConsonants: boolean;
@@ -34,6 +35,7 @@ export const DEFAULT_LANGUAGE: ILanguage = {
     syllableShape: 'CV(C)',
     phonemeClasses: 'C = b k p t d r s v w q g\nL = l m n\nV = a e i o u\nS = CV CVL VC',
     wordPatterns: 'S\nSS\nSSS\n\narticle = \nS\nV\n\npronoun = \nS\nSS\n\ndeterminer = \nS',
+    soundChanges: '',
     forbiddenCombinations: '',
     banSameVowels: true,
     banSameConsonants: false,
