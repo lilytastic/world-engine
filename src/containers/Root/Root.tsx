@@ -24,7 +24,7 @@ export function Root(props: {children?: any}) {
     <Navbar className='bg-body' sticky="top" expand="lg">
       <Container fluid='sm'>
 
-        <Navbar.Brand href="/" className='w-10'>
+        <Navbar.Brand href="/">
           <i className='fas fa-globe me-2'></i>
           <strong>World Engine</strong>
         </Navbar.Brand>
