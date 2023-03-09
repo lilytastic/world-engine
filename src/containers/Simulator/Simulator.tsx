@@ -1,14 +1,21 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import * as ROT from 'rot-js';
+import { getRandomArrayItem } from '../Languages/helpers/logic.helpers';
 import { getDrawingInfo, getEntitiesOnMap, ICoords } from './Simulator.helpers';
 
 export function Simulator(props: {children?: any}) {
 
   const gameWindowRef = useRef(null as HTMLDivElement | null);
   const mapData: {[x: number]: {[y: number]: number}} = useMemo(() => ({}), []);
-  const [ display ] = useState(new ROT.Display({width: 69, height: 32}));
+
+  const defaultDisplay = new ROT.Display({width: 90, height: 40, fontFamily: 'Inconsolata'});
+
+  const [ display ] = useState(defaultDisplay);
   const [ element ] = useState(display.getContainer());
   const [ keysPressed, setKeysPressed ] = useState({} as {[key: string]: boolean});
+
+  const [ playerCoords, setPlayerCoords ] = useState({x: 0, y: 0} as ICoords);
+  const [ cursorCoords, setCursorCoords ] = useState({x: 0, y: 0} as ICoords);
 
   
   const drawMapOnDisplay = useCallback((displayCoords: ICoords, mapCoords: ICoords) => {
@@ -19,27 +26,29 @@ export function Simulator(props: {children?: any}) {
 
 
   useEffect(() => {
-    display.setOptions({
-      fontFamily: 'Inconsolata'
-    });
-
     const {width, height} = display.getOptions();
     const map = new ROT.Map.Digger(width, height);
     map.create((x, y, what) => {
       if (!mapData[x]) { mapData[x] = {}; }
       mapData[x][y] = what;
     });
+    const startingRoom = getRandomArrayItem(map.getRooms());
+    setPlayerCoords({x: startingRoom.getCenter()[0], y: startingRoom.getCenter()[1]});
+  }, [display, drawMapOnDisplay, mapData]);
 
+
+  useEffect(() => {
     Object.keys(mapData).forEach(((_x, x) => {
       Object.keys(mapData[x]).forEach((_y, y) => {
         const displayCoords = {x, y};
         const mapCoords = {x, y};
         drawMapOnDisplay(displayCoords, mapCoords);
+        if (playerCoords.x === x && playerCoords.y === y) {
+          display.drawOver(x, y, '@', '#FFF', '');
+        }
       })
     }));
-
-  }, [display, drawMapOnDisplay, mapData]);
-  
+  });
 
   useEffect(() => {
     let _element = element;
@@ -51,6 +60,31 @@ export function Simulator(props: {children?: any}) {
     return () => { container?.removeChild(child); }
   }, [gameWindowRef, element]);
 
+  useEffect(() => {
+    // console.log(cursorCoords);
+  }, [cursorCoords]);
+
+  useEffect(() => {
+    function handleMouseMove(e: MouseEvent) {
+      const displayContainer = display.getContainer();
+      const displayOptions = display.getOptions();
+      if (e.target === displayContainer && displayContainer) {
+        const canvas = displayContainer.getBoundingClientRect();
+        const left = (e.clientX - canvas.left);
+        const top = (e.clientY - canvas.top);
+        const x = Math.floor((left / canvas.width) * displayOptions.width);
+        const y = Math.floor((top / canvas.height) * displayOptions.height);
+        if (cursorCoords.x !== x || cursorCoords.y !== y) {
+          setCursorCoords({ x, y });
+        }
+      }
+    }
+
+    document.addEventListener('mousemove', handleMouseMove);
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+    }
+  }, [display, cursorCoords]);
 
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
