@@ -2,6 +2,7 @@ import React from 'react';
 import { Language } from '../Languages/views/Language';
 import { Languages } from '../Languages/Languages';
 import { LanguagePicker } from '../Languages/components/LanguagePicker';
+import { Simulator } from '../Simulator/Simulator';
 
 export const ROUTES = [
   {
@@ -54,6 +55,6 @@ export const ROUTES = [
     title: 'Simulator',
     icon: 'gamepad',
     showInNav: true,
-    element: <div></div>
+    element: <Simulator />
   },
 ];
