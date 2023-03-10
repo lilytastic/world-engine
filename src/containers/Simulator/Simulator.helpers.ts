@@ -96,11 +96,11 @@ export const getDrawingInfo = (what: number, mapCoords: ICoords) => {
       } else if (stuff > 0.1) {
         ch = '.'
       }
-      /*
       r = 15 + noise * 10;
       g = 15 + noise * 10;
       b = 15 + noise * 10;
-      foregroundColor = `rgba(${r + 20},${g + 20},${b + 20})`;
+      foregroundColor = [r,g,b];
+      /*
       backgroundColor = `rgba(${r},${g},${b})`;
       */
       backgroundColor = [0,0,0];

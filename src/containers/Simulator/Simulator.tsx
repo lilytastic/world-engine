@@ -33,17 +33,23 @@ export function Simulator(props: {children?: any}) {
 
 
   const drawMapOnDisplay = useCallback((displayCoords: ICoords, mapCoords: ICoords) => {
-    let { ch, foregroundColor, backgroundColor } = getDrawingInfo(getEntitiesOnMap(mapCoords, mapData), mapCoords);
+    const entities = getEntitiesOnMap(mapCoords, mapData);
+    let { ch, foregroundColor, backgroundColor } = getDrawingInfo(entities, mapCoords);
     
-    if (!visibleTiles.find(tile => tile.x === displayCoords.x && tile.y === displayCoords.y)) {
-      const fogOfWar: Color = [10, 5, 30];
-      foregroundColor = ROT.Color.interpolate(foregroundColor, fogOfWar, 0.7);
-      backgroundColor = ROT.Color.interpolate(backgroundColor, fogOfWar, 0.7);
+    if (entities !== 1 && !visibleTiles.find(tile => tile.x === displayCoords.x && tile.y === displayCoords.y)) {
+      if (seenTiles.find(tile => tile.x === displayCoords.x && tile.y === displayCoords.y)) {
+        const fogOfWar: Color = [130, 130, 130];
+        foregroundColor = ROT.Color.multiply(foregroundColor, fogOfWar);
+        backgroundColor = ROT.Color.multiply(backgroundColor, fogOfWar);  
+      } else {
+        foregroundColor = [0,0,0];
+        backgroundColor = [0,0,0];
+      }
     }
     display.draw(displayCoords.x, displayCoords.y, ch, ROT.Color.toRGB(foregroundColor), ROT.Color.toRGB(backgroundColor));
 
     return { x: displayCoords.x, y: displayCoords.y, ch, foregroundColor, backgroundColor };
-  }, [display, mapData, visibleTiles]);
+  }, [display, mapData, visibleTiles, seenTiles]);
 
   
   useEffect(() => {
@@ -51,11 +57,18 @@ export function Simulator(props: {children?: any}) {
     const tiles: ICoords[] = [];
     shadowCasting.compute(playerCoords.x, playerCoords.y, 10, (x, y, r, visibility) => { tiles.push({x, y}); });
     setVisibleTiles(tiles);
-  }, [playerCoords, mapData]);
+    const newlySeenTiles = tiles.filter(_ => !seenTiles.find(tile => tile.x === _.x && tile.y === _.y));
+    if (newlySeenTiles.length > 0) {
+      setSeenTiles([...seenTiles, ...newlySeenTiles]);
+    }
+  }, [playerCoords, mapData, seenTiles]);
 
 
   const drawCursor = useCallback((displayCoords: ICoords) => {
     const { x, y } = displayCoords;
+    if (!seenTiles.find(tile => tile.x === cursorCoords.x && tile.y === cursorCoords.y)) {
+      return;
+    }
     let cursorBrightness = 190 + Math.sin(Date.now() / 200) * 65;
     if (cursorCoords.x === x && cursorCoords.y === y) {
       display.drawOver(x, y, '', '', `rgba(${cursorBrightness},${cursorBrightness},${cursorBrightness})`);
@@ -77,7 +90,7 @@ export function Simulator(props: {children?: any}) {
         display.drawOver(x, y, '', `rgba(${cursorBrightness},${cursorBrightness},${cursorBrightness})`, '');
       }
     }
-  }, [currentPath, isMouseButtonDown, cursorCoords, display, path]);
+  }, [currentPath, isMouseButtonDown, cursorCoords, display, path, seenTiles]);
 
 
   const draw = useCallback(() => {
@@ -104,6 +117,8 @@ export function Simulator(props: {children?: any}) {
       if (!mapData[x]) { mapData[x] = {}; }
       mapData[x][y] = what;
     });
+    setVisibleTiles([]);
+    setSeenTiles([]);
     const startingRoom = getRandomArrayItem(map.getRooms());
     setPlayerCoords({x: startingRoom.getCenter()[0], y: startingRoom.getCenter()[1]});
   }, [mapData]);
