@@ -8,7 +8,7 @@ export function Simulator(props: {children?: any}) {
   const gameWindowRef = useRef(null as HTMLDivElement | null);
   const mapData: {[x: number]: {[y: number]: number}} = useMemo(() => ({}), []);
 
-  const defaultDisplay = new ROT.Display({width: 90, height: 40, fontFamily: 'Inconsolata'});
+  const defaultDisplay = new ROT.Display({width: 90, height: 40, fontSize: 18, fontFamily: 'Inconsolata'});
 
   const [ display ] = useState(defaultDisplay);
   const [ element ] = useState(display.getContainer());
@@ -22,6 +22,8 @@ export function Simulator(props: {children?: any}) {
     let { ch, foregroundColor, backgroundColor } = getDrawingInfo(getEntitiesOnMap(mapCoords, mapData), mapCoords);
     
     display.draw(displayCoords.x, displayCoords.y, ch, foregroundColor, backgroundColor);
+
+    return { x: displayCoords.x, y: displayCoords.y, ch, foregroundColor, backgroundColor };
   }, [display, mapData]);
 
 
@@ -37,18 +39,22 @@ export function Simulator(props: {children?: any}) {
   }, [display, drawMapOnDisplay, mapData]);
 
 
-  useEffect(() => {
+  const draw = useCallback(() => {
     Object.keys(mapData).forEach(((_x, x) => {
       Object.keys(mapData[x]).forEach((_y, y) => {
         const displayCoords = {x, y};
         const mapCoords = {x, y};
-        drawMapOnDisplay(displayCoords, mapCoords);
+        const drawn = drawMapOnDisplay(displayCoords, mapCoords);
         if (playerCoords.x === x && playerCoords.y === y) {
           display.drawOver(x, y, '@', '#FFF', '');
         }
+        if (cursorCoords.x === x && cursorCoords.y === y) {
+          let brightness = 190 + Math.sin(Date.now() / 200) * 65;
+          display.drawOver(x, y, '', '', `rgba(${brightness},${brightness},${brightness})`);
+        }
       })
     }));
-  });
+  }, [cursorCoords, display, mapData, playerCoords, drawMapOnDisplay]);
 
   useEffect(() => {
     let _element = element;
@@ -61,8 +67,19 @@ export function Simulator(props: {children?: any}) {
   }, [gameWindowRef, element]);
 
   useEffect(() => {
-    // console.log(cursorCoords);
-  }, [cursorCoords]);
+    let timeout: NodeJS.Timeout;
+    const startDrawing = () => {
+      draw();
+      timeout = setTimeout(() => {
+        startDrawing();
+      }, 50);
+    }
+    startDrawing();
+
+    return () => {
+      clearInterval(timeout);
+    }
+  }, [draw]);
 
   useEffect(() => {
     function handleMouseMove(e: MouseEvent) {
@@ -77,6 +94,8 @@ export function Simulator(props: {children?: any}) {
         if (cursorCoords.x !== x || cursorCoords.y !== y) {
           setCursorCoords({ x, y });
         }
+      } else if (cursorCoords.x !== -1 || cursorCoords.y !== -1) {
+        setCursorCoords({ x: -1, y: -1 });
       }
     }
 
