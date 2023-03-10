@@ -73,12 +73,10 @@ export const getDrawingInfo = (what: number, mapCoords: ICoords) => {
         b = 0;
       }
 
-      if (foliage > 0.6) {
+      if (foliage > 0.5) {
         ch = '"';
-      } else if (foliage > 0.3) {
-        ch = '\'';
       } else if (foliage > 0.1) {
-        ch = '`';
+        ch = '\'';
       }
 
       foregroundColor = `rgba(${r},${g},${b})`;
@@ -91,9 +89,9 @@ export const getDrawingInfo = (what: number, mapCoords: ICoords) => {
     case 1:
       let stuff = getNoise(x + 3693, y);
       if (stuff > 0.7) {
-        ch = '%';
-      } else if (stuff > 0.6) {
         ch = '*';
+      } else if (stuff > 0.6) {
+        ch = '%';
       } else if (stuff > 0.1) {
         ch = '.'
       }
@@ -107,15 +105,17 @@ export const getDrawingInfo = (what: number, mapCoords: ICoords) => {
       backgroundColor = `rgba(0,0,0)`;
       break;
     case 2:
-      //ch = '#';
-      ch = '·';
+      ch = '#';
+
+      // ch = '·';
+      let baseBrightness = 80;
       let amp = 20;
-      r = 32 + noise * amp;
-      g = 32 + noise * amp;
-      b = 32 + noise * amp;
+      r = baseBrightness + noise * amp;
+      g = baseBrightness + noise * amp;
+      b = baseBrightness + noise * amp;
       foregroundColor = `rgba(${r},${g},${b})`;
       //backgroundColor = '#000';
-      let baseBrightness = 60;
+      baseBrightness = 60;
       r = baseBrightness + noise * amp;
       g = baseBrightness + noise * amp;
       b = baseBrightness + noise * amp;

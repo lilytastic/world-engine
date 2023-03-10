@@ -8,7 +8,14 @@ export function Simulator(props: {children?: any}) {
   const gameWindowRef = useRef(null as HTMLDivElement | null);
   const mapData: Map = useMemo(() => ({}), []);
 
-  const defaultDisplay = new ROT.Display({width: 45, height: 35, fontSize: 18, fontFamily: 'Space Mono', forceSquareRatio: true});
+  const defaultDisplay = new ROT.Display({
+    width: 45,
+    height: 35,
+    fontSize: 18,
+    // fontFamily: 'Inconsolata',
+    fontFamily: 'Space Mono',
+    forceSquareRatio: true
+  });
 
   const [ display ] = useState(defaultDisplay);
   const [ element ] = useState(display.getContainer());
@@ -18,9 +25,12 @@ export function Simulator(props: {children?: any}) {
   const [ cursorCoords, setCursorCoords ] = useState({x: 0, y: 0} as ICoords);
   const [ path, setPath ] = useState([] as ICoords[]);
   const [ currentPath, setCurrentPath ] = useState([] as ICoords[]);
+  const [ seenTiles, setSeenTiles ] = useState([] as ICoords[]);
+  const [ visibleTiles, setVisibleTiles ] = useState([] as ICoords[]);
 
   const [isMouseButtonDown, setIsMouseButtonDown] = useState(false);
-  
+
+
   const drawMapOnDisplay = useCallback((displayCoords: ICoords, mapCoords: ICoords) => {
     let { ch, foregroundColor, backgroundColor } = getDrawingInfo(getEntitiesOnMap(mapCoords, mapData), mapCoords);
     
@@ -30,6 +40,49 @@ export function Simulator(props: {children?: any}) {
   }, [display, mapData]);
 
 
+  const drawCursor = useCallback((displayCoords: ICoords) => {
+    const { x, y } = displayCoords;
+    let cursorBrightness = 190 + Math.sin(Date.now() / 200) * 65;
+    if (cursorCoords.x === x && cursorCoords.y === y) {
+      display.drawOver(x, y, '', '', `rgba(${cursorBrightness},${cursorBrightness},${cursorBrightness})`);
+    }
+    
+    if (currentPath.length > 0 && !isMouseButtonDown) {
+      const currentPathIndex = currentPath.findIndex(p => p.x === x && p.y === y);
+      if (currentPathIndex !== -1 && currentPathIndex === currentPath.length - 1) {
+        cursorBrightness = 220 + Math.sin(Date.now() / 200) * 35;
+        display.drawOver(x, y, '', `rgba(${cursorBrightness},${cursorBrightness},${cursorBrightness})`, '');
+      } else if (currentPathIndex !== -1) {
+        cursorBrightness = 220 + Math.sin(Date.now() / 200 + currentPathIndex * 100) * 35;
+        display.drawOver(x, y, '', `rgba(${cursorBrightness},${cursorBrightness},${cursorBrightness})`, '');
+      }
+    } else {
+      const pathIndex = path.findIndex(p => p.x === x && p.y === y);
+      if (isMouseButtonDown && pathIndex !== -1) {
+        cursorBrightness = 190 + Math.sin(Date.now() / 200 + pathIndex * 100) * 65;
+        display.drawOver(x, y, '', `rgba(${cursorBrightness},${cursorBrightness},${cursorBrightness})`, '');
+      }
+    }
+  }, [currentPath, isMouseButtonDown, cursorCoords, display, path]);
+
+
+  const draw = useCallback(() => {
+    Object.keys(mapData).forEach(((_x, x) => {
+      Object.keys(mapData[x]).forEach((_y, y) => {
+        const displayCoords = {x, y};
+        const mapCoords = {x, y};
+        drawMapOnDisplay(displayCoords, mapCoords);
+
+        drawCursor(displayCoords);
+
+        if (playerCoords.x === x && playerCoords.y === y) {
+          display.drawOver(x, y, '@', '#FFF', '');
+        }
+      })
+    }));
+  }, [drawCursor, display, drawMapOnDisplay, mapData, playerCoords]);
+
+  
   useEffect(() => {
     const {width, height} = display.getOptions();
     const map = new ROT.Map.Digger(width, height);
@@ -42,47 +95,13 @@ export function Simulator(props: {children?: any}) {
   }, [display, drawMapOnDisplay, mapData]);
 
 
-  const draw = useCallback(() => {
-    Object.keys(mapData).forEach(((_x, x) => {
-      Object.keys(mapData[x]).forEach((_y, y) => {
-        const displayCoords = {x, y};
-        const mapCoords = {x, y};
-        const drawn = drawMapOnDisplay(displayCoords, mapCoords);
-
-        let cursorBrightness = 190 + Math.sin(Date.now() / 200) * 65;
-        if (cursorCoords.x === x && cursorCoords.y === y) {
-          display.drawOver(x, y, '', '', `rgba(${cursorBrightness},${cursorBrightness},${cursorBrightness})`);
-        }
-        
-        if (currentPath.length > 0 && !isMouseButtonDown) {
-          const currentPathIndex = currentPath.findIndex(p => p.x === x && p.y === y);
-          if (currentPathIndex !== -1 && currentPathIndex === currentPath.length - 1) {
-            cursorBrightness = 220 + Math.sin(Date.now() / 200) * 35;
-            display.drawOver(x, y, 'x', `rgba(${cursorBrightness},${cursorBrightness},${cursorBrightness})`, '');
-          } else if (currentPathIndex !== -1) {
-            cursorBrightness = 220 + Math.sin(Date.now() / 200 + currentPathIndex * 100) * 35;
-            display.drawOver(x, y, '·', `rgba(${cursorBrightness},${cursorBrightness},${cursorBrightness})`, '');
-          }
-        } else {
-          const pathIndex = path.findIndex(p => p.x === x && p.y === y);
-          if (isMouseButtonDown && pathIndex !== -1) {
-            cursorBrightness = 190 + Math.sin(Date.now() / 200 + pathIndex * 100) * 65;
-            display.drawOver(x, y, '·', `rgba(${cursorBrightness},${cursorBrightness},${cursorBrightness})`, '');
-          }
-        }
-        if (playerCoords.x === x && playerCoords.y === y) {
-          display.drawOver(x, y, '@', '#FFF', '');
-        }
-      })
-    }));
-  }, [cursorCoords, display, mapData, playerCoords, drawMapOnDisplay, path, isMouseButtonDown, currentPath]);
-
   const process = useCallback(() => {
     if (currentPath.length > 0) {
       setPlayerCoords(currentPath[0]);
       setCurrentPath(currentPath.slice(1));
     }
   }, [currentPath]);
+
 
   useEffect(() => {
     let _element = element;
@@ -94,12 +113,14 @@ export function Simulator(props: {children?: any}) {
     return () => { container?.removeChild(child); }
   }, [gameWindowRef, element]);
 
+
   useEffect(() => {
     const astar = new ROT.Path.AStar(cursorCoords.x, cursorCoords.y, (x, y) => mapData[x]?.[y] === 0);
     const path: ICoords[] = [];
     astar.compute(playerCoords.x, playerCoords.y, (x, y) => { if (mapData[x]?.[y] === 0 && (playerCoords.x !== x || playerCoords.y !== y)) { path.push({x, y}); } })
     setPath(path);
   }, [playerCoords, cursorCoords, display, mapData]);
+
 
   useEffect(() => {
     let timeout: NodeJS.Timeout;
@@ -116,6 +137,7 @@ export function Simulator(props: {children?: any}) {
     }
   }, [process]);
 
+
   useEffect(() => {
     let timeout: NodeJS.Timeout;
     const startDrawing = () => {
@@ -130,6 +152,7 @@ export function Simulator(props: {children?: any}) {
       clearInterval(timeout);
     }
   }, [draw]);
+
 
   useEffect(() => {
     function handleMouseMove(e: MouseEvent) {
@@ -154,6 +177,7 @@ export function Simulator(props: {children?: any}) {
       document.removeEventListener('mousemove', handleMouseMove);
     }
   }, [display, cursorCoords]);
+
 
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
@@ -191,6 +215,7 @@ export function Simulator(props: {children?: any}) {
       document.removeEventListener('keyup', handleKeyUp);
     }
   }, [keysPressed]);
+  
 
   useEffect(() => {
     function handleMouseUp(e: MouseEvent) {
