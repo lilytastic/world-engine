@@ -56,7 +56,6 @@ export const getDrawingInfo = (what: number, mapCoords: ICoords) => {
   const {x, y} = mapCoords;
 
   let noise = getNoise(x, y);
-  let amp = 20;
 
   switch (what) {
     case 0:
@@ -107,12 +106,19 @@ export const getDrawingInfo = (what: number, mapCoords: ICoords) => {
       backgroundColor = `rgba(0,0,0)`;
       break;
     case 2:
-      ch = '#';
-      r += noise * amp;
-      g += noise * amp;
-      b += noise * amp;
-      foregroundColor = `rgba(${r - 30},${g - 30},${b - 30})`;
+      //ch = '#';
+      ch = '·';
+      let amp = 20;
+      r = 32 + noise * amp;
+      g = 32 + noise * amp;
+      b = 32 + noise * amp;
+      foregroundColor = `rgba(${r},${g},${b})`;
+      //backgroundColor = '#000';
+      r = 0 + noise * amp;
+      g = 0 + noise * amp;
+      b = 0 + noise * amp;
       backgroundColor = `rgba(${r},${g},${b})`;
+      backgroundColor = '#000';
       break;
   }
 

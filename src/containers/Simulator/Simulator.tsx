@@ -8,7 +8,7 @@ export function Simulator(props: {children?: any}) {
   const gameWindowRef = useRef(null as HTMLDivElement | null);
   const mapData: {[x: number]: {[y: number]: number}} = useMemo(() => ({}), []);
 
-  const defaultDisplay = new ROT.Display({width: 90, height: 40, fontSize: 18, fontFamily: 'Inconsolata'});
+  const defaultDisplay = new ROT.Display({width: 40, height: 30, fontSize: 24, fontFamily: 'Space Mono', forceSquareRatio: true});
 
   const [ display ] = useState(defaultDisplay);
   const [ element ] = useState(display.getContainer());
@@ -16,7 +16,8 @@ export function Simulator(props: {children?: any}) {
 
   const [ playerCoords, setPlayerCoords ] = useState({x: 0, y: 0} as ICoords);
   const [ cursorCoords, setCursorCoords ] = useState({x: 0, y: 0} as ICoords);
-
+  const [ path, setPath ] = useState([] as ICoords[]);
+  const [ currentPath, setCurrentPath ] = useState([] as ICoords[]);
   
   const drawMapOnDisplay = useCallback((displayCoords: ICoords, mapCoords: ICoords) => {
     let { ch, foregroundColor, backgroundColor } = getDrawingInfo(getEntitiesOnMap(mapCoords, mapData), mapCoords);
@@ -45,16 +46,28 @@ export function Simulator(props: {children?: any}) {
         const displayCoords = {x, y};
         const mapCoords = {x, y};
         const drawn = drawMapOnDisplay(displayCoords, mapCoords);
+
+        let cursorBrightness = 190 + Math.sin(Date.now() / 200) * 65;
+        if (cursorCoords.x === x && cursorCoords.y === y) {
+          display.drawOver(x, y, '', '', `rgba(${cursorBrightness},${cursorBrightness},${cursorBrightness})`);
+        }
+        if (currentPath.length === 0 && path.find(p => p.x === x && p.y === y)) {
+          cursorBrightness *= 1.4;
+          display.drawOver(x, y, '', `rgba(${cursorBrightness},${cursorBrightness},${cursorBrightness})`, '');
+        }
         if (playerCoords.x === x && playerCoords.y === y) {
           display.drawOver(x, y, '@', '#FFF', '');
         }
-        if (cursorCoords.x === x && cursorCoords.y === y) {
-          let brightness = 190 + Math.sin(Date.now() / 200) * 65;
-          display.drawOver(x, y, '', '', `rgba(${brightness},${brightness},${brightness})`);
-        }
       })
     }));
-  }, [cursorCoords, display, mapData, playerCoords, drawMapOnDisplay]);
+  }, [cursorCoords, display, mapData, playerCoords, drawMapOnDisplay, path]);
+
+  const process = useCallback(() => {
+    if (currentPath.length > 0) {
+      setPlayerCoords(currentPath[0]);
+      setCurrentPath(currentPath.slice(1));
+    }
+  }, [currentPath]);
 
   useEffect(() => {
     let _element = element;
@@ -65,6 +78,28 @@ export function Simulator(props: {children?: any}) {
     }
     return () => { container?.removeChild(child); }
   }, [gameWindowRef, element]);
+
+  useEffect(() => {
+    const astar = new ROT.Path.AStar(cursorCoords.x, cursorCoords.y, (x, y) => mapData[x]?.[y] === 0);
+    const path: ICoords[] = [];
+    astar.compute(playerCoords.x, playerCoords.y, (x, y) => { if (mapData[x]?.[y] === 0) { path.push({x, y}); } })
+    setPath(path);
+  }, [playerCoords, cursorCoords, display, mapData]);
+
+  useEffect(() => {
+    let timeout: NodeJS.Timeout;
+    const startProcessing = () => {
+      timeout = setTimeout(() => {
+        process();
+        startProcessing();
+      }, 100);
+    }
+    startProcessing();
+
+    return () => {
+      clearInterval(timeout);
+    }
+  }, [process]);
 
   useEffect(() => {
     let timeout: NodeJS.Timeout;
@@ -141,6 +176,24 @@ export function Simulator(props: {children?: any}) {
       document.removeEventListener('keyup', handleKeyUp);
     }
   }, [keysPressed]);
+
+  useEffect(() => {
+    function handleMouseUp(e: MouseEvent) {
+      // ...
+    }
+    function handleMouseDown(e: MouseEvent) {
+      console.log(cursorCoords, e);
+      setCurrentPath(path);
+    }
+
+    document.addEventListener('mousedown', handleMouseDown);
+    document.addEventListener('mouseup', handleMouseUp);
+
+    return () => {
+      document.removeEventListener('mousedown', handleMouseDown);
+      document.removeEventListener('mouseup', handleMouseUp);
+    }
+  }, [cursorCoords, path]);
 
 
   if (!element) {
