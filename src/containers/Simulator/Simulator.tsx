@@ -38,9 +38,9 @@ export function Simulator(props: {children?: any}) {
     
     if (entities !== 1 && !visibleTiles.find(tile => tile.x === displayCoords.x && tile.y === displayCoords.y)) {
       if (seenTiles.find(tile => tile.x === displayCoords.x && tile.y === displayCoords.y)) {
-        const fogOfWar: Color = [130, 130, 130];
+        const fogOfWar: Color = [120, 120, 120];
         foregroundColor = ROT.Color.multiply(foregroundColor, fogOfWar);
-        backgroundColor = ROT.Color.multiply(backgroundColor, fogOfWar);  
+        backgroundColor = ROT.Color.multiply(backgroundColor, [40, 40, 40]);  
       } else {
         foregroundColor = [0,0,0];
         backgroundColor = [0,0,0];
@@ -66,28 +66,25 @@ export function Simulator(props: {children?: any}) {
 
   const drawCursor = useCallback((displayCoords: ICoords) => {
     const { x, y } = displayCoords;
-    if (!seenTiles.find(tile => tile.x === cursorCoords.x && tile.y === cursorCoords.y)) {
-      return;
-    }
     let cursorBrightness = 190 + Math.sin(Date.now() / 200) * 65;
-    if (cursorCoords.x === x && cursorCoords.y === y) {
-      display.drawOver(x, y, '', '', `rgba(${cursorBrightness},${cursorBrightness},${cursorBrightness})`);
+    
+    if (seenTiles.find(tile => tile.x === cursorCoords.x && tile.y === cursorCoords.y)) {
+      if (cursorCoords.x === x && cursorCoords.y === y) {
+        display.drawOver(x, y, '', '', ROT.Color.toRGB([cursorBrightness, cursorBrightness, cursorBrightness]));
+      }
     }
     
     if (currentPath.length > 0 && !isMouseButtonDown) {
       const currentPathIndex = currentPath.findIndex(p => p.x === x && p.y === y);
-      if (currentPathIndex !== -1 && currentPathIndex === currentPath.length - 1) {
-        cursorBrightness = 220 + Math.sin(Date.now() / 200) * 35;
-        display.drawOver(x, y, '', `rgba(${cursorBrightness},${cursorBrightness},${cursorBrightness})`, '');
-      } else if (currentPathIndex !== -1) {
+      if (currentPathIndex !== -1) {
         cursorBrightness = 220 + Math.sin(Date.now() / 200 + currentPathIndex * 100) * 35;
-        display.drawOver(x, y, '', `rgba(${cursorBrightness},${cursorBrightness},${cursorBrightness})`, '');
+        display.drawOver(x, y, '', ROT.Color.toRGB([cursorBrightness, cursorBrightness, cursorBrightness]), '');
       }
-    } else {
+    } else if (isMouseButtonDown) {
       const pathIndex = path.findIndex(p => p.x === x && p.y === y);
-      if (isMouseButtonDown && pathIndex !== -1) {
+      if (pathIndex !== -1) {
         cursorBrightness = 190 + Math.sin(Date.now() / 200 + pathIndex * 100) * 65;
-        display.drawOver(x, y, '', `rgba(${cursorBrightness},${cursorBrightness},${cursorBrightness})`, '');
+        display.drawOver(x, y, '', ROT.Color.toRGB([cursorBrightness, cursorBrightness, cursorBrightness]), '');
       }
     }
   }, [currentPath, isMouseButtonDown, cursorCoords, display, path, seenTiles]);
@@ -153,9 +150,12 @@ export function Simulator(props: {children?: any}) {
 
   useEffect(() => {
     let timeout: NodeJS.Timeout;
+    let time = Date.now();
     const startProcessing = () => {
       timeout = setTimeout(() => {
+        // console.log(Date.now() - time);
         process();
+        time = Date.now();
         startProcessing();
       }, 100);
     }
@@ -169,9 +169,12 @@ export function Simulator(props: {children?: any}) {
 
   useEffect(() => {
     let timeout: NodeJS.Timeout;
+    let time = Date.now();
     const startDrawing = () => {
       draw();
       timeout = setTimeout(() => {
+        // console.log(Date.now() - time);
+        time = Date.now();
         startDrawing();
       }, 50);
     }

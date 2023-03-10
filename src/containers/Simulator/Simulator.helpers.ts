@@ -83,8 +83,8 @@ export const getDrawingInfo = (what: number, mapCoords: ICoords) => {
       foregroundColor = [r,g,b];
 
       r = 25 + noise * 10;
-      g = 25 + noise * 10;
-      b = 25 + noise * 10;
+      g = 20 + noise * 10;
+      b = 15 + noise * 10;
       backgroundColor = [r,g,b];
       break;
     case 1:
