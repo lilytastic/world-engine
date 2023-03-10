@@ -1,5 +1,4 @@
 import * as ROT from 'rot-js';
-import { getRandomArrayItem } from '../Languages/helpers/logic.helpers';
 
 export const colors = {
   'void': '#212529', // document.body.style.backgroundColor,
@@ -12,7 +11,9 @@ export interface ICoords {
   y: number;
 }
 
-export const getAdjacent = (map: any, coords: ICoords) => {
+export type Map = {[x: number]: {[y: number]: number}}
+
+export const getAdjacent = (coords: ICoords, map: Map, ) => {
   const {x, y} = coords;
   return [
     map[x - 1]?.[y - 1],
@@ -26,12 +27,12 @@ export const getAdjacent = (map: any, coords: ICoords) => {
   ];
 }
 
-export const getEntitiesOnMap = (mapCoords: ICoords, map: any) => {
+export const getEntitiesOnMap = (mapCoords: ICoords, map: Map) => {
   const { x, y } = mapCoords;
   const what = map[x][y];
   switch (what) {
     case 1:
-      if (getAdjacent(map, mapCoords).includes(0)) {
+      if (getAdjacent(mapCoords, map).includes(0)) {
         return 2;
       }
       return what;
@@ -114,11 +115,12 @@ export const getDrawingInfo = (what: number, mapCoords: ICoords) => {
       b = 32 + noise * amp;
       foregroundColor = `rgba(${r},${g},${b})`;
       //backgroundColor = '#000';
-      r = 0 + noise * amp;
-      g = 0 + noise * amp;
-      b = 0 + noise * amp;
+      let baseBrightness = 60;
+      r = baseBrightness + noise * amp;
+      g = baseBrightness + noise * amp;
+      b = baseBrightness + noise * amp;
       backgroundColor = `rgba(${r},${g},${b})`;
-      backgroundColor = '#000';
+      //backgroundColor = '#000';
       break;
   }
 

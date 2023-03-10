@@ -1,14 +1,14 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import * as ROT from 'rot-js';
 import { getRandomArrayItem } from '../Languages/helpers/logic.helpers';
-import { getDrawingInfo, getEntitiesOnMap, ICoords } from './Simulator.helpers';
+import { getDrawingInfo, getEntitiesOnMap, ICoords, Map } from './Simulator.helpers';
 
 export function Simulator(props: {children?: any}) {
 
   const gameWindowRef = useRef(null as HTMLDivElement | null);
-  const mapData: {[x: number]: {[y: number]: number}} = useMemo(() => ({}), []);
+  const mapData: Map = useMemo(() => ({}), []);
 
-  const defaultDisplay = new ROT.Display({width: 40, height: 30, fontSize: 24, fontFamily: 'Space Mono', forceSquareRatio: true});
+  const defaultDisplay = new ROT.Display({width: 45, height: 35, fontSize: 18, fontFamily: 'Space Mono', forceSquareRatio: true});
 
   const [ display ] = useState(defaultDisplay);
   const [ element ] = useState(display.getContainer());
@@ -18,6 +18,8 @@ export function Simulator(props: {children?: any}) {
   const [ cursorCoords, setCursorCoords ] = useState({x: 0, y: 0} as ICoords);
   const [ path, setPath ] = useState([] as ICoords[]);
   const [ currentPath, setCurrentPath ] = useState([] as ICoords[]);
+
+  const [isMouseButtonDown, setIsMouseButtonDown] = useState(false);
   
   const drawMapOnDisplay = useCallback((displayCoords: ICoords, mapCoords: ICoords) => {
     let { ch, foregroundColor, backgroundColor } = getDrawingInfo(getEntitiesOnMap(mapCoords, mapData), mapCoords);
@@ -51,16 +53,29 @@ export function Simulator(props: {children?: any}) {
         if (cursorCoords.x === x && cursorCoords.y === y) {
           display.drawOver(x, y, '', '', `rgba(${cursorBrightness},${cursorBrightness},${cursorBrightness})`);
         }
-        if (currentPath.length === 0 && path.find(p => p.x === x && p.y === y)) {
-          cursorBrightness *= 1.4;
-          display.drawOver(x, y, '', `rgba(${cursorBrightness},${cursorBrightness},${cursorBrightness})`, '');
+        
+        if (currentPath.length > 0 && !isMouseButtonDown) {
+          const currentPathIndex = currentPath.findIndex(p => p.x === x && p.y === y);
+          if (currentPathIndex !== -1 && currentPathIndex === currentPath.length - 1) {
+            cursorBrightness = 220 + Math.sin(Date.now() / 200) * 35;
+            display.drawOver(x, y, 'x', `rgba(${cursorBrightness},${cursorBrightness},${cursorBrightness})`, '');
+          } else if (currentPathIndex !== -1) {
+            cursorBrightness = 220 + Math.sin(Date.now() / 200 + currentPathIndex * 100) * 35;
+            display.drawOver(x, y, '·', `rgba(${cursorBrightness},${cursorBrightness},${cursorBrightness})`, '');
+          }
+        } else {
+          const pathIndex = path.findIndex(p => p.x === x && p.y === y);
+          if (isMouseButtonDown && pathIndex !== -1) {
+            cursorBrightness = 190 + Math.sin(Date.now() / 200 + pathIndex * 100) * 65;
+            display.drawOver(x, y, '·', `rgba(${cursorBrightness},${cursorBrightness},${cursorBrightness})`, '');
+          }
         }
         if (playerCoords.x === x && playerCoords.y === y) {
           display.drawOver(x, y, '@', '#FFF', '');
         }
       })
     }));
-  }, [cursorCoords, display, mapData, playerCoords, drawMapOnDisplay, path]);
+  }, [cursorCoords, display, mapData, playerCoords, drawMapOnDisplay, path, isMouseButtonDown, currentPath]);
 
   const process = useCallback(() => {
     if (currentPath.length > 0) {
@@ -82,7 +97,7 @@ export function Simulator(props: {children?: any}) {
   useEffect(() => {
     const astar = new ROT.Path.AStar(cursorCoords.x, cursorCoords.y, (x, y) => mapData[x]?.[y] === 0);
     const path: ICoords[] = [];
-    astar.compute(playerCoords.x, playerCoords.y, (x, y) => { if (mapData[x]?.[y] === 0) { path.push({x, y}); } })
+    astar.compute(playerCoords.x, playerCoords.y, (x, y) => { if (mapData[x]?.[y] === 0 && (playerCoords.x !== x || playerCoords.y !== y)) { path.push({x, y}); } })
     setPath(path);
   }, [playerCoords, cursorCoords, display, mapData]);
 
@@ -179,11 +194,11 @@ export function Simulator(props: {children?: any}) {
 
   useEffect(() => {
     function handleMouseUp(e: MouseEvent) {
-      // ...
+      setCurrentPath(path);
+      setIsMouseButtonDown(false);
     }
     function handleMouseDown(e: MouseEvent) {
-      console.log(cursorCoords, e);
-      setCurrentPath(path);
+      setIsMouseButtonDown(true);
     }
 
     document.addEventListener('mousedown', handleMouseDown);
