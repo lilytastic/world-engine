@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import * as ROT from 'rot-js';
+import { Color } from 'rot-js/lib/color';
 import { getRandomArrayItem } from '../Languages/helpers/logic.helpers';
 import { getDrawingInfo, getEntitiesOnMap, ICoords, Map } from './Simulator.helpers';
 
@@ -34,10 +35,23 @@ export function Simulator(props: {children?: any}) {
   const drawMapOnDisplay = useCallback((displayCoords: ICoords, mapCoords: ICoords) => {
     let { ch, foregroundColor, backgroundColor } = getDrawingInfo(getEntitiesOnMap(mapCoords, mapData), mapCoords);
     
-    display.draw(displayCoords.x, displayCoords.y, ch, foregroundColor, backgroundColor);
+    if (!visibleTiles.find(tile => tile.x === displayCoords.x && tile.y === displayCoords.y)) {
+      const fogOfWar: Color = [10, 5, 30];
+      foregroundColor = ROT.Color.interpolate(foregroundColor, fogOfWar, 0.7);
+      backgroundColor = ROT.Color.interpolate(backgroundColor, fogOfWar, 0.7);
+    }
+    display.draw(displayCoords.x, displayCoords.y, ch, ROT.Color.toRGB(foregroundColor), ROT.Color.toRGB(backgroundColor));
 
     return { x: displayCoords.x, y: displayCoords.y, ch, foregroundColor, backgroundColor };
-  }, [display, mapData]);
+  }, [display, mapData, visibleTiles]);
+
+  
+  useEffect(() => {
+    const shadowCasting = new ROT.FOV.PreciseShadowcasting((x, y) => mapData[x]?.[y] === 0);
+    const tiles: ICoords[] = [];
+    shadowCasting.compute(playerCoords.x, playerCoords.y, 10, (x, y, r, visibility) => { tiles.push({x, y}); });
+    setVisibleTiles(tiles);
+  }, [playerCoords, mapData]);
 
 
   const drawCursor = useCallback((displayCoords: ICoords) => {
@@ -71,6 +85,7 @@ export function Simulator(props: {children?: any}) {
       Object.keys(mapData[x]).forEach((_y, y) => {
         const displayCoords = {x, y};
         const mapCoords = {x, y};
+        
         drawMapOnDisplay(displayCoords, mapCoords);
 
         drawCursor(displayCoords);
@@ -84,15 +99,14 @@ export function Simulator(props: {children?: any}) {
 
   
   useEffect(() => {
-    const {width, height} = display.getOptions();
-    const map = new ROT.Map.Digger(width, height);
+    const map = new ROT.Map.Digger(45, 35);
     map.create((x, y, what) => {
       if (!mapData[x]) { mapData[x] = {}; }
       mapData[x][y] = what;
     });
     const startingRoom = getRandomArrayItem(map.getRooms());
     setPlayerCoords({x: startingRoom.getCenter()[0], y: startingRoom.getCenter()[1]});
-  }, [display, drawMapOnDisplay, mapData]);
+  }, [mapData]);
 
 
   const process = useCallback(() => {

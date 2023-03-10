@@ -1,4 +1,5 @@
 import * as ROT from 'rot-js';
+import { Color } from 'rot-js/lib/color';
 
 export const colors = {
   'void': '#212529', // document.body.style.backgroundColor,
@@ -49,8 +50,8 @@ const getNoise = (x: number, y: number) => {
 
 export const getDrawingInfo = (what: number, mapCoords: ICoords) => {
   let ch = ' ';
-  let foregroundColor = colors.void;
-  let backgroundColor = colors.void;
+  let foregroundColor = [0,0,0] as Color;
+  let backgroundColor = [0,0,0] as Color;
   let r = 128;
   let g = 128;
   let b = 128;
@@ -79,12 +80,12 @@ export const getDrawingInfo = (what: number, mapCoords: ICoords) => {
         ch = '\'';
       }
 
-      foregroundColor = ROT.Color.toRGB([r,g,b]);
+      foregroundColor = [r,g,b];
 
       r = 25 + noise * 10;
       g = 25 + noise * 10;
       b = 25 + noise * 10;
-      backgroundColor = ROT.Color.toRGB([r,g,b]);
+      backgroundColor = [r,g,b];
       break;
     case 1:
       let stuff = getNoise(x + 3693, y);
@@ -102,7 +103,7 @@ export const getDrawingInfo = (what: number, mapCoords: ICoords) => {
       foregroundColor = `rgba(${r + 20},${g + 20},${b + 20})`;
       backgroundColor = `rgba(${r},${g},${b})`;
       */
-      backgroundColor = ROT.Color.toRGB([0,0,0]);
+      backgroundColor = [0,0,0];
       break;
     case 2:
       ch = '#';
@@ -113,13 +114,13 @@ export const getDrawingInfo = (what: number, mapCoords: ICoords) => {
       r = baseBrightness + noise * amp;
       g = baseBrightness + noise * amp;
       b = baseBrightness + noise * amp;
-      foregroundColor = ROT.Color.toRGB([r,g,b]);
+      foregroundColor = [r,g,b];
       //backgroundColor = '#000';
       baseBrightness = 60;
       r = baseBrightness + noise * amp;
       g = baseBrightness + noise * amp;
       b = baseBrightness + noise * amp;
-      backgroundColor = ROT.Color.toRGB([r,g,b]);
+      backgroundColor = [r,g,b];
       //backgroundColor = '#000';
       break;
   }
