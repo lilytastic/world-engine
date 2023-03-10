@@ -79,12 +79,12 @@ export const getDrawingInfo = (what: number, mapCoords: ICoords) => {
         ch = '\'';
       }
 
-      foregroundColor = `rgba(${r},${g},${b})`;
+      foregroundColor = ROT.Color.toRGB([r,g,b]);
 
       r = 25 + noise * 10;
       g = 25 + noise * 10;
       b = 25 + noise * 10;
-      backgroundColor = `rgba(${r},${g},${b})`;
+      backgroundColor = ROT.Color.toRGB([r,g,b]);
       break;
     case 1:
       let stuff = getNoise(x + 3693, y);
@@ -102,7 +102,7 @@ export const getDrawingInfo = (what: number, mapCoords: ICoords) => {
       foregroundColor = `rgba(${r + 20},${g + 20},${b + 20})`;
       backgroundColor = `rgba(${r},${g},${b})`;
       */
-      backgroundColor = `rgba(0,0,0)`;
+      backgroundColor = ROT.Color.toRGB([0,0,0]);
       break;
     case 2:
       ch = '#';
@@ -113,13 +113,13 @@ export const getDrawingInfo = (what: number, mapCoords: ICoords) => {
       r = baseBrightness + noise * amp;
       g = baseBrightness + noise * amp;
       b = baseBrightness + noise * amp;
-      foregroundColor = `rgba(${r},${g},${b})`;
+      foregroundColor = ROT.Color.toRGB([r,g,b]);
       //backgroundColor = '#000';
       baseBrightness = 60;
       r = baseBrightness + noise * amp;
       g = baseBrightness + noise * amp;
       b = baseBrightness + noise * amp;
-      backgroundColor = `rgba(${r},${g},${b})`;
+      backgroundColor = ROT.Color.toRGB([r,g,b]);
       //backgroundColor = '#000';
       break;
   }
