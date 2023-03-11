@@ -4,7 +4,7 @@ import * as ROT from 'rot-js';
 import { Color } from 'rot-js/lib/color';
 import Scheduler from 'rot-js/lib/scheduler/scheduler';
 import { getRandomArrayItem } from '../Languages/helpers/logic.helpers';
-import { colors, getDrawingInfo, getTileData, ICoords, ITurn, Map } from './Simulator.helpers';
+import { COLORS, getDrawingInfo, getTileData, ICoords, ITurn, Map } from './Simulator.helpers';
 import { getMapData, setMap } from './Simulator.reducer';
 
 export function Simulator(props: {children?: any}) {
@@ -51,12 +51,12 @@ export function Simulator(props: {children?: any}) {
     
     if (!!tileData && !visibleTiles.find(tile => tile.x === displayCoords.x && tile.y === displayCoords.y)) {
       if (seenTiles.find(tile => tile.x === displayCoords.x && tile.y === displayCoords.y)) {
-        const fogOfWar: Color = colors.void;
+        const fogOfWar: Color = COLORS.void;
         foregroundColor = ROT.Color.interpolate(foregroundColor, fogOfWar);
-        backgroundColor = ROT.Color.interpolate(backgroundColor, colors.void);  
+        backgroundColor = ROT.Color.interpolate(backgroundColor, COLORS.void);  
       } else {
-        foregroundColor = colors.void;
-        backgroundColor = colors.void;
+        foregroundColor = COLORS.void;
+        backgroundColor = COLORS.void;
       }
     }
     display.draw(displayCoords.x, displayCoords.y, ch, ROT.Color.toRGB(foregroundColor), ROT.Color.toRGB(backgroundColor));
