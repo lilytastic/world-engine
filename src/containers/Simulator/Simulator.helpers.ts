@@ -1,10 +1,10 @@
 import * as ROT from 'rot-js';
 import { Color } from 'rot-js/lib/color';
 
-export const colors = {
-  'void': '#212529', // document.body.style.backgroundColor,
-  'wall': '#999',
-  'floor': '#000'
+export const colors: {[id: string]: Color} = {
+  'void': [20,8,25], // document.body.style.backgroundColor,
+  'wall': [0,0,0],
+  'floor': [35,19,22]
 }
 
 export interface ICoords {
@@ -12,7 +12,9 @@ export interface ICoords {
   y: number;
 }
 
-export type Map = {[x: number]: {[y: number]: number}}
+export type MapTile = number;
+
+export type Map = {[x: number]: {[y: number]: MapTile}}
 
 export const getAdjacent = (coords: ICoords, map: Map, ) => {
   const {x, y} = coords;
@@ -82,10 +84,8 @@ export const getDrawingInfo = (what: number, mapCoords: ICoords) => {
 
       foregroundColor = [r,g,b];
 
-      r = 25 + noise * 10;
-      g = 20 + noise * 10;
-      b = 15 + noise * 10;
-      backgroundColor = [r,g,b];
+      [r,g,b] = colors.floor.map(x => x += noise * 10);
+      backgroundColor = colors.floor.map(x => x += noise * 10) as Color;
       break;
     case 1:
       let stuff = getNoise(x + 3693, y);
@@ -96,14 +96,11 @@ export const getDrawingInfo = (what: number, mapCoords: ICoords) => {
       } else if (stuff > 0.1) {
         ch = '.'
       }
-      r = 15 + noise * 10;
-      g = 15 + noise * 10;
-      b = 15 + noise * 10;
-      foregroundColor = [r,g,b];
+      foregroundColor = colors.void.map(x => x += 10 + noise * 10) as Color;
       /*
       backgroundColor = `rgba(${r},${g},${b})`;
       */
-      backgroundColor = [0,0,0];
+      backgroundColor = colors.void;
       break;
     case 2:
       ch = '#';

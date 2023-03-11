@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import * as ROT from 'rot-js';
 import { Color } from 'rot-js/lib/color';
 import { getRandomArrayItem } from '../Languages/helpers/logic.helpers';
-import { getDrawingInfo, getEntitiesOnMap, ICoords, Map } from './Simulator.helpers';
+import { colors, getDrawingInfo, getEntitiesOnMap, ICoords, Map } from './Simulator.helpers';
 
 export function Simulator(props: {children?: any}) {
 
@@ -38,12 +38,12 @@ export function Simulator(props: {children?: any}) {
     
     if (entities !== 1 && !visibleTiles.find(tile => tile.x === displayCoords.x && tile.y === displayCoords.y)) {
       if (seenTiles.find(tile => tile.x === displayCoords.x && tile.y === displayCoords.y)) {
-        const fogOfWar: Color = [120, 120, 120];
-        foregroundColor = ROT.Color.multiply(foregroundColor, fogOfWar);
-        backgroundColor = ROT.Color.multiply(backgroundColor, [40, 40, 40]);  
+        const fogOfWar: Color = colors.void;
+        foregroundColor = ROT.Color.interpolate(foregroundColor, fogOfWar);
+        backgroundColor = ROT.Color.interpolate(backgroundColor, colors.void);  
       } else {
-        foregroundColor = [0,0,0];
-        backgroundColor = [0,0,0];
+        foregroundColor = colors.void;
+        backgroundColor = colors.void;
       }
     }
     display.draw(displayCoords.x, displayCoords.y, ch, ROT.Color.toRGB(foregroundColor), ROT.Color.toRGB(backgroundColor));
@@ -125,8 +125,30 @@ export function Simulator(props: {children?: any}) {
     if (currentPath.length > 0) {
       setPlayerCoords(currentPath[0]);
       setCurrentPath(currentPath.slice(1));
+    } else {
+      let moveTo = playerCoords;
+      if (keysPressed['VK_W']) {
+        moveTo = {x: playerCoords.x, y: playerCoords.y - 1};
+      }
+      if (keysPressed['VK_D']) {
+        moveTo = {x: playerCoords.x + 1, y: playerCoords.y};
+      }
+      if (keysPressed['VK_S']) {
+        moveTo = {x: playerCoords.x, y: playerCoords.y + 1};
+      }
+      if (keysPressed['VK_A']) {
+        moveTo = {x: playerCoords.x - 1, y: playerCoords.y};
+      }
+      if (mapData[moveTo.x]?.[moveTo.y] === 0) {
+        setPlayerCoords(moveTo);
+      }
     }
-  }, [currentPath]);
+  }, [currentPath, keysPressed, playerCoords, mapData]);
+
+  useEffect(() => {
+    // console.log(keysPressed);
+    process();
+  }, [keysPressed]);
 
 
   useEffect(() => {
@@ -164,7 +186,7 @@ export function Simulator(props: {children?: any}) {
     return () => {
       clearInterval(timeout);
     }
-  }, [process]);
+  }, [process, keysPressed]);
 
 
   useEffect(() => {
