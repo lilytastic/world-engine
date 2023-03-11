@@ -1,5 +1,31 @@
 import * as ROT from 'rot-js';
 import { Color } from 'rot-js/lib/color';
+import { IGameEntity } from './Simulator.reducer';
+
+const DEFAULT_TURN_DELAY = 150;
+
+export const DEFAULT_ENTITY: IGameEntity = {
+  id: 0,
+  ch: '?'
+}
+
+export interface ITurn {
+  onAct: () => Promise<TypedTurnAction>;
+}
+
+export type TypedTurnAction = Move | Interact;
+export type EntityId = number;
+
+export interface ITurnAction<T extends string> {
+  type: T;
+  target: ICoords | EntityId;
+}
+export interface Move extends ITurnAction<'movement'> {
+  target: ICoords;
+}
+export interface Interact extends ITurnAction<'inspect'> {
+  target: ICoords | EntityId;
+}
 
 export const colors: {[id: string]: Color} = {
   'void': [20,8,25], // document.body.style.backgroundColor,
@@ -12,9 +38,13 @@ export interface ICoords {
   y: number;
 }
 
-export type MapTile = number;
+export interface ITileData {
+  canLightPass: boolean;
+  canEntitiesPass: boolean;
+  what: number;
+};
 
-export type Map = {[x: number]: {[y: number]: MapTile}}
+export type Map = {[x: number]: {[y: number]: ITileData}};
 
 export const getAdjacent = (coords: ICoords, map: Map, ) => {
   const {x, y} = coords;
@@ -30,18 +60,9 @@ export const getAdjacent = (coords: ICoords, map: Map, ) => {
   ];
 }
 
-export const getEntitiesOnMap = (mapCoords: ICoords, map: Map) => {
+export const getTileData = (mapCoords: ICoords, map: Map) => {
   const { x, y } = mapCoords;
-  const what = map[x][y];
-  switch (what) {
-    case 1:
-      if (getAdjacent(mapCoords, map).includes(0)) {
-        return 2;
-      }
-      return what;
-    default:
-      return what;
-  }
+  return map[x]?.[y];
 }
 
 const simplexNoise = new ROT.Noise.Simplex();
@@ -50,7 +71,7 @@ const getNoise = (x: number, y: number) => {
   return (simplexNoise.get(x / 6, y / 6) + simplexNoise.get(x / 20, y / 20)) / 2
 }
 
-export const getDrawingInfo = (what: number, mapCoords: ICoords) => {
+export const getDrawingInfo = (tileData: ITileData, mapCoords: ICoords, map: Map) => {
   let ch = ' ';
   let foregroundColor = [0,0,0] as Color;
   let backgroundColor = [0,0,0] as Color;
@@ -61,67 +82,61 @@ export const getDrawingInfo = (what: number, mapCoords: ICoords) => {
 
   let noise = getNoise(x, y);
 
-  switch (what) {
-    case 0:
-      ch = '·';
-      let shade = getNoise(x + 999, y + 222);
-      r = 60;
-      g = 60;
-      b = 60;
-      
-      let foliage = getNoise(x + 2153, y);
-      if (foliage > 0.1) {
-        r = 128 + shade * 50;
-        g = 180 + shade * 50;
-        b = 0;
-      }
+  if (tileData.canEntitiesPass) {
+    ch = '·';
+    let shade = getNoise(x + 999, y + 222);
+    r = 60;
+    g = 60;
+    b = 60;
+    
+    let foliage = getNoise(x + 2153, y);
+    if (foliage > 0.1) {
+      r = 128 + shade * 50;
+      g = 180 + shade * 50;
+      b = 0;
+    }
 
-      if (foliage > 0.5) {
-        ch = '"';
-      } else if (foliage > 0.1) {
-        ch = '\'';
-      }
+    if (foliage > 0.5) {
+      ch = '"';
+    } else if (foliage > 0.1) {
+      ch = '\'';
+    }
 
-      foregroundColor = [r,g,b];
+    foregroundColor = [r,g,b];
 
-      [r,g,b] = colors.floor.map(x => x += noise * 10);
-      backgroundColor = colors.floor.map(x => x += noise * 10) as Color;
-      break;
-    case 1:
-      let stuff = getNoise(x + 3693, y);
-      if (stuff > 0.7) {
-        ch = '*';
-      } else if (stuff > 0.6) {
-        ch = '%';
-      } else if (stuff > 0.1) {
-        ch = '.'
-      }
-      foregroundColor = colors.void.map(x => x += 10 + noise * 10) as Color;
-      /*
-      backgroundColor = `rgba(${r},${g},${b})`;
-      */
-      backgroundColor = colors.void;
-      break;
-    case 2:
-      ch = '#';
+    [r,g,b] = colors.floor.map(x => x += noise * 10);
+    backgroundColor = colors.floor.map(x => x += noise * 10) as Color;
+  } else if (!!getAdjacent(mapCoords, map).find(tile => tile?.canLightPass)) {
+    ch = '#';
 
-      // ch = '·';
-      let baseBrightness = 80;
-      let amp = 20;
-      r = baseBrightness + noise * amp;
-      g = baseBrightness + noise * amp;
-      b = baseBrightness + noise * amp;
-      foregroundColor = [r,g,b];
-      //backgroundColor = '#000';
-      baseBrightness = 60;
-      r = baseBrightness + noise * amp;
-      g = baseBrightness + noise * amp;
-      b = baseBrightness + noise * amp;
-      backgroundColor = [r,g,b];
-      //backgroundColor = '#000';
-      break;
+    // ch = '·';
+    let baseBrightness = 80;
+    let amp = 20;
+    r = baseBrightness + noise * amp;
+    g = baseBrightness + noise * amp;
+    b = baseBrightness + noise * amp;
+    foregroundColor = [r,g,b];
+    //backgroundColor = '#000';
+    baseBrightness = 60;
+    r = baseBrightness + noise * amp;
+    g = baseBrightness + noise * amp;
+    b = baseBrightness + noise * amp;
+    backgroundColor = [r,g,b];
+  } else {
+    let stuff = getNoise(x + 3693, y);
+    if (stuff > 0.7) {
+      ch = '*';
+    } else if (stuff > 0.6) {
+      ch = '%';
+    } else if (stuff > 0.1) {
+      ch = '.'
+    }
+    foregroundColor = colors.void.map(x => x += 10 + noise * 10) as Color;
+    /*
+    backgroundColor = `rgba(${r},${g},${b})`;
+    */
+    backgroundColor = colors.void;
   }
-
   return {
     ch,
     foregroundColor,

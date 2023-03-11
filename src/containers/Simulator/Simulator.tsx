@@ -1,13 +1,18 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import * as ROT from 'rot-js';
 import { Color } from 'rot-js/lib/color';
+import Scheduler from 'rot-js/lib/scheduler/scheduler';
 import { getRandomArrayItem } from '../Languages/helpers/logic.helpers';
-import { colors, getDrawingInfo, getEntitiesOnMap, ICoords, Map } from './Simulator.helpers';
+import { colors, getDrawingInfo, getTileData, ICoords, ITurn, Map } from './Simulator.helpers';
+import { getMapData, setMap } from './Simulator.reducer';
 
 export function Simulator(props: {children?: any}) {
 
   const gameWindowRef = useRef(null as HTMLDivElement | null);
-  const mapData: Map = useMemo(() => ({}), []);
+  const mapData: Map = useSelector(getMapData);
+
+  const dispatch = useDispatch();
 
   const defaultDisplay = new ROT.Display({
     width: 45,
@@ -32,11 +37,19 @@ export function Simulator(props: {children?: any}) {
   const [isMouseButtonDown, setIsMouseButtonDown] = useState(false);
 
 
+  async function mainLoop(scheduler: Scheduler<ITurn>) {
+    while (1) {
+      let turnData: ITurn = scheduler.next();
+      if (!turnData) { break; }
+      await turnData.onAct();
+    }
+  }
+
   const drawMapOnDisplay = useCallback((displayCoords: ICoords, mapCoords: ICoords) => {
-    const entities = getEntitiesOnMap(mapCoords, mapData);
-    let { ch, foregroundColor, backgroundColor } = getDrawingInfo(entities, mapCoords);
+    const tileData = getTileData(mapCoords, mapData);
+    let { ch, foregroundColor, backgroundColor } = getDrawingInfo(tileData, mapCoords, mapData);
     
-    if (entities !== 1 && !visibleTiles.find(tile => tile.x === displayCoords.x && tile.y === displayCoords.y)) {
+    if (!!tileData && !visibleTiles.find(tile => tile.x === displayCoords.x && tile.y === displayCoords.y)) {
       if (seenTiles.find(tile => tile.x === displayCoords.x && tile.y === displayCoords.y)) {
         const fogOfWar: Color = colors.void;
         foregroundColor = ROT.Color.interpolate(foregroundColor, fogOfWar);
@@ -53,7 +66,7 @@ export function Simulator(props: {children?: any}) {
 
   
   useEffect(() => {
-    const shadowCasting = new ROT.FOV.PreciseShadowcasting((x, y) => mapData[x]?.[y] === 0);
+    const shadowCasting = new ROT.FOV.PreciseShadowcasting((x, y) => getTileData({x, y}, mapData)?.canLightPass, {  });
     const tiles: ICoords[] = [];
     shadowCasting.compute(playerCoords.x, playerCoords.y, 10, (x, y, r, visibility) => { tiles.push({x, y}); });
     setVisibleTiles(tiles);
@@ -90,6 +103,15 @@ export function Simulator(props: {children?: any}) {
   }, [currentPath, isMouseButtonDown, cursorCoords, display, path, seenTiles]);
 
 
+  useEffect(() => {
+    if (!isMouseButtonDown) { return; }
+    const astar = new ROT.Path.AStar(cursorCoords.x, cursorCoords.y, (x, y) => getTileData({x, y}, mapData)?.canLightPass);
+    const path: ICoords[] = [];
+    astar.compute(playerCoords.x, playerCoords.y, (x, y) => { if (getTileData({x, y}, mapData)?.canLightPass && (playerCoords.x !== x || playerCoords.y !== y)) { path.push({x, y}); } })
+    setPath(path);
+  }, [playerCoords, cursorCoords, display, mapData, isMouseButtonDown]);
+
+
   const draw = useCallback(() => {
     Object.keys(mapData).forEach(((_x, x) => {
       Object.keys(mapData[x]).forEach((_y, y) => {
@@ -107,48 +129,55 @@ export function Simulator(props: {children?: any}) {
     }));
   }, [drawCursor, display, drawMapOnDisplay, mapData, playerCoords]);
 
-  
-  useEffect(() => {
+  const createMap = useCallback(() => {
     const map = new ROT.Map.Digger(45, 35);
+    const _mapData: Map = {};
     map.create((x, y, what) => {
-      if (!mapData[x]) { mapData[x] = {}; }
-      mapData[x][y] = what;
+      if (!_mapData[x]) { _mapData[x] = {}; }
+      _mapData[x][y] = {
+        what,
+        canLightPass: what === 0,
+        canEntitiesPass: what === 0
+      };
     });
+    // console.log(_mapData);
+    dispatch(setMap(_mapData));
     setVisibleTiles([]);
     setSeenTiles([]);
     const startingRoom = getRandomArrayItem(map.getRooms());
     setPlayerCoords({x: startingRoom.getCenter()[0], y: startingRoom.getCenter()[1]});
-  }, [mapData]);
+  }, [dispatch]);
+
+  useEffect(() => {
+    createMap();
+  }, [createMap]);
 
 
   const process = useCallback(() => {
     if (currentPath.length > 0) {
       setPlayerCoords(currentPath[0]);
+      // const destination = currentPath[currentPath.length - 1];
+      // const astar = new ROT.Path.AStar(destination.x, destination.y, (x, y) => mapData[x]?.[y] === 0);
       setCurrentPath(currentPath.slice(1));
     } else {
-      let moveTo = playerCoords;
-      if (keysPressed['VK_W']) {
-        moveTo = {x: playerCoords.x, y: playerCoords.y - 1};
+      let moveTo = {...playerCoords};
+      if (keysPressed['VK_W'] || keysPressed['VK_UP']) {
+        moveTo.y -= 1;
       }
-      if (keysPressed['VK_D']) {
-        moveTo = {x: playerCoords.x + 1, y: playerCoords.y};
+      if (keysPressed['VK_D'] || keysPressed['VK_RIGHT']) {
+        moveTo.x += 1;
       }
-      if (keysPressed['VK_S']) {
-        moveTo = {x: playerCoords.x, y: playerCoords.y + 1};
+      if (keysPressed['VK_S'] || keysPressed['VK_DOWN']) {
+        moveTo.y += 1;
       }
-      if (keysPressed['VK_A']) {
-        moveTo = {x: playerCoords.x - 1, y: playerCoords.y};
+      if (keysPressed['VK_A'] || keysPressed['VK_LEFT']) {
+        moveTo.x -= 1;
       }
-      if (mapData[moveTo.x]?.[moveTo.y] === 0) {
+      if (getTileData(moveTo, mapData)?.canEntitiesPass && (moveTo.x !== playerCoords.x || moveTo.y !== playerCoords.y)) {
         setPlayerCoords(moveTo);
       }
     }
   }, [currentPath, keysPressed, playerCoords, mapData]);
-
-  useEffect(() => {
-    // console.log(keysPressed);
-    process();
-  }, [keysPressed]);
 
 
   useEffect(() => {
@@ -163,19 +192,10 @@ export function Simulator(props: {children?: any}) {
 
 
   useEffect(() => {
-    const astar = new ROT.Path.AStar(cursorCoords.x, cursorCoords.y, (x, y) => mapData[x]?.[y] === 0);
-    const path: ICoords[] = [];
-    astar.compute(playerCoords.x, playerCoords.y, (x, y) => { if (mapData[x]?.[y] === 0 && (playerCoords.x !== x || playerCoords.y !== y)) { path.push({x, y}); } })
-    setPath(path);
-  }, [playerCoords, cursorCoords, display, mapData]);
-
-
-  useEffect(() => {
     let timeout: NodeJS.Timeout;
     let time = Date.now();
     const startProcessing = () => {
       timeout = setTimeout(() => {
-        // console.log(Date.now() - time);
         process();
         time = Date.now();
         startProcessing();
