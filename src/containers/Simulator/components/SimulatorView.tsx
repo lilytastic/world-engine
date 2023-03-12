@@ -17,6 +17,8 @@ export function SimulatorView(props: {children?: any, cursorCoords: Vector2, dra
   const seenTiles = useSelector(getSeenTiles);
   const visibleTiles = useSelector(getVisibleTiles);
 
+  const [scroll, setScroll] = useState({x: 0, y: 0} as Vector2); 
+
   const defaultDisplay = new ROT.Display({
     width: 35,
     height: 25,
@@ -52,8 +54,8 @@ export function SimulatorView(props: {children?: any, cursorCoords: Vector2, dra
     const tileData = getTileData(mapCoords, mapData);
     let { ch, foregroundColor, backgroundColor } = getDrawingInfo(tileData, mapCoords, mapData);
     
-    if (!!tileData && !visibleTiles.find(tile => tile.x === displayCoords.x && tile.y === displayCoords.y)) {
-      if (seenTiles.find(tile => tile.x === displayCoords.x && tile.y === displayCoords.y)) {
+    if (!!tileData && !visibleTiles.find(tile => tile.x === mapCoords.x && tile.y === mapCoords.y)) {
+      if (seenTiles.find(tile => tile.x === mapCoords.x && tile.y === mapCoords.y)) {
         const fogOfWar: Color = COLORS.void;
         foregroundColor = ROT.Color.interpolate(foregroundColor, fogOfWar);
         backgroundColor = ROT.Color.interpolate(backgroundColor, COLORS.void);  
@@ -65,7 +67,7 @@ export function SimulatorView(props: {children?: any, cursorCoords: Vector2, dra
 
     const entities = gameEntities.ids.map(id => gameEntities.entities[id]);
     entities.forEach(entity => {
-      if (entity?.position.x === displayCoords.x && entity?.position.y === displayCoords.y) {
+      if (entity?.position.x === mapCoords.x && entity?.position.y === mapCoords.y) {
         ch = entity.ch;
       }
     });
@@ -98,10 +100,20 @@ export function SimulatorView(props: {children?: any, cursorCoords: Vector2, dra
 
   const draw = useCallback(() => {
     const options = display.getOptions();
+    display.clear();
+    const bufferZone = 6;
+    const idealScroll = {
+      x: Math.max(Math.min(scroll.x, playerCoords.x - bufferZone), playerCoords.x - options.width + bufferZone),
+      y: Math.max(Math.min(scroll.y, playerCoords.y - bufferZone), playerCoords.y - options.height + bufferZone),
+    };
+    if (idealScroll.x !== scroll.x || idealScroll.y !== scroll.y) {
+      setScroll(idealScroll);
+    }
+
     for (let x = 0; x < options.width; x++) {
       for (let y = 0; y < options.height; y++) {
         const displayCoords = {x, y};
-        const mapCoords = {x, y};
+        const mapCoords = {x: x + idealScroll.x, y: y + idealScroll.y};
         
         console.log(currentGameMode);
         switch (currentGameMode) {
@@ -110,14 +122,17 @@ export function SimulatorView(props: {children?: any, cursorCoords: Vector2, dra
     
             drawCursor(displayCoords);
             
-            if (playerCoords.x === x && playerCoords.y === y) {
-              display.drawOver(x, y, '@', '#FFF', '');
+            if (playerCoords.x === mapCoords.x && playerCoords.y === mapCoords.y) {
+              display.drawOver(displayCoords.x, displayCoords.y, '@', '#FFF', '');
             }
             break;
         }
       }
     }
-  }, [drawCursor, drawMapOnDisplay, playerCoords, currentGameMode, display]);
+
+    // display.drawText(0, 0, `${playerCoords.x},${playerCoords.y}`);
+    // display.drawText(0, 1, `${idealScroll.x},${idealScroll.y}`);
+  }, [drawCursor, drawMapOnDisplay, playerCoords, currentGameMode, display, scroll]);
 
 
   useEffect(() => {
