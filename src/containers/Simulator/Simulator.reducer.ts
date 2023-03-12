@@ -22,7 +22,8 @@ export interface IMap {
 
 export enum GameMode {
   Start = 'start',
-  Map = 'map' // actual play
+  Map = 'map',
+  Play = 'play' // actual play
 }
 
 // Define a type for the slice state

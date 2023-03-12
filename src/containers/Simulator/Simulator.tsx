@@ -49,14 +49,15 @@ export function Simulator(props: {children?: any}) {
 
 
   const createMap = useCallback(() => {
-    const generator = new ROT.Map.Digger(45, 35);
-    const map = generateMap(generator);
+
+    const map = generateMap();
     setScheduler(new ROT.Scheduler.Speed());
-    dispatch(setMap(map));
+
+    dispatch(setMap(map.mapData));
     dispatch(setVisibleTiles([]));
     dispatch(setSeenTiles([]));
-    const startingRoom = getRandomArrayItem(generator.getRooms());
-    setPlayerCoords({x: startingRoom.getCenter()[0], y: startingRoom.getCenter()[1]});
+
+    setPlayerCoords(map.entrance);
   }, [dispatch]);
 
   useEffect(() => {

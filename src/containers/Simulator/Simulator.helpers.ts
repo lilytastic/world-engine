@@ -1,6 +1,7 @@
 import * as ROT from 'rot-js';
 import { Color } from 'rot-js/lib/color';
 import Digger from 'rot-js/lib/map/digger';
+import { getRandomArrayItem } from '../Languages/helpers/logic.helpers';
 import { IGameEntity } from './Simulator.reducer';
 
 const DEFAULT_MAP = 'default_map';
@@ -165,8 +166,9 @@ const getFloorDrawingInfo = (): IDrawingInfo => {
   }
 }
 
-export const generateMap = (generator: Digger): Map => {
+export const generateMap = (): {mapData: Map, entrance: Vector2} => {
   const _mapData: Map = {};
+  const generator = new ROT.Map.Digger(45, 35);
   generator.create((x, y, what) => {
     _mapData[`${x},${y}`] = {
       what,
@@ -174,5 +176,13 @@ export const generateMap = (generator: Digger): Map => {
       canEntitiesPass: what === 0
     };
   });
-  return _mapData;
+
+  // TODO: Replace this with a list of entrances/exits.
+  const startingRoom = getRandomArrayItem(generator.getRooms());
+  const entrance = {x: startingRoom.getCenter()[0], y: startingRoom.getCenter()[1]};
+
+  return {
+    mapData: _mapData,
+    entrance
+  };
 }
