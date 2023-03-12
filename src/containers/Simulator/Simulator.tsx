@@ -185,7 +185,10 @@ export function Simulator(props: {children?: any}) {
 
   useEffect(() => {
     const mapCoords = {x: cursorCoords.x + scroll.x, y: cursorCoords.y + scroll.y};
-    if (!isMouseButtonDown || !seenTiles.find(tile => tile.x === mapCoords.x && tile.y === mapCoords.y)) { return; }
+    if (!isMouseButtonDown || !seenTiles.find(tile => tile.x === mapCoords.x && tile.y === mapCoords.y)) {
+      setPath([]);
+      return;
+    }
     const astar = new ROT.Path.AStar(
       mapCoords.x,
       mapCoords.y,
