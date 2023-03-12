@@ -142,6 +142,8 @@ body, .navbar, .form-group {
 [data-bs-theme="dark"] {
   //--bs-form-control-bg: var(--bs-body-bg);
   --bs-form-control-bg: #fafafa;
+  --bs-body-bg: #140819;
+  --bs-body-bg-rgb: rgb(18, 7, 23);
   .form-control {
     color: var(--bs-tertiary-bg);
   }

@@ -5,9 +5,19 @@ import { Color } from 'rot-js/lib/color';
 import { COLORS, getDrawingInfo, getTileData, Vector2, Map } from '../Simulator.helpers';
 import { getGameEntities, getMapData, getSeenTiles, getVisibleTiles, getGameMode } from '../Simulator.reducer';
 
-export function SimulatorView(props: {children?: any, cursorCoords: Vector2, drawnPath: Vector2[], playerCoords: Vector2, onSetDisplay: (display: ROT.Display) => void}) {
 
-  const { cursorCoords, drawnPath, onSetDisplay, playerCoords } = props;
+const DEFAULT_DISPLAY_SETTINGS = {
+  width: 35,
+  height: 25,
+  fontSize: 24,
+  // fontFamily: 'Inconsolata',
+  fontFamily: 'Space Mono',
+  forceSquareRatio: true
+};
+
+export function SimulatorView(props: {children?: any, cursorCoords: Vector2, drawnPath: Vector2[], playerCoords: Vector2, onScroll: (coords: Vector2) => void, onSetDisplay: (display: ROT.Display) => void}) {
+
+  const { cursorCoords, drawnPath, onSetDisplay, onScroll, playerCoords } = props;
 
   const gameWindowRef = useRef(null as HTMLDivElement | null);
   const mapData: Map = useSelector(getMapData);
@@ -19,13 +29,16 @@ export function SimulatorView(props: {children?: any, cursorCoords: Vector2, dra
 
   const [scroll, setScroll] = useState({x: 0, y: 0} as Vector2); 
 
+  const getFullscreenDisplay = useCallback(() => {
+    return {
+      width: Math.floor(window.innerWidth / DEFAULT_DISPLAY_SETTINGS.fontSize),
+      height: Math.floor((window.innerHeight - 64) / DEFAULT_DISPLAY_SETTINGS.fontSize)
+    };
+  }, []);
+
   const defaultDisplay = new ROT.Display({
-    width: 35,
-    height: 25,
-    fontSize: 24,
-    // fontFamily: 'Inconsolata',
-    fontFamily: 'Space Mono',
-    forceSquareRatio: true
+    ...DEFAULT_DISPLAY_SETTINGS,
+    ...getFullscreenDisplay()
   });
 
   const [ display, setDisplay ] = useState(defaultDisplay);
@@ -78,33 +91,36 @@ export function SimulatorView(props: {children?: any, cursorCoords: Vector2, dra
   }, [display, mapData, visibleTiles, seenTiles, gameEntities]);
 
 
-  const drawCursor = useCallback((displayCoords: Vector2) => {
-    const { x, y } = displayCoords;
+  const drawCursor = useCallback((displayCoords: Vector2, mapCoords: Vector2) => {
     let cursorBrightness = 190 + Math.sin(Date.now() / 200) * 65;
     
-    if (seenTiles.find(tile => tile.x === cursorCoords.x && tile.y === cursorCoords.y)) {
-      if (cursorCoords.x === x && cursorCoords.y === y) {
-        display.drawOver(x, y, '', '', ROT.Color.toRGB([cursorBrightness, cursorBrightness, cursorBrightness]));
+    if (seenTiles.find(tile => tile.x === mapCoords.x && tile.y === mapCoords.y)) {
+      if (cursorCoords.x === displayCoords.x && cursorCoords.y === displayCoords.y) {
+        display.drawOver(displayCoords.x, displayCoords.y, '', '', ROT.Color.toRGB([cursorBrightness, cursorBrightness, cursorBrightness]));
       }
     }
 
     if (drawnPath) {
-      const currentPathIndex = drawnPath.findIndex(p => p.x === x && p.y === y);
+      const currentPathIndex = drawnPath.findIndex(p => p.x === mapCoords.x && p.y === mapCoords.y);
       if (currentPathIndex !== -1) {
         cursorBrightness = 220 + Math.sin(Date.now() / 200 + currentPathIndex * 100) * 35;
-        display.drawOver(x, y, '', ROT.Color.toRGB([cursorBrightness, cursorBrightness, cursorBrightness]), '');
+        display.drawOver(displayCoords.x, displayCoords.y, '', ROT.Color.toRGB([cursorBrightness, cursorBrightness, cursorBrightness]), '');
       }
     }
   }, [cursorCoords, display, drawnPath, seenTiles]);
 
 
+  useEffect(() => { onScroll?.(scroll) }, [ onScroll, scroll ]);
+
   const draw = useCallback(() => {
     const options = display.getOptions();
     display.clear();
-    const bufferZone = 6;
+
+    const bufferZone = {x: 12, y: 9};
+
     const idealScroll = {
-      x: Math.max(Math.min(scroll.x, playerCoords.x - bufferZone), playerCoords.x - options.width + bufferZone),
-      y: Math.max(Math.min(scroll.y, playerCoords.y - bufferZone), playerCoords.y - options.height + bufferZone),
+      x: Math.max(Math.min(scroll.x, playerCoords.x - bufferZone.x), playerCoords.x - options.width + bufferZone.x),
+      y: Math.max(Math.min(scroll.y, playerCoords.y - bufferZone.y), playerCoords.y - options.height + bufferZone.y),
     };
     if (idealScroll.x !== scroll.x || idealScroll.y !== scroll.y) {
       setScroll(idealScroll);
@@ -115,12 +131,11 @@ export function SimulatorView(props: {children?: any, cursorCoords: Vector2, dra
         const displayCoords = {x, y};
         const mapCoords = {x: x + idealScroll.x, y: y + idealScroll.y};
         
-        console.log(currentGameMode);
         switch (currentGameMode) {
           default:
             drawMapOnDisplay(displayCoords, mapCoords);
     
-            drawCursor(displayCoords);
+            drawCursor(displayCoords, mapCoords);
             
             if (playerCoords.x === mapCoords.x && playerCoords.y === mapCoords.y) {
               display.drawOver(displayCoords.x, displayCoords.y, '@', '#FFF', '');
@@ -152,7 +167,7 @@ export function SimulatorView(props: {children?: any, cursorCoords: Vector2, dra
       draw();
       timeout = setTimeout(() => {
         startDrawing();
-      }, 50);
+      }, 1000 / 30);
     }
     startDrawing();
 
@@ -160,6 +175,23 @@ export function SimulatorView(props: {children?: any, cursorCoords: Vector2, dra
       clearInterval(timeout);
     }
   }, [draw]);
+  
+
+  useEffect(() => {
+    function handleResize(e: UIEvent) {
+      console.log(e);
+      setDisplay(new ROT.Display({
+        ...DEFAULT_DISPLAY_SETTINGS,
+        ...getFullscreenDisplay()
+      }));
+    }
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    }
+  }, []);
 
 
   if (!element) {

@@ -68,8 +68,6 @@ export function Root(props: {children?: any}) {
 
       </Container>
     </Navbar>
-    <Container fluid='sm'>
-      <div className="main">{props.children}</div>
-    </Container>
+    <div className="main">{props.children}</div>
   </div>);
 }

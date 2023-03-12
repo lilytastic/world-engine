@@ -22,6 +22,7 @@ export function Simulator(props: {children?: any}) {
   const [ currentPath, setCurrentPath ] = useState([] as Vector2[]);
   const [ display, setDisplay ] = useState(null as ROT.Display | null);
   const [ scheduler, setScheduler ] = useState(null as Scheduler | null);
+  const [scroll, setScroll] = useState({x: 0, y: 0} as Vector2); 
 
   const [isMouseButtonDown, setIsMouseButtonDown] = useState(false);
 
@@ -184,10 +185,11 @@ export function Simulator(props: {children?: any}) {
 
 
   useEffect(() => {
-    if (!isMouseButtonDown || !seenTiles.find(tile => tile.x === cursorCoords.x && tile.y === cursorCoords.y)) { return; }
+    const mapCoords = {x: cursorCoords.x + scroll.x, y: cursorCoords.y + scroll.y};
+    if (!isMouseButtonDown || !seenTiles.find(tile => tile.x === mapCoords.x && tile.y === mapCoords.y)) { return; }
     const astar = new ROT.Path.AStar(
-      cursorCoords.x,
-      cursorCoords.y,
+      mapCoords.x,
+      mapCoords.y,
       (x, y) => getTileData({x, y}, mapData)?.canEntitiesPass && !!seenTiles.find(tile => tile.x === x && tile.y === y),
       { topology: 8 }
     );
@@ -202,16 +204,15 @@ export function Simulator(props: {children?: any}) {
       }
     )
     setPath(path);
-  }, [playerCoords, cursorCoords, mapData, seenTiles, isMouseButtonDown]);
+  }, [playerCoords, cursorCoords, mapData, seenTiles, isMouseButtonDown, scroll]);
 
   return (
-    <div className="view py-3">
-      <SimulatorView
-        cursorCoords={cursorCoords}
-        playerCoords={playerCoords}
-        drawnPath={isMouseButtonDown ? path : currentPath}
-        onSetDisplay={display => setDisplay(display)}
-      />
-    </div>
+    <SimulatorView
+      cursorCoords={cursorCoords}
+      playerCoords={playerCoords}
+      drawnPath={isMouseButtonDown ? path : currentPath}
+      onSetDisplay={display => setDisplay(display)}
+      onScroll={scroll => setScroll(scroll)}
+    />
   );
 }

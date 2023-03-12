@@ -77,7 +77,7 @@ export const simulatorSlice = createSlice({
       return {...state, gameEntities};
     }
   }
-})
+});
 
 export const { addGameEntity, setMap, setSeenTiles, setVisibleTiles } = simulatorSlice.actions;
 

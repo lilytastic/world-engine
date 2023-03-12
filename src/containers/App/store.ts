@@ -8,7 +8,7 @@ export const store = configureStore({
     simulator: SimulatorReducer
   },
   middleware(getDefaultMiddleware) {
-    console.log(getDefaultMiddleware);
+    // console.log(getDefaultMiddleware);
     return getDefaultMiddleware({
       serializableCheck: {
         // Ignore these field paths in all actions
