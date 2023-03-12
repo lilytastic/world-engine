@@ -86,5 +86,7 @@ export const getPlayer = createSelector((state: RootState) => state.simulator, (
 export const getMapData = createSelector((state: RootState) => state.simulator, (state) => state.mapData);
 export const getSeenTiles = createSelector((state: RootState) => state.simulator, (state) => state.seenTiles);
 export const getVisibleTiles = createSelector((state: RootState) => state.simulator, (state) => state.visibleTiles);
+export const getGameMode = createSelector((state: RootState) => state.simulator, (state) => state.currentMode);
+
 
 export default simulatorSlice.reducer;

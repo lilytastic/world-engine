@@ -3,8 +3,7 @@ import { Color } from 'rot-js/lib/color';
 import Digger from 'rot-js/lib/map/digger';
 import { IGameEntity } from './Simulator.reducer';
 
-const DEFAULT_TURN_DELAY = 150;
-const DEFAULT_MAP = 'default_map'; 
+const DEFAULT_MAP = 'default_map';
 
 export const DEFAULT_ENTITY: IGameEntity = {
   id: 0,
@@ -61,25 +60,21 @@ export interface ITileData {
   what: number;
 };
 
-export type Map = {[x: number]: {[y: number]: ITileData}};
+export type Map = {[coords: string]: ITileData};
+export const getFromMap = (coords: Vector2, map: Map) => {
+  return map[`${coords.x},${coords.y}`];
+}
 
 export const getAdjacent = (coords: Vector2, map: Map, ) => {
-  const {x, y} = coords;
-  return [
-    map[x - 1]?.[y - 1],
-    map[x - 1]?.[y + 1],
-    map[x - 1]?.[y],
-    map[x]?.[y - 1],
-    map[x]?.[y + 1],
-    map[x + 1]?.[y - 1],
-    map[x + 1]?.[y + 1],
-    map[x + 1]?.[y]
-  ];
+  const arr: ITileData[] = [];
+  ROT.DIRS[8].forEach((dir) => {
+    arr.push(getFromMap({x: coords.x + dir[0], y: coords.y + dir[1]}, map));
+  });
+  return arr;
 }
 
 export const getTileData = (mapCoords: Vector2, map: Map) => {
-  const { x, y } = mapCoords;
-  return map[x]?.[y];
+  return getFromMap(mapCoords, map);
 }
 
 const simplexNoise = new ROT.Noise.Simplex();
@@ -96,6 +91,7 @@ export interface IDrawingInfo {
 
 
 export const getDrawingInfo = (tileData: ITileData, mapCoords: Vector2, map: Map): IDrawingInfo => {
+
   let drawingInfo: IDrawingInfo = {
     ch: ' ',
     foregroundColor: COLORS.void,
@@ -105,7 +101,7 @@ export const getDrawingInfo = (tileData: ITileData, mapCoords: Vector2, map: Map
 
   let noise = getNoise(x, y);
 
-  if (tileData.canEntitiesPass) {
+  if (tileData?.canEntitiesPass) {
     drawingInfo = getFloorDrawingInfo();
 
     let shade = getNoise(x + 999, y + 222);    
@@ -172,8 +168,7 @@ const getFloorDrawingInfo = (): IDrawingInfo => {
 export const generateMap = (generator: Digger): Map => {
   const _mapData: Map = {};
   generator.create((x, y, what) => {
-    if (!_mapData[x]) { _mapData[x] = {}; }
-    _mapData[x][y] = {
+    _mapData[`${x},${y}`] = {
       what,
       canLightPass: what === 0,
       canEntitiesPass: what === 0

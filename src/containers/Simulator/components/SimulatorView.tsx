@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import * as ROT from 'rot-js';
 import { Color } from 'rot-js/lib/color';
 import { COLORS, getDrawingInfo, getTileData, Vector2, Map } from '../Simulator.helpers';
-import { getMapData, getSeenTiles, getVisibleTiles } from '../Simulator.reducer';
+import { getGameEntities, getMapData, getSeenTiles, getVisibleTiles, getGameMode } from '../Simulator.reducer';
 
 export function SimulatorView(props: {children?: any, cursorCoords: Vector2, drawnPath: Vector2[], playerCoords: Vector2, onSetDisplay: (display: ROT.Display) => void}) {
 
@@ -11,14 +11,16 @@ export function SimulatorView(props: {children?: any, cursorCoords: Vector2, dra
 
   const gameWindowRef = useRef(null as HTMLDivElement | null);
   const mapData: Map = useSelector(getMapData);
+  const gameEntities = useSelector(getGameEntities);
 
+  const currentGameMode = useSelector(getGameMode);
   const seenTiles = useSelector(getSeenTiles);
   const visibleTiles = useSelector(getVisibleTiles);
 
   const defaultDisplay = new ROT.Display({
-    width: 45,
-    height: 35,
-    fontSize: 18,
+    width: 35,
+    height: 25,
+    fontSize: 24,
     // fontFamily: 'Inconsolata',
     fontFamily: 'Space Mono',
     forceSquareRatio: true
@@ -60,10 +62,18 @@ export function SimulatorView(props: {children?: any, cursorCoords: Vector2, dra
         backgroundColor = COLORS.void;
       }
     }
+
+    const entities = gameEntities.ids.map(id => gameEntities.entities[id]);
+    entities.forEach(entity => {
+      if (entity?.position.x === displayCoords.x && entity?.position.y === displayCoords.y) {
+        ch = entity.ch;
+      }
+    });
+
     display.draw(displayCoords.x, displayCoords.y, ch, ROT.Color.toRGB(foregroundColor), ROT.Color.toRGB(backgroundColor));
 
     return { x: displayCoords.x, y: displayCoords.y, ch, foregroundColor, backgroundColor };
-  }, [display, mapData, visibleTiles, seenTiles]);
+  }, [display, mapData, visibleTiles, seenTiles, gameEntities]);
 
 
   const drawCursor = useCallback((displayCoords: Vector2) => {
@@ -87,21 +97,27 @@ export function SimulatorView(props: {children?: any, cursorCoords: Vector2, dra
 
 
   const draw = useCallback(() => {
-    Object.keys(mapData).forEach(((_x, x) => {
-      Object.keys(mapData[x]).forEach((_y, y) => {
+    const options = display.getOptions();
+    for (let x = 0; x < options.width; x++) {
+      for (let y = 0; y < options.height; y++) {
         const displayCoords = {x, y};
         const mapCoords = {x, y};
         
-        drawMapOnDisplay(displayCoords, mapCoords);
-
-        drawCursor(displayCoords);
-        
-        if (playerCoords.x === x && playerCoords.y === y) {
-          display.drawOver(x, y, '@', '#FFF', '');
+        console.log(currentGameMode);
+        switch (currentGameMode) {
+          default:
+            drawMapOnDisplay(displayCoords, mapCoords);
+    
+            drawCursor(displayCoords);
+            
+            if (playerCoords.x === x && playerCoords.y === y) {
+              display.drawOver(x, y, '@', '#FFF', '');
+            }
+            break;
         }
-      })
-    }));
-  }, [drawCursor, drawMapOnDisplay, mapData, playerCoords]);
+      }
+    }
+  }, [drawCursor, drawMapOnDisplay, playerCoords, currentGameMode, display]);
 
 
   useEffect(() => {
