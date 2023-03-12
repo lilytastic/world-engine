@@ -1,12 +1,15 @@
 import * as ROT from 'rot-js';
 import { Color } from 'rot-js/lib/color';
+import Digger from 'rot-js/lib/map/digger';
 import { IGameEntity } from './Simulator.reducer';
 
 const DEFAULT_TURN_DELAY = 150;
+const DEFAULT_MAP = 'default_map'; 
 
 export const DEFAULT_ENTITY: IGameEntity = {
   id: 0,
-  ch: '?'
+  ch: '?',
+  position: { x: 0, y: 0, map: DEFAULT_MAP }
 }
 
 export interface ITurn {
@@ -18,13 +21,13 @@ export type EntityId = number;
 
 export interface ITurnAction<T extends string> {
   type: T;
-  target: ICoords | EntityId;
+  target: Vector2 | EntityId;
 }
 export interface Move extends ITurnAction<'movement'> {
-  target: ICoords;
+  target: Vector2;
 }
 export interface Interact extends ITurnAction<'inspect'> {
-  target: ICoords | EntityId;
+  target: Vector2 | EntityId;
 }
 
 export const COLORS: {[id: string]: Color} = {
@@ -33,7 +36,21 @@ export const COLORS: {[id: string]: Color} = {
   'floor': [35,19,22]
 }
 
-export interface ICoords {
+export const getCursorCoordsOnDisplay = (e: MouseEvent, display: ROT.Display): Vector2 | null => {
+  const displayContainer = display.getContainer();
+  const displayOptions = display.getOptions();
+  if (e.target === displayContainer && displayContainer) {
+    const canvas = displayContainer.getBoundingClientRect();
+    const left = (e.clientX - canvas.left);
+    const top = (e.clientY - canvas.top);
+    const x = Math.floor((left / canvas.width) * displayOptions.width);
+    const y = Math.floor((top / canvas.height) * displayOptions.height);
+    return { x, y };
+  }
+  return null;
+}
+
+export type Vector2 = {
   x: number;
   y: number;
 }
@@ -46,7 +63,7 @@ export interface ITileData {
 
 export type Map = {[x: number]: {[y: number]: ITileData}};
 
-export const getAdjacent = (coords: ICoords, map: Map, ) => {
+export const getAdjacent = (coords: Vector2, map: Map, ) => {
   const {x, y} = coords;
   return [
     map[x - 1]?.[y - 1],
@@ -60,7 +77,7 @@ export const getAdjacent = (coords: ICoords, map: Map, ) => {
   ];
 }
 
-export const getTileData = (mapCoords: ICoords, map: Map) => {
+export const getTileData = (mapCoords: Vector2, map: Map) => {
   const { x, y } = mapCoords;
   return map[x]?.[y];
 }
@@ -78,11 +95,11 @@ export interface IDrawingInfo {
 }
 
 
-export const getDrawingInfo = (tileData: ITileData, mapCoords: ICoords, map: Map): IDrawingInfo => {
+export const getDrawingInfo = (tileData: ITileData, mapCoords: Vector2, map: Map): IDrawingInfo => {
   let drawingInfo: IDrawingInfo = {
     ch: ' ',
-    foregroundColor: [0,0,0],
-    backgroundColor: [0,0,0]
+    foregroundColor: COLORS.void,
+    backgroundColor: COLORS.void
   }
   const {x, y} = mapCoords;
 
@@ -150,4 +167,17 @@ const getFloorDrawingInfo = (): IDrawingInfo => {
     foregroundColor: [60, 60, 60],
     backgroundColor: [35, 19, 22]
   }
+}
+
+export const generateMap = (generator: Digger): Map => {
+  const _mapData: Map = {};
+  generator.create((x, y, what) => {
+    if (!_mapData[x]) { _mapData[x] = {}; }
+    _mapData[x][y] = {
+      what,
+      canLightPass: what === 0,
+      canEntitiesPass: what === 0
+    };
+  });
+  return _mapData;
 }
