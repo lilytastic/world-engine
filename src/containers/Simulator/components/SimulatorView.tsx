@@ -165,8 +165,8 @@ export function SimulatorView(props: {children?: any, cursorCoords: Vector2, dra
     let timeout: NodeJS.Timeout;
     const startDrawing = () => {
       draw();
-      timeout = setTimeout(() => {
-        startDrawing();
+      timeout = setInterval(() => {
+        draw();
       }, 1000 / 30);
     }
     startDrawing();
@@ -179,7 +179,7 @@ export function SimulatorView(props: {children?: any, cursorCoords: Vector2, dra
 
   useEffect(() => {
     function handleResize(e: UIEvent) {
-      console.log(e);
+      // console.log(e);
       setDisplay(new ROT.Display({
         ...DEFAULT_DISPLAY_SETTINGS,
         ...getFullscreenDisplay()

@@ -94,9 +94,8 @@ export function Simulator(props: {children?: any}) {
   useEffect(() => {
     let timeout: NodeJS.Timeout;
     const startProcessing = () => {
-      timeout = setTimeout(() => {
+      timeout = setInterval(() => {
         process();
-        startProcessing();
       }, 100);
     }
     startProcessing();
