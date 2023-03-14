@@ -1,4 +1,4 @@
-import { createSlice, createEntityAdapter, EntityState } from '@reduxjs/toolkit'
+import { createSlice, createEntityAdapter, EntityState, Update } from '@reduxjs/toolkit'
 import { createSelector } from 'reselect'
 import { RootState } from '../App/store';
 import { DEFAULT_ENTITY, Vector2, MapData } from './Simulator.helpers';
@@ -40,29 +40,23 @@ export enum GameMode {
 // Define a type for the slice state
 interface SimulatorState {
   display: HTMLElement | null,
-  currentMap: string,
-  persistentMaps: EntityState<Map>;
-  tempMaps: EntityState<Map>;
+  currentMap: number,
+  maps: EntityState<Map>;
   persistentEntities: EntityState<PersistentEntity>;
   tempEntities: EntityState<TempEntity>;
   currentMode: GameMode;
   playingAs: number;
-  seenTiles: Vector2[];
-  visibleTiles: Vector2[];
 }
 
 // Define the initial state using that type
 const initialState: SimulatorState = {
   display: null,
-  currentMap: '',
+  currentMap: 0,
   playingAs: -1,
   currentMode: GameMode.Start,
-  persistentMaps: mapAdapter.getInitialState(),
-  tempMaps: mapAdapter.getInitialState(),
+  maps: mapAdapter.getInitialState(),
   persistentEntities: persistentEntityAdapter.getInitialState(),
-  tempEntities: tempEntityAdapter.getInitialState(),
-  seenTiles: [],
-  visibleTiles: []
+  tempEntities: tempEntityAdapter.getInitialState()
 }
 
 export const simulatorSlice = createSlice({
@@ -70,28 +64,27 @@ export const simulatorSlice = createSlice({
   // `createSlice` will infer the state type from the `initialState` argument
   initialState,
   reducers: {
-    setMap: (state, action: {payload: string}) => {
+    setMap: (state, action: {payload: number}) => {
       return {...state, currentMap: action.payload};
     },
-    addPersistentMap: (state, action: {payload: Map}) => {
+    addMap: (state, action: {payload: Map}) => {
       const map = {...action.payload};
-      map.id = Math.max(0, ...state.persistentMaps.ids.map(x => +x)) + 1;
-      return {...state, persistentMaps: mapAdapter.upsertOne({...state.persistentMaps}, map)};
-    },
-    addTemporaryMap: (state, action: {payload: Map}) => {
-      const map = {...action.payload};
-      map.id = Math.max(0, ...state.tempMaps.ids.map(x => +x)) + 1;
+      map.id = Math.max(0, ...state.maps.ids.map(x => +x)) + 1;
       console.log(map);
-      return {...state, currentMap: map.id.toString(), tempMaps: mapAdapter.upsertOne({...state.tempMaps}, map)};
+      return {...state, currentMap: map.id, maps: mapAdapter.upsertOne({...state.maps}, map)};
     },
     setDisplay: (state, action: {payload: HTMLElement}) => {
       return {...state, display: action.payload};
     },
     setSeenTiles: (state, action: {payload: Vector2[]}) => {
-      return {...state, seenTiles: action.payload};
+      // @ts-ignore;
+      return {...state, maps: mapAdapter.updateOne({...state.maps}, {id: state.currentMap, changes: { seenTiles: action.payload }}) };
     },
     setVisibleTiles: (state, action: {payload: Vector2[]}) => {
-      return {...state, visibleTiles: action.payload};
+      return {...state, maps: mapAdapter.updateOne({...state.maps}, {id: state.currentMap, changes: { visibleTiles: action.payload }}) };
+    },
+    updateMap: (state, action: {payload: Update<Map>}) => {
+      return {...state, maps: mapAdapter.updateOne({...state.maps}, action.payload) };
     },
     addGameEntity: (state, action: {payload?: Partial<IGameEntity>}) => {
       // console.log(action.payload);
@@ -111,14 +104,14 @@ export const simulatorSlice = createSlice({
   }
 });
 
-export const { addGameEntity, setDisplay, setMap, setSeenTiles, setVisibleTiles, addTemporaryMap, addPersistentMap } = simulatorSlice.actions;
+export const { addGameEntity, setDisplay, setMap, setSeenTiles, setVisibleTiles, addMap } = simulatorSlice.actions;
 
 export const getPersistentEntities = createSelector((state: RootState) => state.simulator, (state) => state.persistentEntities);
 export const getPlayer = createSelector((state: RootState) => state.simulator, (state) => state.persistentEntities.entities[state.playingAs]);
-export const getCurrentMap = createSelector((state: RootState) => state.simulator, (state) => state.persistentMaps.entities[state.currentMap] || state.tempMaps.entities[state.currentMap]);
+export const getCurrentMap = createSelector((state: RootState) => state.simulator, (state) => state.maps.entities[state.currentMap]);
 export const getMapData = createSelector(getCurrentMap, (map) => map?.mapData);
-export const getSeenTiles = createSelector((state: RootState) => state.simulator, (state) => state.seenTiles);
-export const getVisibleTiles = createSelector((state: RootState) => state.simulator, (state) => state.visibleTiles);
+export const getSeenTiles = createSelector(getCurrentMap, (map) => map?.seenTiles);
+export const getVisibleTiles = createSelector(getCurrentMap, (map) => map?.visibleTiles)
 export const getGameMode = createSelector((state: RootState) => state.simulator, (state) => state.currentMode);
 export const getCurrentDisplay = createSelector((state: RootState) => state.simulator, (state) => state.display);
 

@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import * as ROT from 'rot-js';
 import Scheduler from 'rot-js/lib/scheduler/scheduler';
 import { buildMap, getCursorCoordsOnDisplay, getTileData, Vector2, ITurn, useEffectOnce } from './Simulator.helpers';
-import { addTemporaryMap, getMapData, getSeenTiles, setMap, setSeenTiles, setVisibleTiles } from './Simulator.reducer';
+import { addMap, getCurrentMap, getMapData, getSeenTiles, setSeenTiles, setVisibleTiles } from './Simulator.reducer';
 import { SimulatorView } from './components/SimulatorView';
 
 export function Simulator(props: {children?: any}) {
@@ -12,6 +12,8 @@ export function Simulator(props: {children?: any}) {
   const seenTiles = useSelector(getSeenTiles);
 
   const dispatch = useDispatch();
+
+  const currentMap = useSelector(getCurrentMap);
 
   const [ keysPressed, setKeysPressed ] = useState({} as {[key: string]: boolean});
 
@@ -29,18 +31,16 @@ export function Simulator(props: {children?: any}) {
   const init = useCallback(() => {
     const map = buildMap();
     setScheduler(new ROT.Scheduler.Speed());
-
-    dispatch(addTemporaryMap(map));
-    dispatch(setVisibleTiles([]));
-    dispatch(setSeenTiles([]));
-
-    setPlayerCoords(map.entrance);
-  }, [dispatch]);
+    if (!currentMap) {
+      dispatch(addMap(map));
+      setPlayerCoords(map.entrance);
+    }
+  }, [dispatch, currentMap]);
 
   useEffectOnce(() => {
     init();
   });
-  
+
 
   const mainLoop = async (scheduler: Scheduler) => {
     while (1) {
@@ -57,8 +57,8 @@ export function Simulator(props: {children?: any}) {
     const tiles: Vector2[] = [];
     shadowCasting.compute(playerCoords.x, playerCoords.y, 10, (x, y, r, visibility) => { tiles.push({x, y}); });
     dispatch(setVisibleTiles(tiles));
-    const newlySeenTiles = tiles.filter(_ => !seenTiles.find(tile => tile.x === _.x && tile.y === _.y));
-    if (newlySeenTiles.length > 0) {
+    const newlySeenTiles = tiles.filter(_ => !seenTiles?.find(tile => tile.x === _.x && tile.y === _.y));
+    if (newlySeenTiles.length > 0 && seenTiles) {
       dispatch(setSeenTiles([...seenTiles, ...newlySeenTiles]));
     }
   }, [playerCoords, mapData, seenTiles, dispatch]);
@@ -187,14 +187,14 @@ export function Simulator(props: {children?: any}) {
   useEffect(() => {
     if (!mapData) { return; }
     const mapCoords = {x: cursorCoords.x + scroll.x, y: cursorCoords.y + scroll.y};
-    if (!isMouseButtonDown || !seenTiles.find(tile => tile.x === mapCoords.x && tile.y === mapCoords.y)) {
+    if (!isMouseButtonDown || !seenTiles?.find(tile => tile.x === mapCoords.x && tile.y === mapCoords.y)) {
       setPath([]);
       return;
     }
     const astar = new ROT.Path.AStar(
       mapCoords.x,
       mapCoords.y,
-      (x, y) => getTileData({x, y}, mapData)?.canEntitiesPass && !!seenTiles.find(tile => tile.x === x && tile.y === y),
+      (x, y) => getTileData({x, y}, mapData)?.canEntitiesPass && !!seenTiles?.find(tile => tile.x === x && tile.y === y),
       { topology: 8 }
     );
     const path: Vector2[] = [];

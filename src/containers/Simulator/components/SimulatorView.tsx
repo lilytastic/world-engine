@@ -32,7 +32,7 @@ export function SimulatorView(props: {children?: any, cursorCoords: Vector2, dra
   const getFullscreenDisplay = useCallback(() => {
     return {
       width: Math.floor(window.innerWidth / DEFAULT_DISPLAY_SETTINGS.fontSize),
-      height: Math.floor((window.innerHeight - 64) / DEFAULT_DISPLAY_SETTINGS.fontSize)
+      height: Math.floor((window.innerHeight - 56) / DEFAULT_DISPLAY_SETTINGS.fontSize)
     };
   }, []);
 
@@ -68,8 +68,8 @@ export function SimulatorView(props: {children?: any, cursorCoords: Vector2, dra
     const tileData = getTileData(mapCoords, mapData);
     let { ch, foregroundColor, backgroundColor } = getDrawingInfo(tileData, mapCoords, mapData);
     
-    if (!!tileData && !visibleTiles.find(tile => tile.x === mapCoords.x && tile.y === mapCoords.y)) {
-      if (seenTiles.find(tile => tile.x === mapCoords.x && tile.y === mapCoords.y)) {
+    if (!!tileData && !visibleTiles?.find(tile => tile.x === mapCoords.x && tile.y === mapCoords.y)) {
+      if (seenTiles?.find(tile => tile.x === mapCoords.x && tile.y === mapCoords.y)) {
         const fogOfWar: Color = COLORS.void;
         foregroundColor = ROT.Color.interpolate(foregroundColor, fogOfWar);
         backgroundColor = ROT.Color.interpolate(backgroundColor, COLORS.void);  
@@ -95,7 +95,7 @@ export function SimulatorView(props: {children?: any, cursorCoords: Vector2, dra
   const drawCursor = useCallback((displayCoords: Vector2, mapCoords: Vector2) => {
     let cursorBrightness = 190 + Math.sin(Date.now() / 200) * 65;
     
-    if (seenTiles.find(tile => tile.x === mapCoords.x && tile.y === mapCoords.y)) {
+    if (seenTiles?.find(tile => tile.x === mapCoords.x && tile.y === mapCoords.y)) {
       if (cursorCoords.x === displayCoords.x && cursorCoords.y === displayCoords.y) {
         displaySettings.drawOver(displayCoords.x, displayCoords.y, '', '', ROT.Color.toRGB([cursorBrightness, cursorBrightness, cursorBrightness]));
       }
@@ -200,6 +200,6 @@ export function SimulatorView(props: {children?: any, cursorCoords: Vector2, dra
   }
   
   return (
-    <div className='mx-auto' style={{width: 'fit-content'}} ref={gameWindowRef}></div>
+    <div className='mx-auto' style={{width: 'fit-content', height: 0}} ref={gameWindowRef}></div>
   );
 };
