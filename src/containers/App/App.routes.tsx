@@ -3,6 +3,7 @@ import { Language } from '../Languages/views/Language';
 import { Languages } from '../Languages/Languages';
 import { LanguagePicker } from '../Languages/components/LanguagePicker';
 import { Simulator } from '../Simulator/Simulator';
+import { Offcanvas } from 'react-bootstrap';
 
 export const ROUTES = [
   {
@@ -56,5 +57,5 @@ export const ROUTES = [
     icon: 'gamepad',
     showInNav: true,
     element: <Simulator />
-  },
+  }
 ];

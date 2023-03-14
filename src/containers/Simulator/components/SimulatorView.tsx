@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import * as ROT from 'rot-js';
 import { Color } from 'rot-js/lib/color';
-import { COLORS, getDrawingInfo, getTileData, Vector2, Map } from '../Simulator.helpers';
-import { getGameEntities, getMapData, getSeenTiles, getVisibleTiles, getGameMode } from '../Simulator.reducer';
+import { COLORS, getDrawingInfo, getTileData, Vector2 } from '../Simulator.helpers';
+import { getPersistentEntities, getMapData, getSeenTiles, getVisibleTiles, getGameMode, setDisplay } from '../Simulator.reducer';
 
 
 const DEFAULT_DISPLAY_SETTINGS = {
@@ -20,8 +20,8 @@ export function SimulatorView(props: {children?: any, cursorCoords: Vector2, dra
   const { cursorCoords, drawnPath, onSetDisplay, onScroll, playerCoords } = props;
 
   const gameWindowRef = useRef(null as HTMLDivElement | null);
-  const mapData: Map = useSelector(getMapData);
-  const gameEntities = useSelector(getGameEntities);
+  const mapData = useSelector(getMapData);
+  const gameEntities = useSelector(getPersistentEntities);
 
   const currentGameMode = useSelector(getGameMode);
   const seenTiles = useSelector(getSeenTiles);
@@ -41,16 +41,16 @@ export function SimulatorView(props: {children?: any, cursorCoords: Vector2, dra
     ...getFullscreenDisplay()
   });
 
-  const [ display, setDisplay ] = useState(defaultDisplay);
+  const [ displaySettings, setDisplaySettings ] = useState(defaultDisplay);
   const [ element, setElement ] = useState(null as HTMLElement | null);
 
   useEffect(() => {
-    const container = display.getContainer()
-    if (display && container) {
+    const container = displaySettings.getContainer();
+    if (displaySettings && container) {
       setElement(container);
-      onSetDisplay?.(display);  
+      onSetDisplay?.(displaySettings);  
     }
-  }, [display, onSetDisplay]);
+  }, [displaySettings, onSetDisplay]);
 
   useEffect(() => {
     let _element = element;
@@ -64,6 +64,7 @@ export function SimulatorView(props: {children?: any, cursorCoords: Vector2, dra
 
 
   const drawMapOnDisplay = useCallback((displayCoords: Vector2, mapCoords: Vector2) => {
+    if (!mapData) { return; }
     const tileData = getTileData(mapCoords, mapData);
     let { ch, foregroundColor, backgroundColor } = getDrawingInfo(tileData, mapCoords, mapData);
     
@@ -85,10 +86,10 @@ export function SimulatorView(props: {children?: any, cursorCoords: Vector2, dra
       }
     });
 
-    display.draw(displayCoords.x, displayCoords.y, ch, ROT.Color.toRGB(foregroundColor), ROT.Color.toRGB(backgroundColor));
+    displaySettings.draw(displayCoords.x, displayCoords.y, ch, ROT.Color.toRGB(foregroundColor), ROT.Color.toRGB(backgroundColor));
 
     return { x: displayCoords.x, y: displayCoords.y, ch, foregroundColor, backgroundColor };
-  }, [display, mapData, visibleTiles, seenTiles, gameEntities]);
+  }, [displaySettings, mapData, visibleTiles, seenTiles, gameEntities]);
 
 
   const drawCursor = useCallback((displayCoords: Vector2, mapCoords: Vector2) => {
@@ -96,7 +97,7 @@ export function SimulatorView(props: {children?: any, cursorCoords: Vector2, dra
     
     if (seenTiles.find(tile => tile.x === mapCoords.x && tile.y === mapCoords.y)) {
       if (cursorCoords.x === displayCoords.x && cursorCoords.y === displayCoords.y) {
-        display.drawOver(displayCoords.x, displayCoords.y, '', '', ROT.Color.toRGB([cursorBrightness, cursorBrightness, cursorBrightness]));
+        displaySettings.drawOver(displayCoords.x, displayCoords.y, '', '', ROT.Color.toRGB([cursorBrightness, cursorBrightness, cursorBrightness]));
       }
     }
 
@@ -104,17 +105,17 @@ export function SimulatorView(props: {children?: any, cursorCoords: Vector2, dra
       const currentPathIndex = drawnPath.findIndex(p => p.x === mapCoords.x && p.y === mapCoords.y);
       if (currentPathIndex !== -1) {
         cursorBrightness = 220 + Math.sin(Date.now() / 200 + currentPathIndex * 100) * 35;
-        display.drawOver(displayCoords.x, displayCoords.y, '', ROT.Color.toRGB([cursorBrightness, cursorBrightness, cursorBrightness]), '');
+        displaySettings.drawOver(displayCoords.x, displayCoords.y, '', ROT.Color.toRGB([cursorBrightness, cursorBrightness, cursorBrightness]), '');
       }
     }
-  }, [cursorCoords, display, drawnPath, seenTiles]);
+  }, [cursorCoords, displaySettings, drawnPath, seenTiles]);
 
 
   useEffect(() => { onScroll?.(scroll) }, [ onScroll, scroll ]);
 
   const draw = useCallback(() => {
-    const options = display.getOptions();
-    display.clear();
+    const options = displaySettings.getOptions();
+    displaySettings.clear();
 
     const bufferZone = {x: 12, y: 9};
 
@@ -138,7 +139,7 @@ export function SimulatorView(props: {children?: any, cursorCoords: Vector2, dra
             drawCursor(displayCoords, mapCoords);
             
             if (playerCoords.x === mapCoords.x && playerCoords.y === mapCoords.y) {
-              display.drawOver(displayCoords.x, displayCoords.y, '@', '#FFF', '');
+              displaySettings.drawOver(displayCoords.x, displayCoords.y, '@', '#FFF', '');
             }
             break;
         }
@@ -147,7 +148,7 @@ export function SimulatorView(props: {children?: any, cursorCoords: Vector2, dra
 
     // display.drawText(0, 0, `${playerCoords.x},${playerCoords.y}`);
     // display.drawText(0, 1, `${idealScroll.x},${idealScroll.y}`);
-  }, [drawCursor, drawMapOnDisplay, playerCoords, currentGameMode, display, scroll]);
+  }, [drawCursor, drawMapOnDisplay, playerCoords, currentGameMode, displaySettings, scroll]);
 
 
   useEffect(() => {
@@ -180,7 +181,7 @@ export function SimulatorView(props: {children?: any, cursorCoords: Vector2, dra
   useEffect(() => {
     function handleResize(e: UIEvent) {
       // console.log(e);
-      setDisplay(new ROT.Display({
+      setDisplaySettings(new ROT.Display({
         ...DEFAULT_DISPLAY_SETTINGS,
         ...getFullscreenDisplay()
       }));

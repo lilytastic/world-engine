@@ -128,6 +128,13 @@ body, .navbar, .form-group {
   transition: background-color .15s ease-in-out;
 }
 
+.offcanvas.fullscreen {
+  height: 100vh;
+  .offcanvas-body {
+    padding: 0;
+  }
+}
+
 [data-bs-theme="light"] {
   .navbar {
     --bs-navbar-toggler-icon-bg: url("data:image/svg+xml,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%27-4 -4 8 8%27%3e%3ccircle r=%273%27 fill=%27rgba%28255, 255, 255, 1%29%27/%3e%3c/svg%3e");

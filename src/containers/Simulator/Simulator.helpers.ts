@@ -1,8 +1,8 @@
+import { useEffect, useRef, useState } from 'react';
 import * as ROT from 'rot-js';
 import { Color } from 'rot-js/lib/color';
-import Digger from 'rot-js/lib/map/digger';
 import { getRandomArrayItem } from '../Languages/helpers/logic.helpers';
-import { IGameEntity } from './Simulator.reducer';
+import { IGameEntity, Map, persistentEntityAdapter } from './Simulator.reducer';
 
 const DEFAULT_MAP = 'default_map';
 
@@ -61,12 +61,12 @@ export interface ITileData {
   what: number;
 };
 
-export type Map = {[coords: string]: ITileData};
-export const getFromMap = (coords: Vector2, map: Map) => {
+export type MapData = {[coords: string]: ITileData};
+export const getFromMap = (coords: Vector2, map: MapData) => {
   return map[`${coords.x},${coords.y}`];
 }
 
-export const getAdjacent = (coords: Vector2, map: Map, ) => {
+export const getAdjacent = (coords: Vector2, map: MapData, ) => {
   const arr: ITileData[] = [];
   ROT.DIRS[8].forEach((dir) => {
     arr.push(getFromMap({x: coords.x + dir[0], y: coords.y + dir[1]}, map));
@@ -74,7 +74,7 @@ export const getAdjacent = (coords: Vector2, map: Map, ) => {
   return arr;
 }
 
-export const getTileData = (mapCoords: Vector2, map: Map) => {
+export const getTileData = (mapCoords: Vector2, map: MapData) => {
   return getFromMap(mapCoords, map);
 }
 
@@ -91,7 +91,7 @@ export interface IDrawingInfo {
 }
 
 
-export const getDrawingInfo = (tileData: ITileData, mapCoords: Vector2, map: Map): IDrawingInfo => {
+export const getDrawingInfo = (tileData: ITileData, mapCoords: Vector2, map: MapData): IDrawingInfo => {
 
   let drawingInfo: IDrawingInfo = {
     ch: ' ',
@@ -166,23 +166,74 @@ const getFloorDrawingInfo = (): IDrawingInfo => {
   }
 }
 
-export const generateMap = (): {mapData: Map, entrance: Vector2} => {
-  const _mapData: Map = {};
+export type BuildMapOptions = {
+  type?: string,
+  generatorType?: 'digger' | 'arena' | 'cellular' | 'uniform',
+  width?: number,
+  height?: number
+}
+
+export const buildMap = (options?: BuildMapOptions): Map => {
+  const mapData: MapData = {};
   const generator = new ROT.Map.Digger(45, 35);
-  generator.create((x, y, what) => {
-    _mapData[`${x},${y}`] = {
-      what,
-      canLightPass: what === 0,
-      canEntitiesPass: what === 0
+
+  generator.create((x, y, isWall) => {
+    const canLightPass = !isWall;
+    const canEntitiesPass = !isWall;
+
+    mapData[`${x},${y}`] = {
+      what: isWall,
+      canLightPass,
+      canEntitiesPass
     };
   });
+
+  // TODO: Create temp entities.
+  // TODO: If any persistent entities should be placed here for whatever reason, decide now. Or take it from options.
 
   // TODO: Replace this with a list of entrances/exits.
   const startingRoom = getRandomArrayItem(generator.getRooms());
   const entrance = {x: startingRoom.getCenter()[0], y: startingRoom.getCenter()[1]};
 
   return {
-    mapData: _mapData,
-    entrance
+    id: 0,
+    mapData,
+    seenTiles: [],
+    visibleTiles: [],
+    entrance,
+    entities: persistentEntityAdapter.getInitialState()
   };
 }
+
+export const useEffectOnce = (effect: () => void | (() => void)) => {
+  const destroyFunc = useRef<void | (() => void)>();
+  const effectCalled = useRef(false);
+  const renderAfterCalled = useRef(false);
+  const [val, setVal] = useState<number>(0);
+
+  if (effectCalled.current) {
+    renderAfterCalled.current = true;
+  }
+
+  useEffect(() => {
+    // only execute the effect first time around
+    if (!effectCalled.current) {
+      destroyFunc.current = effect();
+      effectCalled.current = true;
+    }
+
+    // this forces one render after the effect is run
+    setVal((val) => val + 1);
+
+    return () => {
+      // if the comp didn't render since the useEffect was called,
+      // we know it's the dummy React cycle
+      if (!renderAfterCalled.current) {
+        return;
+      }
+      if (destroyFunc.current) {
+        destroyFunc.current();
+      }
+    };
+  }, []);
+};

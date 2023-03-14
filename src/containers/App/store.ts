@@ -12,7 +12,7 @@ export const store = configureStore({
     return getDefaultMiddleware({
       serializableCheck: {
         // Ignore these field paths in all actions
-        ignoredActionPaths: ['payload.history'],
+        ignoredActionPaths: ['payload.history', 'simulator.display'],
       },
     })
   },
