@@ -3,7 +3,7 @@ import { Button, Dropdown } from 'react-bootstrap';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { ILanguage } from '../models/language.model';
-import { addNewLanguage } from '../reducers/language.reducer';
+import { addNewLanguage, deleteLanguage } from '../reducers/language.reducer';
 
 
 export const LanguageOptions = (props: {children?: any, language: ILanguage, className?: string}) => {
@@ -33,7 +33,7 @@ export const LanguageOptions = (props: {children?: any, language: ILanguage, cla
         </Dropdown.Item>
         <Dropdown.Divider />
         <Dropdown.Item as={Button}
-                      onClick={ev => {}}
+                      onClick={ev => { dispatch(deleteLanguage({id: language.id})); history('/languages/'); }}
                       className='btn btn-link text-danger'>
           <i className='fas fa-trash fa-fw fa-sm me-2'></i>
           Delete

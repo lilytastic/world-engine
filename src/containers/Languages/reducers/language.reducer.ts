@@ -53,11 +53,16 @@ export const languageSlice = createSlice({
       const languages = languageAdapter.updateOne({...state.languages}, { id: lang.id, changes: lang });
       localStorage.setItem('languages', JSON.stringify(languages));
       return {...state, languages};
+    },
+    deleteLanguage: (state, action) => {
+      const languages = languageAdapter.removeOne({...state.languages}, action.payload.id);
+      localStorage.setItem('languages', JSON.stringify(languages));
+      return {...state, languages};
     }
   }
 })
 
-export const { addNewLanguage, updateLanguage } = languageSlice.actions;
+export const { addNewLanguage, updateLanguage, deleteLanguage } = languageSlice.actions;
 
 export const getLanguages = createSelector((state: RootState) => state.language, (state) => state.languages);
 
