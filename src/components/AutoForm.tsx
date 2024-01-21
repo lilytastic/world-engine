@@ -1,9 +1,10 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Button, Form, OverlayTrigger, Popover, Tab, Tabs } from 'react-bootstrap';
+import { Button, Col, Form, InputGroup, OverlayTrigger, Popover, Row, Tab, Tabs } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { AutoForm, AutoFormField, AutoFormItem } from '../containers/Root/models/language.form';
 import { EntityState } from '@reduxjs/toolkit';
+import { StringDictionary } from './StringDictionary';
 
 interface IStack<T> {
   push(item: T): void;
@@ -118,6 +119,31 @@ export function AutoFormer<T>(props: {children?: any, className?: string, form: 
   }, [data]);
 
   const displayFormGroup = (item: AutoFormItem<T>, content: JSX.Element): JSX.Element => {
+    return (<Form.Group className='mb-3 form-group' key={item.key}>
+      {item.label && (
+        <Form.Label htmlFor="phonemeClasses" className='d-flex justify-content-between align-items-center'>
+          <div className='d-flex align-items-center'>
+            {item.label}
+            {item.popover && (
+              <OverlayTrigger trigger="focus" placement='bottom' overlay={item.popover}>
+                <Button variant='link' className='p-0 small text-secondary'>
+                  <i className='fas fa-circle-question small ms-2'></i>
+                </Button>
+              </OverlayTrigger>
+            )}
+          </div>
+          {item.footerText && (
+            <small className='text-muted'>
+              {item.footerText}
+            </small>
+          )}
+        </Form.Label>
+      )}
+      {content}
+    </Form.Group>);
+  }
+  
+  const displayFormControl = (item: AutoFormItem<T>, content: JSX.Element): JSX.Element => {
     return (<div key={item.key}>
       <Form.Label htmlFor="phonemeClasses" className='d-flex justify-content-between align-items-center'>
         <div className='d-flex align-items-center'>
@@ -157,9 +183,11 @@ export function AutoFormer<T>(props: {children?: any, className?: string, form: 
 
     switch (item.type) {
       case AutoFormField.Group:
-        return <Form.Group className='mb-4 form-group'>{item.children?.map(next => displayFormItem(next, newParents))}</Form.Group>
+        return displayFormGroup(item, <>{item.children?.map(next => displayFormItem(next, newParents))}</>);
+      case AutoFormField.StringDictionary:
+        return <StringDictionary value={value} item={item} add={ev => submit(item.key, { [ev]: '' }, newParents)}></StringDictionary>;
       case AutoFormField.Radio:
-        return displayFormGroup(
+        return displayFormControl(
           item,
           <>
             {item.options?.map(option => (
@@ -188,7 +216,7 @@ export function AutoFormer<T>(props: {children?: any, className?: string, form: 
           ))}
         </div>);
       case AutoFormField.Control:
-        return displayFormGroup(
+        return displayFormControl(
           item,
           <Form.Control
             as={item.as}

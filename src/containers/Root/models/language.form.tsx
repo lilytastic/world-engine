@@ -4,7 +4,7 @@ import { ILanguage } from "../../Languages/models/language.model";
 import { OverlayChildren } from "react-bootstrap/esm/Overlay";
 import { Popover } from "react-bootstrap";
 
-export enum AutoFormField { TabGroup, Tab, Group, Control, Radio, Select, TileView, CheckGroup }
+export enum AutoFormField { TabGroup, Tab, Group, Control, Radio, Select, TileView, CheckGroup, StringDictionary }
 
 export type AutoFormOption = {
   label: string;
@@ -153,6 +153,16 @@ export const LanguageForm: AutoForm<ILanguage> = [
                 type: AutoFormField.Control,
                 key: 'name',
                 label: 'Language Name'
+              }
+            ]
+          },
+          {
+            type: AutoFormField.Group,
+            label: 'Dictionary',
+            children: [
+              {
+                type: AutoFormField.StringDictionary,
+                key: 'dictionary'
               }
             ]
           }

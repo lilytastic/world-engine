@@ -5,6 +5,7 @@ import { IConsonant, IVowel } from "./sounds.model";
 export interface ILanguage {
   id: number;
   name: string;
+  dictionary: {[meaning: string]: string};
   vowels: IVowel[];
   consonants: IConsonant[];
   phonology: IPhonology;
@@ -29,6 +30,7 @@ export const DEFAULT_LANGUAGE: ILanguage = {
   id: 1,
   name: "",
   type: 'language',
+  dictionary: {},
   vowels: [],
   consonants: [],
   phonology: {
