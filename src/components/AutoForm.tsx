@@ -50,36 +50,36 @@ export function AutoFormer<T>(props: {children?: any, className?: string, form: 
     setScratch(data);
   }, [data]);
 
-  const change = useCallback((key: string, value: any) => {
+  const change = useCallback((key: string, value: any, parents?: AutoFormItem<T>[]) => {
     if (!scratch) { return; }
 
-    const propTree = key.split('.');
-    const updatedScratch = {...scratch};
-
-    setScratch(updatedScratch);
-  }, [scratch]);
-
-  const submit = useCallback((key: string, value: any) => {
-    const propTree = key.split('.');
-    const updatedData = {...data};
-    dispatch(props.update(updatedData));
-  }, [scratch]);
-
-  const constructObjectKey = (key?: string, parents?: AutoFormItem<T>[]) => {
-    if (!key) {
-      key = '';
-    }
-    parents?.forEach(item => {
-      if (item.key) {
-        key = `${item.key}.`;
+    let update: any = {};
+    update[key] = value;
+    
+    parents?.forEach(parent => {
+      if (!!parent.key) {
+        update = { [parent.key]: {...update} }
       }
     });
-    console.log(key);
-    return key;
-  }
 
+    console.log(update);
+
+    setScratch({...scratch, ...update});
+  }, [scratch]);
+
+  const submit = useCallback((key: string, value: any, parents?: AutoFormItem<T>[]) => {
+    const propTree = key.split('.');
+    const updatedData = {...data};
+
+    console.log(updatedData);
+
+    dispatch(props.update(updatedData));
+  }, [scratch]);
+  
   const displayFormItem = useCallback((item: AutoFormItem<T>, parents?: AutoFormItem<T>[]): JSX.Element => {
-    let value: any = data;
+    if (!scratch) { return <></>; }
+
+    let value: any = scratch;
     parents?.forEach(parent => {
       if (!!parent.key) {
         value = value[parent.key];
@@ -115,10 +115,10 @@ export function AutoFormer<T>(props: {children?: any, className?: string, form: 
             as={item.as}
             id={item.key}
             value={value}
-            onBlur={ev => change(constructObjectKey(item.key, parents), ev.currentTarget.value)}
+            onChange={ev => change(item.key || '', ev.currentTarget.value, parents)}
+            onBlur={ev => submit(item.key || '', ev.currentTarget.value, parents)}
           />
         </Form.Group>);
-        return <Form.Control as={item.as} id={item.key} value={value}></Form.Control>
       case AutoFormField.TabGroup:
         return (<Tabs
             defaultActiveKey={item.children?.[0]?.key}
@@ -137,7 +137,7 @@ export function AutoFormer<T>(props: {children?: any, className?: string, form: 
           {item.children?.map(next => displayFormItem(next, newParents))}
         </div>);
     }
-  }, [data]);
+  }, [scratch]);
 
   const popover = (
     <Popover id="popover-basic">
