@@ -1,9 +1,8 @@
 import React from 'react';
 import { Language } from '../Languages/views/Language';
 import { Languages } from '../Languages/Languages';
-import { LanguagePicker } from '../Languages/components/LanguagePicker';
+import { LanguagePicker } from '../Languages/views/LanguagePicker';
 import { Simulator } from '../Simulator/Simulator';
-import { Offcanvas } from 'react-bootstrap';
 
 export const ROUTES = [
   {
@@ -22,7 +21,7 @@ export const ROUTES = [
     path: '/cultures',
     title: 'Cultures',
     icon: 'landmark',
-    showInNav: false,
+    showInNav: true,
     element: <div></div>
   },
   { 
@@ -48,9 +47,10 @@ export const ROUTES = [
     path: '/characters',
     title: 'Characters',
     icon: 'users',
-    showInNav: false,
+    showInNav: true,
     element: <div></div>
   },
+  /*
   { 
     path: '/simulator',
     title: 'Simulator',
@@ -58,4 +58,5 @@ export const ROUTES = [
     showInNav: true,
     element: <Simulator />
   }
+  */
 ];
