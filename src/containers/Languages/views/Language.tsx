@@ -8,7 +8,7 @@ import { useParams } from 'react-router';
 import { PhonemeClasses } from '../components/PhonemeClasses';
 import { WordPatterns } from '../components/WordPatterns';
 import { SampleWords } from '../components/SampleWords';
-import { Breadcrumb, Col, Form, Row, Tab, Tabs } from 'react-bootstrap';
+import { Breadcrumb, Button, Col, Form, Row, Tab, Tabs } from 'react-bootstrap';
 import { ProbabilityDropoff } from '../components/ProbabilityDropoff';
 import { ForbiddenCombinations } from '../components/ForbiddenCombinations';
 import { LanguageOptions } from '../components/LanguageOptions';
@@ -139,6 +139,10 @@ export function Language(props: {children?: any}) {
           
         </Tab>
       </Tabs>
+
+      <div className='mt-4'>
+        <Button>Save</Button>
+      </div>
 
     </div>
   );
