@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Button, Form, InputGroup } from "react-bootstrap";
 import { AutoFormItem } from "../../Root/models/language.form";
 import { universalWords } from "../../../assets/universaldictionary";
@@ -10,6 +10,7 @@ export function WordDictionary<T>(props: {item: AutoFormItem<T>, value: any, gen
 
   const [keyToAdd, setKeyToAdd] = useState('');
   const [valueToAdd, setValueToAdd] = useState('');
+  const [hideUnset, setHideUnset] = useState(false);
   const [page, setPage] = useState(0);
 
   const dict = universalWords.split('\n')
@@ -18,6 +19,18 @@ export function WordDictionary<T>(props: {item: AutoFormItem<T>, value: any, gen
     .sort((a, b) => a.label.toLowerCase() > b.label.toLowerCase() ? 1 : b.label.toLowerCase() > a.label.toLowerCase() ? -1 : 0);
 
   const pageLength = 50;
+  const [pages, setPages] = useState(1);
+  
+  const wordsDisplayed = useMemo(() => {
+    return dict.filter(word => !!dictionary[word.label] || !hideUnset);
+  }, [hideUnset, page, pageLength]);
+
+  useEffect(() => {
+    setPages(Math.ceil(wordsDisplayed.length / pageLength));
+    if (page > pages) {
+      setPage(pages - 1);
+    }
+  }, [wordsDisplayed, hideUnset, page, pages]);
 
   return (
     <div>
@@ -27,13 +40,23 @@ export function WordDictionary<T>(props: {item: AutoFormItem<T>, value: any, gen
         <Button onClick={() => { add(keyToAdd, valueToAdd); setKeyToAdd(''); setValueToAdd(''); }}>Add</Button>
       </InputGroup>
 
-      <div className="d-flex align-items-center">
-        <Button variant='link' disabled={page <= 0} onClick={() => setPage(page - 1)}><i className="fas fa-chevron-left"></i></Button>
-        {page + 1} / {Math.ceil(dict.length / pageLength)}
-        <Button variant='link' disabled={page >= Math.ceil(dict.length / pageLength) - 1} onClick={() => setPage(page + 1)}><i className="fas fa-chevron-right"></i></Button>
+      <div className="d-flex align-items-center justify-content-between">
+        <div>
+          <Form.Check
+            label='Hide unset words'
+            checked={hideUnset}
+            onChange={ev => setHideUnset(ev.currentTarget.checked)}
+            type='switch'
+            id={'hide-unset'}></Form.Check>
+        </div>
+        <div className="d-flex align-items-center">
+          <Button variant='link' disabled={page <= 0} onClick={() => setPage(page - 1)}><i className="fas fa-chevron-left"></i></Button>
+          {page + 1} / {pages}
+          <Button variant='link' disabled={page >= pages - 1} onClick={() => setPage(page + 1)}><i className="fas fa-chevron-right"></i></Button>
+        </div>
       </div>
 
-      {dict.slice(page * pageLength, page * pageLength + pageLength).map((word, i) => (
+      {wordsDisplayed.slice(page * pageLength, page * pageLength + pageLength).map((word, i) => (
         <InputGroup key={i + page * pageLength}>
           <InputGroup.Text style={{minWidth: '200px'}}>{word.label}</InputGroup.Text>
           <Form.Control as='input' value={dictionary[word.label]} onChange={ev => change(word.label, ev.currentTarget.value)} onBlur={ev => blur(word.label, ev.currentTarget.value)}></Form.Control>

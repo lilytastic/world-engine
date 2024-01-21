@@ -13,8 +13,9 @@ import { PhoneticKeyboard } from '../components/PhoneticKeyboard';
 import { AutoFormer } from '../../../components/AutoForm';
 import { AutoForm, AutoFormField } from '../../Root/models/language.form';
 import { universalWords } from '../../../assets/universaldictionary';
-import { generateRules, processWordFromDictionary } from '../helpers/phonology.helpers';
+import { generateRules } from '../helpers/phonology.helpers';
 import { ProbabilityType } from '../helpers/logic.helpers';
+import { processWordFromDictionary } from '../components/WordDictionary';
 
 
 
