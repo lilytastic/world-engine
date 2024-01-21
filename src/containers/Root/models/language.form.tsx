@@ -4,11 +4,12 @@ import { ILanguage } from "../../Languages/models/language.model";
 import { OverlayChildren } from "react-bootstrap/esm/Overlay";
 import { Popover } from "react-bootstrap";
 
-export enum AutoFormField { TabGroup, Tab, Group, Control, Radio, Select, TileView }
+export enum AutoFormField { TabGroup, Tab, Group, Control, Radio, Select, TileView, CheckGroup }
 
 export type AutoFormOption = {
   label: string;
-  value: any;
+  key?: string;
+  value?: any;
 }
 export type AutoForm<T> = AutoFormItem<T>[];
 export type AutoFormItem<T> = {
@@ -71,6 +72,17 @@ export const LanguageForm: AutoForm<ILanguage> = [
                 type: AutoFormField.Radio,
                 label: 'Probability Dropoff',
                 key: 'dropoffRate',
+                popover: (
+                  <Popover id="popover-basic">
+                    <Popover.Body>
+                      <ul className='list'>
+                        <li>Phonemes are ranked by frequency from left (most frequent) to right (least frequent).</li>
+                        <li><b>Fast</b> rate makes frequent phonemes even more frequent, <b>Medium</b> creates a more even spread, and <b>Equiprobable</b> creates a perfectly even spread.</li>
+                        <li>When using Equiprobable, phonemes can be custom weighted by writing *multiplier. For example, p*10 makes p ten times more common than a phoneme without a multiplier. To make it less likely, multiply by a decimal: p*0.4.</li>
+                      </ul>
+                    </Popover.Body>
+                  </Popover>
+                ),
                 options: [
                   {
                     label: 'Fast dropoff',
@@ -83,6 +95,32 @@ export const LanguageForm: AutoForm<ILanguage> = [
                   {
                     label: 'Equiprobable',
                     value: ProbabilityType.Equiprobable
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            type: AutoFormField.Group,
+            children: [
+              {
+                type: AutoFormField.Control,
+                label: 'Forbidden Combinations',
+                key: 'forbiddenCombinations',
+                placeholder: '#ŋ dt',
+                as: 'textarea'
+              },
+              {
+                type: AutoFormField.CheckGroup,
+                label: 'Probability Dropoff',
+                options: [
+                  {
+                    label: 'Ban two of the same vowels in a row',
+                    key: 'banSameVowels'
+                  },
+                  {
+                    label: 'Ban two of the same consonants in a row',
+                    key: 'banSameConsonants'
                   }
                 ]
               }

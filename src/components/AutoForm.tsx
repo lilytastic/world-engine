@@ -174,6 +174,22 @@ export function AutoFormer<T>(props: {children?: any, className?: string, form: 
             ))}
           </>
         );
+      case AutoFormField.CheckGroup:
+        return displayFormGroup(
+          item,
+          <>
+            {item.options?.map(option => (
+              <Form.Check
+                label={option.label}
+                checked={value[option.key || ''] === true}
+                onChange={ev => submit(option.key, ev.currentTarget.checked, [item, ...newParents])}
+                name={item.key}
+                type='switch'
+                id={option.key}
+              />
+            ))}
+          </>
+        );
       case AutoFormField.Control:
         return displayFormGroup(
           item,
