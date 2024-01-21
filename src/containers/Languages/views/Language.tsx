@@ -1,18 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import { getSampleWords } from '../helpers/generators.helpers';
+import React, { useEffect, useMemo, useState } from 'react';
+import { generateWord, generateWordV2, getSampleWords } from '../helpers/generators.helpers';
 
 import { ILanguage, IWord } from '../models/language.model';
 import { useDispatch, useSelector } from 'react-redux';
 import { getLanguages, updateLanguage } from '../reducers/language.reducer';
 import { useParams } from 'react-router';
 import { SampleWords } from '../components/SampleWords';
-import { Breadcrumb, Button, Col, Form, Row, Tab, Tabs } from 'react-bootstrap';
+import { Breadcrumb, Button, Col, Form, Popover, Row, Tab, Tabs } from 'react-bootstrap';
 import { LanguageOptions } from '../components/LanguageOptions';
 import { NavLink } from 'react-router-dom';
 import { PhoneticKeyboard } from '../components/PhoneticKeyboard';
 import { AutoFormer } from '../../../components/AutoForm';
-import { LanguageForm } from '../../Root/models/language.form';
+import { AutoForm, AutoFormField } from '../../Root/models/language.form';
 import { universalWords } from '../../../assets/universaldictionary';
+import { generateRules, processWordFromDictionary } from '../helpers/phonology.helpers';
+import { ProbabilityType } from '../helpers/logic.helpers';
+
 
 
 export function Language(props: {children?: any}) {
@@ -36,7 +39,7 @@ export function Language(props: {children?: any}) {
   useEffect(() => {
     window.addEventListener('scroll', handleScroll, { passive: true });
 
-    console.log(universalWords.split('\n').filter(x => !!x).map(processWordFromDictionary));
+    console.log(universalWords.split('\n').filter(x => !!x).map(processWordFromDictionary).filter(x => !!x));
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
@@ -56,34 +59,164 @@ export function Language(props: {children?: any}) {
     }
   }, [language]);
 
-  const processWordFromDictionary = (item: string) => {
-    let wordType = 'n';
-    let meaning = '';
-
-    const bracketStart = item.indexOf('(');
-    if (bracketStart !== -1) {
-      const bracketEnd = item.indexOf(')');
-      meaning = item.substring(bracketStart + 1, bracketEnd);
-      item = item.slice(0, bracketStart) + item.slice(bracketEnd + 1);
-    }
-
-    const sqBracketStart = item.indexOf('[');
-    if (sqBracketStart !== -1) {
-      const sqBracketEnd = item.indexOf(']');
-      wordType = item.substring(sqBracketStart + 1, sqBracketEnd);
-      item = item.slice(0, sqBracketStart) + item.slice(sqBracketEnd + 1);
-    }
-    const variations = item.split(',').map(x => x.trim()).filter(x => !!x);
-
-    const curlyBracketStart = item.indexOf('{');
-    if (curlyBracketStart !== -1) {
-      const curlyBracketEnd = item.indexOf('}');
-      item = item.slice(0, curlyBracketStart) + item.slice(curlyBracketEnd + 1);
-    }
-
-    return {id: `${variations[0]} [${wordType}]`, variations, meaning, wordType};
-  }
-
+  const LanguageForm: AutoForm<ILanguage> = useMemo(() => {
+    if (!language) { return []; }
+    return [
+      {
+        type: AutoFormField.TabGroup,
+        children: [
+          {
+            type: AutoFormField.Tab,
+            label: 'Phonology',
+            key: 'phonology', // In this case, all children will attempt to modify 'phonology.X' on the base object.
+            children: [
+              {
+                type: AutoFormField.Group,
+                children: [
+                  {
+                    type: AutoFormField.Control,
+                    label: 'Word Patterns',
+                    key: 'wordPatterns',
+                    as: 'textarea',
+                    popover: (<Popover id="popover-basic">
+                      <Popover.Body>
+                        <ul className='list'>
+                          <li>Word patterns are made of classes or actual phonemes, eg: zVC means the word will always start with z, then a random choice of V and C.</li>
+                          <li>Use brackets for optional patterns: CV(zV) means the zV pattern occurs 20% of the time. Manually change the probability by writing it after the brackets: CV(zV)50%.</li>
+                          <li>Patterns for particular parts-of-speech can be added after the default patterns, eg: part-of-speech = ...</li>
+                        </ul>
+                      </Popover.Body>
+                    </Popover>)
+                  },
+                ]
+              },
+              {
+                type: AutoFormField.Group,
+                children: [
+                  {
+                    type: AutoFormField.Control,
+                    label: 'Phoneme Classes',
+                    key: 'phonemeClasses',
+                    as: 'textarea',
+                    footerText: `most frequent <-> least frequent`,
+                    popover: (<Popover id="popover-basic">
+                      <Popover.Body>
+                        <ul className='list'>
+                          <li>Assign phonemes to classes (uppercase letters), which act as placeholders for Word Patterns</li>
+                          <li>The uppercase letters don't inherently mean anything, and any phoneme can be assigned to any class</li>
+                          <li>Classes contain sequences of phonemes (A = ion lar mel) and sequences of other classes (S = CV VC)</li>
+                          <li>If you need more than 26 classes, the following Greek letters can be used: ΓΔΘΛΞΠΣΦΨΩ</li>
+                        </ul>
+                      </Popover.Body>
+                    </Popover>)
+                  },
+                  {
+                    type: AutoFormField.Radio,
+                    label: 'Probability Dropoff',
+                    key: 'dropoffRate',
+                    popover: (
+                      <Popover id="popover-basic">
+                        <Popover.Body>
+                          <ul className='list'>
+                            <li>Phonemes are ranked by frequency from left (most frequent) to right (least frequent).</li>
+                            <li><b>Fast</b> rate makes frequent phonemes even more frequent, <b>Medium</b> creates a more even spread, and <b>Equiprobable</b> creates a perfectly even spread.</li>
+                            <li>When using Equiprobable, phonemes can be custom weighted by writing *multiplier. For example, p*10 makes p ten times more common than a phoneme without a multiplier. To make it less likely, multiply by a decimal: p*0.4.</li>
+                          </ul>
+                        </Popover.Body>
+                      </Popover>
+                    ),
+                    options: [
+                      {
+                        label: 'Fast dropoff',
+                        value: ProbabilityType.FastDropoff
+                      },
+                      {
+                        label: 'Medium dropoff',
+                        value: ProbabilityType.MediumDropoff
+                      },
+                      {
+                        label: 'Equiprobable',
+                        value: ProbabilityType.Equiprobable
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                type: AutoFormField.Group,
+                children: [
+                  {
+                    type: AutoFormField.Control,
+                    label: 'Forbidden Combinations',
+                    key: 'forbiddenCombinations',
+                    placeholder: '#ŋ dt',
+                    as: 'textarea'
+                  },
+                  {
+                    type: AutoFormField.CheckGroup,
+                    label: 'Probability Dropoff',
+                    options: [
+                      {
+                        label: 'Ban two of the same vowels in a row',
+                        key: 'banSameVowels'
+                      },
+                      {
+                        label: 'Ban two of the same consonants in a row',
+                        key: 'banSameConsonants'
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                type: AutoFormField.Group,
+                children: [
+                  {
+                    type: AutoFormField.Control,
+                    label: 'Sound Changes',
+                    key: 'soundChanges',
+                    placeholder: 'ʒ > d / _#',
+                    as: 'textarea'
+                  },
+                ]
+              }
+            ]
+          },
+          {
+            type: AutoFormField.Tab,
+            label: 'Vocabulary',
+            id: 'vocabulary',
+            children: [
+              {
+                type: AutoFormField.Group,
+                children: [
+                  {
+                    type: AutoFormField.Control,
+                    key: 'name',
+                    label: 'Language Name'
+                  }
+                ]
+              },
+              {
+                type: AutoFormField.Group,
+                label: 'Dictionary',
+                children: [
+                  {
+                    type: AutoFormField.WordDictionary,
+                    templateOptions: {
+                      generateWord: language ? () => { return generateWordV2(language) } : null
+                    },
+                    key: 'dictionary'
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }, [language]);
+  
 
   if (!language) {
     return <div></div>;
@@ -115,64 +248,9 @@ export function Language(props: {children?: any}) {
         <LanguageOptions language={language} className='position-absolute top-0 end-0 d-flex'></LanguageOptions>
       </h1>
 
-      {/*
-      <h2 className='mb-4 mt-0 h6 text-muted'>
-        {!language.ancestor ? 'No ancestors' : `Dialect of ${language.ancestor.name}`}
-      </h2>
-
-      <Card color='dark' className='my-4 mb-5 p-3'>
-        <ul className='list m-0'>
-          <li>Proto-language</li>
-        </ul>
-      </Card>
-      */}
-      
       <SampleWords></SampleWords>
 
       <AutoFormer data={language} form={LanguageForm} update={updateLanguage}></AutoFormer>
-
-      {/*
-      <Tabs
-        defaultActiveKey="vocabulary"
-        id="uncontrolled-tab-example"
-        variant='pills'
-        className="mt-4 mb-4 mx-auto rounded"
-        style={{width: 'fit-content'}}
-      >
-        <Tab eventKey="phonology" title="Phonology">
-          <Form.Group className='mb-4 form-group'>
-            <PhonemeClasses></PhonemeClasses>
-            <div className='my-1'>&nbsp;</div>
-            <WordPatterns></WordPatterns>
-            <div className='my-1'>&nbsp;</div>
-            <ProbabilityDropoff></ProbabilityDropoff>
-          </Form.Group>
-          <Form.Group className='mb-4 form-group'>
-            <ForbiddenCombinations></ForbiddenCombinations>
-          </Form.Group>
-          <Form.Group className='form-group'>
-            <SoundChanges></SoundChanges>
-          </Form.Group>
-        </Tab>
-        <Tab eventKey="spelling" title="Spelling">
-          
-        </Tab>
-        <Tab eventKey="vocabulary" title="Vocabulary">
-          <Form.Group className='form-group'>
-            <Form.Label htmlFor='languageName'>Language name</Form.Label>
-            <Form.Control
-              as='input'
-              id='languageName'
-              value={language.name}
-              onChange={ev => dispatch(updateLanguage({...language, name: ev.currentTarget.value}))}
-            />
-          </Form.Group>
-        </Tab>
-        <Tab eventKey="grammar" title="Grammar">
-          
-        </Tab>
-      </Tabs>
-      */}
     </div>
   );
 }

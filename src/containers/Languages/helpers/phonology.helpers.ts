@@ -96,3 +96,32 @@ export const getTokens = (script: string) => {
 
   return tokens;
 }
+
+export const processWordFromDictionary = (item: string) => {
+  let wordType = 'n';
+  let meaning = '';
+
+  const curlyBracketStart = item.indexOf('{');
+  if (curlyBracketStart !== -1) {
+    const curlyBracketEnd = item.indexOf('}');
+    item = item.slice(0, curlyBracketStart) + item.slice(curlyBracketEnd + 1);
+  }
+
+  const bracketStart = item.indexOf('(');
+  if (bracketStart !== -1) {
+    const bracketEnd = item.indexOf(')');
+    meaning = item.substring(bracketStart + 1, bracketEnd);
+    item = item.slice(0, bracketStart) + item.slice(bracketEnd + 1);
+  }
+
+  const sqBracketStart = item.indexOf('[');
+  if (sqBracketStart !== -1) {
+    const sqBracketEnd = item.indexOf(']');
+    wordType = item.substring(sqBracketStart + 1, sqBracketEnd);
+    item = item.slice(0, sqBracketStart) + item.slice(sqBracketEnd + 1);
+  }
+  const variations = item.split(',').map(x => x.trim()).filter(x => !!x);
+
+  if (!variations.length) { return null; }
+  return {label: `${variations[0]} [${wordType}]`, variations, meaning, wordType};
+}

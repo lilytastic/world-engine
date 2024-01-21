@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom';
 import { AutoForm, AutoFormField, AutoFormItem } from '../containers/Root/models/language.form';
 import { EntityState } from '@reduxjs/toolkit';
 import { StringDictionary } from './StringDictionary';
+import { WordDictionary } from '../containers/Languages/components/WordDictionary';
 
 interface IStack<T> {
   push(item: T): void;
@@ -192,6 +193,15 @@ export function AutoFormer<T>(props: {children?: any, className?: string, form: 
           change={(key, value) => change(item.key, { [key]: value }, newParents)}
           blur={(key, value) => submit(item.key, { [key]: value }, newParents)}
         ></StringDictionary>;
+      case AutoFormField.WordDictionary:
+        return <WordDictionary
+          value={value}
+          item={item}
+          add={(key, value) => submit(item.key, { [key]: value }, newParents)}
+          change={(key, value) => change(item.key, { [key]: value }, newParents)}
+          blur={(key, value) => submit(item.key, { [key]: value }, newParents)}
+          {...item.templateOptions}
+        ></WordDictionary>;
       case AutoFormField.Radio:
         return displayFormControl(
           item,
