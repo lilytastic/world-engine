@@ -5,6 +5,38 @@ import { useParams } from 'react-router-dom';
 import { AutoForm, AutoFormField, AutoFormItem } from '../containers/Root/models/language.form';
 import { EntityState } from '@reduxjs/toolkit';
 
+interface IStack<T> {
+  push(item: T): void;
+  pop(): T | undefined;
+  peek(): T | undefined;
+  size(): number;
+}
+
+class Stack<T> implements IStack<T> {
+  private storage: T[] = [];
+
+  constructor(private capacity: number = Infinity) {}
+
+  push(item: T): void {
+    if (this.size() === this.capacity) {
+      throw Error("Stack has reached max capacity, you cannot add more items");
+    }
+    this.storage.push(item);
+  }
+
+  pop(): T | undefined {
+    return this.storage.pop();
+  }
+
+  peek(): T | undefined {
+    return this.storage[this.size() - 1];
+  }
+
+  size(): number {
+    return this.storage.length;
+  }
+}
+
 
 export function AutoFormer<T>(props: {children?: any, className?: string, form: AutoForm<T>, data: T, update: any}) {
 
@@ -33,24 +65,79 @@ export function AutoFormer<T>(props: {children?: any, className?: string, form: 
     dispatch(props.update(updatedData));
   }, [scratch]);
 
-  const displayFormItem = (item: AutoFormItem<T>): JSX.Element => {
+  const constructObjectKey = (key?: string, parents?: AutoFormItem<T>[]) => {
+    if (!key) {
+      key = '';
+    }
+    parents?.forEach(item => {
+      if (item.key) {
+        key = `${item.key}.`;
+      }
+    });
+    console.log(key);
+    return key;
+  }
+
+  const displayFormItem = useCallback((item: AutoFormItem<T>, parents?: AutoFormItem<T>[]): JSX.Element => {
+    let value: any = data;
+    parents?.forEach(parent => {
+      if (!!parent.key) {
+        value = value[parent.key];
+      }
+    });
+    if (item.key) {
+      value = value[item.key];
+    }
+
+    const newParents = [item, ...(parents || [])];
+
     switch (item.type) {
+      case AutoFormField.Control:
+        return (<Form.Group key={item.key} className='mb-4 form-group'>
+          <Form.Label htmlFor="phonemeClasses" className='d-flex justify-content-between align-items-center'>
+            <div className='d-flex align-items-center'>
+              {item.label}
+              {item.popover && (
+                <OverlayTrigger trigger="focus" placement='bottom' overlay={item.popover}>
+                  <Button variant='link' className='p-0 small text-secondary'>
+                    <i className='fas fa-circle-question small ms-2'></i>
+                  </Button>
+                </OverlayTrigger>
+              )}
+            </div>
+            {item.footerText && (
+              <small className='text-muted'>
+                {item.footerText}
+              </small>
+            )}
+          </Form.Label>
+          <Form.Control
+            as={item.as}
+            id={item.key}
+            value={value}
+            onBlur={ev => change(constructObjectKey(item.key, parents), ev.currentTarget.value)}
+          />
+        </Form.Group>);
+        return <Form.Control as={item.as} id={item.key} value={value}></Form.Control>
       case AutoFormField.TabGroup:
         return (<Tabs
             defaultActiveKey={item.children?.[0]?.key}
             variant='pills'
+            key={item.key}
             className="mt-4 mb-4 mx-auto rounded"
             style={{width: 'fit-content'}}
           >
-            {item.children?.map(tab => (<Tab eventKey={tab.key} title={tab.label}>{tab.children?.map(displayFormItem)}</Tab>))}
+            {item.children?.map(tab => (<Tab key={tab.key} eventKey={tab.key} title={tab.label}>
+              {tab.children?.map(next => displayFormItem(next, [tab, ...newParents]))}
+            </Tab>))}
         </Tabs>);
       default:
-        return (<>
+        return (<div key={item.key}>
           {item.label}
-          {item.children?.map(displayFormItem)}
-        </>);
+          {item.children?.map(next => displayFormItem(next, newParents))}
+        </div>);
     }
-  }
+  }, [data]);
 
   const popover = (
     <Popover id="popover-basic">
@@ -65,7 +152,7 @@ export function AutoFormer<T>(props: {children?: any, className?: string, form: 
   );
 
   return (<>
-    {form.map(displayFormItem)}
+    {form.map(item => displayFormItem(item))}
   </>);
 }
 

@@ -1,5 +1,7 @@
+import { ElementType } from "react";
 import { ProbabilityType } from "../../Languages/helpers/logic.helpers";
 import { ILanguage } from "../../Languages/models/language.model";
+import { OverlayChildren } from "react-bootstrap/esm/Overlay";
 
 export enum AutoFormField { TabGroup, Group, Control, Radio, Select, TileView }
 
@@ -12,9 +14,11 @@ export type AutoFormItem<T> = {
     type: AutoFormField;
     label?: string;
     key?: string;
-    as?: string;
+    as?: ElementType;
     options?: AutoFormOption[];
     children?: AutoFormItem<T>[];
+    popover?: OverlayChildren;
+    footerText?: string;
 }
 
 export const LanguageForm: AutoForm<ILanguage> = [
