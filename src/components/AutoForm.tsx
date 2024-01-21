@@ -82,8 +82,8 @@ export function AutoFormer<T>(props: {children?: any, className?: string, form: 
     setScratch(data);
   }, [data]);
 
-  const change = useCallback((key: string, value: any, parents?: AutoFormItem<T>[]) => {
-    if (!scratch) { return; }
+  const change = useCallback((key: string | undefined, value: any, parents?: AutoFormItem<T>[]) => {
+    if (!scratch || !key) { return; }
 
     let update: any = {};
     update[key] = value;
@@ -100,8 +100,8 @@ export function AutoFormer<T>(props: {children?: any, className?: string, form: 
     setScratch(mergeDeep({...data}, update));
   }, [scratch]);
 
-  const submit = useCallback((key: string, value: any, parents?: AutoFormItem<T>[]) => {
-    if (!data) { return; }
+  const submit = useCallback((key: string | undefined, value: any, parents?: AutoFormItem<T>[]) => {
+    if (!data || !key) { return; }
 
     let update: any = {};
     update[key] = value;
@@ -116,6 +116,29 @@ export function AutoFormer<T>(props: {children?: any, className?: string, form: 
 
     dispatch(props.update(mergeDeep(data, update)));
   }, [data]);
+
+  const displayFormGroup = (item: AutoFormItem<T>, content: JSX.Element): JSX.Element => {
+    return (<div key={item.key}>
+      <Form.Label htmlFor="phonemeClasses" className='d-flex justify-content-between align-items-center'>
+        <div className='d-flex align-items-center'>
+          {item.label}
+          {item.popover && (
+            <OverlayTrigger trigger="focus" placement='bottom' overlay={item.popover}>
+              <Button variant='link' className='p-0 small text-secondary'>
+                <i className='fas fa-circle-question small ms-2'></i>
+              </Button>
+            </OverlayTrigger>
+          )}
+        </div>
+        {item.footerText && (
+          <small className='text-muted'>
+            {item.footerText}
+          </small>
+        )}
+      </Form.Label>
+      {content}
+    </div>);
+  }
   
   const displayFormItem = useCallback((item: AutoFormItem<T>, parents?: AutoFormItem<T>[]): JSX.Element => {
     if (!scratch) { return <></>; }
@@ -133,33 +156,35 @@ export function AutoFormer<T>(props: {children?: any, className?: string, form: 
     const newParents = [item, ...(parents || [])];
 
     switch (item.type) {
+      case AutoFormField.Group:
+        return <Form.Group className='mb-4 form-group'>{item.children?.map(next => displayFormItem(next, newParents))}</Form.Group>
+      case AutoFormField.Radio:
+        return displayFormGroup(
+          item,
+          <>
+            {item.options?.map(option => (
+              <Form.Check
+                label={option.label}
+                checked={value === option.value}
+                onChange={ev => change(item.key, option.value, parents)}
+                name="group1"
+                type='radio'
+                id='inline-type-1'
+              />
+            ))}
+          </>
+        );
       case AutoFormField.Control:
-        return (<Form.Group key={item.key} className='mb-4 form-group'>
-          <Form.Label htmlFor="phonemeClasses" className='d-flex justify-content-between align-items-center'>
-            <div className='d-flex align-items-center'>
-              {item.label}
-              {item.popover && (
-                <OverlayTrigger trigger="focus" placement='bottom' overlay={item.popover}>
-                  <Button variant='link' className='p-0 small text-secondary'>
-                    <i className='fas fa-circle-question small ms-2'></i>
-                  </Button>
-                </OverlayTrigger>
-              )}
-            </div>
-            {item.footerText && (
-              <small className='text-muted'>
-                {item.footerText}
-              </small>
-            )}
-          </Form.Label>
+        return displayFormGroup(
+          item,
           <Form.Control
             as={item.as}
             id={item.key}
             value={value}
-            onChange={ev => change(item.key || '', ev.currentTarget.value, parents)}
-            onBlur={ev => submit(item.key || '', ev.currentTarget.value, parents)}
+            onChange={ev => change(item.key, ev.currentTarget.value, parents)}
+            onBlur={ev => submit(item.key, ev.currentTarget.value, parents)}
           />
-        </Form.Group>);
+        );
       case AutoFormField.TabGroup:
         return (<Tabs
             defaultActiveKey={item.children?.[0]?.key}
@@ -169,7 +194,7 @@ export function AutoFormer<T>(props: {children?: any, className?: string, form: 
             style={{width: 'fit-content'}}
           >
             {item.children?.map(tab => (<Tab key={tab.key} eventKey={tab.key} title={tab.label}>
-              {tab.children?.map(next => displayFormItem(next, [tab, ...newParents]))}
+              {displayFormItem(tab, newParents)}
             </Tab>))}
         </Tabs>);
       default:

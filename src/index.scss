@@ -87,6 +87,9 @@ input:not([type="checkbox"]), textarea {
   padding: 16px;
   border-radius: var(--bs-border-radius);
   background-color: var(--bs-secondary-bg);
+  display: grid;
+  grid-auto-flow: row;
+  row-gap: 16px;
   // border: solid 1px var(--bs-border-color);
   //box-shadow: var(--bs-box-shadow);
 }
