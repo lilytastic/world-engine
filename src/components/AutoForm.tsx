@@ -185,7 +185,13 @@ export function AutoFormer<T>(props: {children?: any, className?: string, form: 
       case AutoFormField.Group:
         return displayFormGroup(item, <>{item.children?.map(next => displayFormItem(next, newParents))}</>);
       case AutoFormField.StringDictionary:
-        return <StringDictionary value={value} item={item} add={ev => submit(item.key, { [ev]: '' }, newParents)}></StringDictionary>;
+        return <StringDictionary
+          value={value}
+          item={item}
+          add={(key, value) => submit(item.key, { [key]: value }, newParents)}
+          change={(key, value) => change(item.key, { [key]: value }, newParents)}
+          blur={(key, value) => submit(item.key, { [key]: value }, newParents)}
+        ></StringDictionary>;
       case AutoFormField.Radio:
         return displayFormControl(
           item,
