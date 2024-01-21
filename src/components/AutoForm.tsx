@@ -166,10 +166,10 @@ export function AutoFormer<T>(props: {children?: any, className?: string, form: 
               <Form.Check
                 label={option.label}
                 checked={value === option.value}
-                onChange={ev => change(item.key, option.value, parents)}
-                name="group1"
+                onChange={ev => submit(item.key, option.value, parents)}
+                name={item.key}
                 type='radio'
-                id='inline-type-1'
+                id={option.value}
               />
             ))}
           </>
