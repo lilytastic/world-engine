@@ -15,6 +15,8 @@ import { LanguageOptions } from '../components/LanguageOptions';
 import { NavLink } from 'react-router-dom';
 import { PhoneticKeyboard } from '../components/PhoneticKeyboard';
 import { SoundChanges } from '../components/SoundChanges';
+import { AutoFormer } from '../../../components/AutoForm';
+import { LanguageForm } from '../../Root/models/language.form';
 
 export function Language(props: {children?: any}) {
 
@@ -85,6 +87,7 @@ export function Language(props: {children?: any}) {
 
         <LanguageOptions language={language} className='position-absolute top-0 end-0 d-flex'></LanguageOptions>
       </h1>
+
       {/*
       <h2 className='mb-4 mt-0 h6 text-muted'>
         {!language.ancestor ? 'No ancestors' : `Dialect of ${language.ancestor.name}`}
@@ -99,6 +102,9 @@ export function Language(props: {children?: any}) {
       
       <SampleWords></SampleWords>
 
+      <AutoFormer data={language} form={LanguageForm} update={updateLanguage}></AutoFormer>
+
+      {/*
       <Tabs
         defaultActiveKey="vocabulary"
         id="uncontrolled-tab-example"
@@ -139,11 +145,7 @@ export function Language(props: {children?: any}) {
           
         </Tab>
       </Tabs>
-
-      <div className='mt-4'>
-        <Button>Save</Button>
-      </div>
-
+      */}
     </div>
   );
 }

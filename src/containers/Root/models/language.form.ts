@@ -1,27 +1,45 @@
 import { ProbabilityType } from "../../Languages/helpers/logic.helpers";
+import { ILanguage } from "../../Languages/models/language.model";
 
-export enum Form { TabGroup, Group, Control, Radio, Select }
+export enum AutoFormField { TabGroup, Group, Control, Radio, Select, TileView }
 
-export const LanguageForm = [
+export type AutoFormOption = {
+    label: string;
+    value: any;
+}
+export type AutoForm<T> = AutoFormItem<T>[];
+export type AutoFormItem<T> = {
+    type: AutoFormField;
+    label?: string;
+    key?: string;
+    as?: string;
+    options?: AutoFormOption[];
+    children?: AutoFormItem<T>[];
+}
+
+export const LanguageForm: AutoForm<ILanguage> = [
     {
-        type: Form.TabGroup,
+        type: AutoFormField.TabGroup,
         children: [
             {
                 label: 'Phonology',
-                type: Form.Group,
+                key: 'phonology', // In this case, all children will attempt to modify 'phonology.X' on the base object.
+                type: AutoFormField.Group,
                 children: [
                     {
-                        type: Form.Control,
+                        type: AutoFormField.Control,
                         label: 'Phoneme Classes',
-                        key: 'phonemeClasses'
+                        key: 'phonemeClasses',
+                        as: 'textarea'
                     },
                     {
-                        type: Form.Control,
+                        type: AutoFormField.Control,
                         label: 'Word Patterns',
-                        key: 'wordPatterns'
+                        key: 'wordPatterns',
+                        as: 'textarea'
                     },
                     {
-                        type: Form.Radio,
+                        type: AutoFormField.Radio,
                         label: 'Probability Dropoff',
                         key: 'dropoffRate',
                         options: [
@@ -38,6 +56,33 @@ export const LanguageForm = [
                                 value: ProbabilityType.Equiprobable
                             }
                         ]
+                    }
+                ]
+            }
+        ]
+    }
+]
+
+export const CultureForm = [
+    {
+        type: AutoFormField.TabGroup,
+        children: [
+            {
+                label: 'Memes',
+                type: AutoFormField.Group,
+                children: [
+                    {
+                        type: AutoFormField.TileView, // Represents the data as tiles, and allows user to toggle them on or off.
+                        templateOptions: {
+                            behaviour: 'toggle',
+                            min: 0
+                        },
+                        key: 'memes'
+                    },
+                    {
+                        type: AutoFormField.Group,
+                        label: 'Add New Meme',
+                        children: []
                     }
                 ]
             }
