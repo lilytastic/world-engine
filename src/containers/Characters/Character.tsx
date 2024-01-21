@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { ICharacter } from "./models/character.model";
 import { useParams } from "react-router";
 import { Col, Form, Row } from "react-bootstrap";
+import { CharacterOptions } from "./components/CharacterOptions";
 
 export function Character(props: {children?: any}) {
 
@@ -19,39 +20,44 @@ export function Character(props: {children?: any}) {
     }, [characters, params.id]);
 
     if (!character) {
-        return <></>;
+      return <></>;
     }
 
     return (
-        <div>
-          <Form.Group className='form-group'>
-            <Row>
-              <Col lg={7}>
-                <Form.Label htmlFor='name'>Name</Form.Label>
-                <Form.Control
-                  as='input'
-                  id='characterName'
-                  value={character.name}
-                  onChange={ev => dispatch(updateCharacter({...character, name: ev.currentTarget.value}))}
-                />
-              </Col>
-              <Col lg={5}>
-                <Form.Label htmlFor='gender'>Gender</Form.Label>
-                <Form.Select
-                    aria-label="Gender"
-                    value={character.gender}
-                    onChange={(ev) => {
-                      console.log(ev);
-                      dispatch(updateCharacter({...character, gender: ev.currentTarget.value}));
-                    }}>
-                  <option>Choose one</option>
-                  <option value="M">Male</option>
-                  <option value="F">Female</option>
-                  <option value="X">Non-binary</option>
-                </Form.Select>
-              </Col>
-            </Row>
-          </Form.Group>
-        </div>
+      <div>
+        <h1 className='d-flex align-items-start position-relative lh-1 mb-4'>
+          {character.name}
+
+          <CharacterOptions character={character} className='position-absolute top-0 end-0 d-flex'></CharacterOptions>
+        </h1>
+        <Form.Group className='form-group'>
+          <Row>
+            <Col lg={7}>
+              <Form.Label htmlFor='name'>Name</Form.Label>
+              <Form.Control
+                as='input'
+                id='characterName'
+                value={character.name}
+                onChange={ev => dispatch(updateCharacter({...character, name: ev.currentTarget.value}))}
+              />
+            </Col>
+            <Col lg={5}>
+              <Form.Label htmlFor='gender'>Gender</Form.Label>
+              <Form.Select
+                  aria-label="Gender"
+                  value={character.gender}
+                  onChange={(ev) => {
+                    console.log(ev);
+                    dispatch(updateCharacter({...character, gender: ev.currentTarget.value}));
+                  }}>
+                <option>Choose one</option>
+                <option value="M">Male</option>
+                <option value="F">Female</option>
+                <option value="X">Non-binary</option>
+              </Form.Select>
+            </Col>
+          </Row>
+        </Form.Group>
+      </div>
     )
 }

@@ -22,9 +22,6 @@ export function Characters(props: {children?: any}) {
         <label className='mb-2 pb-1'>
           &nbsp;
         </label>
-        <h1 className='lh-1 mb-3'>
-          Characters
-        </h1>
         <Row className='mt-2'>
           <Col xs={12} md={6} lg={7}>
             <div className='w-100'>
@@ -46,6 +43,7 @@ export function Characters(props: {children?: any}) {
                                 action
                                 active={location.pathname === `/characters/${id}`}>
                   {characters.entities[id]?.name || 'Untitled'}
+                  {characters.entities[id]?.gender === 'M' ? '♂' : characters.entities[id]?.gender === 'F' ? '♀' : ''}
                 </ListGroup.Item>
               ))}
             </ListGroup>
