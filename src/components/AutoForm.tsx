@@ -181,6 +181,7 @@ export function AutoFormer<T>(props: {children?: any, className?: string, form: 
             as={item.as}
             id={item.key}
             value={value}
+            placeholder={item.placeholder}
             onChange={ev => change(item.key, ev.currentTarget.value, parents)}
             onBlur={ev => submit(item.key, ev.currentTarget.value, parents)}
           />
@@ -199,7 +200,6 @@ export function AutoFormer<T>(props: {children?: any, className?: string, form: 
         </Tabs>);
       default:
         return (<div key={item.key}>
-          {item.label}
           {item.children?.map(next => displayFormItem(next, newParents))}
         </div>);
     }
@@ -221,61 +221,3 @@ export function AutoFormer<T>(props: {children?: any, className?: string, form: 
     {form.map(item => displayFormItem(item))}
   </>);
 }
-
-/*
-    <Form.Label htmlFor="dropoffRate" className='d-flex align-items-center'>
-      Probability Dropoff Rate
-      <OverlayTrigger trigger="focus" placement='bottom' overlay={popover}>
-        <Button variant='link' className='p-0 small text-secondary'>
-          <i className='fas fa-circle-question small ms-2'></i>
-        </Button>
-      </OverlayTrigger>
-    </Form.Label>
-    <div className='mb-2'>
-      <Form.Check
-        label="Fast dropoff"
-        checked={currentDropoffRate === ProbabilityType.FastDropoff}
-        onChange={ev => updateDropoffRate(ProbabilityType.FastDropoff)}
-        name="group1"
-        type='radio'
-        id='inline-type-1'
-      />
-      <Form.Check
-        label="Medium dropoff"
-        checked={currentDropoffRate === ProbabilityType.MediumDropoff}
-        onChange={ev => updateDropoffRate(ProbabilityType.MediumDropoff)}
-        name="group1"
-        type='radio'
-        id='inline-type-2'
-      />
-      <Form.Check
-        label="Equiprobable"
-        checked={currentDropoffRate === ProbabilityType.Equiprobable}
-        onChange={ev => updateDropoffRate(ProbabilityType.Equiprobable)}
-        name="group1"
-        type='radio'
-        id='inline-type-3'
-      />
-      {/*
-      <ButtonGroup className='w-100'>
-        <Button active={currentDropoffRate === ProbabilityType.FastDropoff}
-                onClick={ev => updateDropoffRate(ProbabilityType.FastDropoff)}
-                variant='secondary'
-                className='w-100'>
-          Fast
-        </Button>
-        <Button active={currentDropoffRate === ProbabilityType.MediumDropoff}
-                onClick={ev => updateDropoffRate(ProbabilityType.MediumDropoff)}
-                variant='secondary'
-                className='w-100'>
-          Medium
-        </Button>
-        <Button active={currentDropoffRate === ProbabilityType.Equiprobable}
-                onClick={ev => updateDropoffRate(ProbabilityType.Equiprobable)}
-                variant='secondary'
-                className='w-100'>
-          Equiprobable
-        </Button>
-      </ButtonGroup>
-      */
-     
