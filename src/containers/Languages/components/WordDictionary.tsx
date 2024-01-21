@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Button, Form, InputGroup } from "react-bootstrap";
+import { Button, Col, Form, InputGroup, Row } from "react-bootstrap";
 import { AutoFormItem } from "../../Root/models/language.form";
 import { universalWords } from "../../../assets/universaldictionary";
 
@@ -10,6 +10,7 @@ export function WordDictionary<T>(props: {item: AutoFormItem<T>, value: any, gen
 
   const [keyToAdd, setKeyToAdd] = useState('');
   const [valueToAdd, setValueToAdd] = useState('');
+  const [searchString, setSearchString] = useState('');
   const [hideUnset, setHideUnset] = useState(false);
   const [page, setPage] = useState(0);
 
@@ -22,8 +23,8 @@ export function WordDictionary<T>(props: {item: AutoFormItem<T>, value: any, gen
   const [pages, setPages] = useState(1);
   
   const wordsDisplayed = useMemo(() => {
-    return dict.filter(word => !!dictionary[word.label] || !hideUnset);
-  }, [hideUnset, page, pageLength]);
+    return dict.filter(word => (!searchString || word.label.includes(searchString)) && (!!dictionary[word.label] || !hideUnset));
+  }, [searchString, hideUnset, page, pageLength]);
 
   useEffect(() => {
     setPages(Math.ceil(wordsDisplayed.length / pageLength));
@@ -40,21 +41,27 @@ export function WordDictionary<T>(props: {item: AutoFormItem<T>, value: any, gen
         <Button onClick={() => { add(keyToAdd, valueToAdd); setKeyToAdd(''); setValueToAdd(''); }}>Add</Button>
       </InputGroup>
 
-      <div className="d-flex align-items-center justify-content-between">
-        <div>
+      <Row className="align-items-center mb-2">
+        <Col>
+          <InputGroup>
+            <InputGroup.Text><i className="fas fa-search"></i></InputGroup.Text>
+            <Form.Control placeholder='Search for word...' as='input' value={searchString} onChange={ev => setSearchString(ev.currentTarget.value)}></Form.Control>
+          </InputGroup>
+        </Col>
+        <Col>
           <Form.Check
             label='Hide unset words'
             checked={hideUnset}
             onChange={ev => setHideUnset(ev.currentTarget.checked)}
             type='switch'
             id={'hide-unset'}></Form.Check>
-        </div>
-        <div className="d-flex align-items-center">
+        </Col>
+        <Col lg={3} className="d-flex align-items-center">
           <Button variant='link' disabled={page <= 0} onClick={() => setPage(page - 1)}><i className="fas fa-chevron-left"></i></Button>
-          {page + 1} / {pages}
+          <div className="w-100 text-center">{page + 1} / {pages}</div>
           <Button variant='link' disabled={page >= pages - 1} onClick={() => setPage(page + 1)}><i className="fas fa-chevron-right"></i></Button>
-        </div>
-      </div>
+        </Col>
+      </Row>
 
       {wordsDisplayed.slice(page * pageLength, page * pageLength + pageLength).map((word, i) => (
         <InputGroup key={i + page * pageLength + word.label}>
