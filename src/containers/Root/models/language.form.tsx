@@ -16,6 +16,7 @@ export type AutoFormItem<T> = {
   type: AutoFormField;
   label?: string;
   key?: string;
+  id?: string;
   placeholder?: string;
   as?: ElementType;
   options?: AutoFormOption[];
@@ -136,6 +137,23 @@ export const LanguageForm: AutoForm<ILanguage> = [
                 placeholder: 'ʒ > d / _#',
                 as: 'textarea'
               },
+            ]
+          }
+        ]
+      },
+      {
+        type: AutoFormField.Tab,
+        label: 'Vocabulary',
+        id: 'vocabulary',
+        children: [
+          {
+            type: AutoFormField.Group,
+            children: [
+              {
+                type: AutoFormField.Control,
+                key: 'name',
+                label: 'Language Name'
+              }
             ]
           }
         ]

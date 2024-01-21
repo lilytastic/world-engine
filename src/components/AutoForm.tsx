@@ -112,7 +112,7 @@ export function AutoFormer<T>(props: {children?: any, className?: string, form: 
       }
     });
 
-    console.log(data, update, mergeDeep(data, update));
+    // console.log(data, update, mergeDeep(data, update));
 
     dispatch(props.update(mergeDeep(data, update)));
   }, [data]);
@@ -207,7 +207,7 @@ export function AutoFormer<T>(props: {children?: any, className?: string, form: 
             className="mt-4 mb-4 mx-auto rounded"
             style={{width: 'fit-content'}}
           >
-            {item.children?.map(tab => (<Tab key={tab.key} eventKey={tab.key} title={tab.label}>
+            {item.children?.map(tab => (<Tab key={tab.id || tab.key} eventKey={tab.id || tab.key} title={tab.label}>
               {displayFormItem(tab, newParents)}
             </Tab>))}
         </Tabs>);
