@@ -37,6 +37,38 @@ class Stack<T> implements IStack<T> {
   }
 }
 
+/**
+ * Simple object check.
+ * @param item
+ * @returns {boolean}
+ */
+export function isObject(item: any) {
+  return (item && typeof item === 'object' && !Array.isArray(item));
+}
+
+/**
+ * Deep merge two objects.
+ * @param target
+ * @param ...sources
+ */
+export function mergeDeep<T>(target: any, source: Partial<T>[]): T {
+  let obj = {...target};
+
+  if (isObject(obj) && isObject(source)) {
+    for (const key in source) {
+      if (isObject(source[key])) {
+        if (!obj[key]) {
+          obj[key] = {};
+        }
+        obj[key] = mergeDeep(obj[key], source[key] as any);
+      } else {
+        obj[key] = source[key];
+      }
+    }
+  }
+
+  return obj;
+}
 
 export function AutoFormer<T>(props: {children?: any, className?: string, form: AutoForm<T>, data: T, update: any}) {
 
@@ -62,19 +94,28 @@ export function AutoFormer<T>(props: {children?: any, className?: string, form: 
       }
     });
 
-    console.log(update);
+    // console.log(scratch, update, mergeDeep({...data}, update));
 
-    setScratch({...scratch, ...update});
+    // setScratch({...scratch, ...update});
+    setScratch(mergeDeep({...data}, update));
   }, [scratch]);
 
   const submit = useCallback((key: string, value: any, parents?: AutoFormItem<T>[]) => {
-    const propTree = key.split('.');
-    const updatedData = {...data};
+    if (!data) { return; }
 
-    console.log(updatedData);
+    let update: any = {};
+    update[key] = value;
+    
+    parents?.forEach(parent => {
+      if (!!parent.key) {
+        update = { [parent.key]: {...update} }
+      }
+    });
 
-    dispatch(props.update(updatedData));
-  }, [scratch]);
+    console.log(data, update, mergeDeep(data, update));
+
+    dispatch(props.update(mergeDeep(data, update)));
+  }, [data]);
   
   const displayFormItem = useCallback((item: AutoFormItem<T>, parents?: AutoFormItem<T>[]): JSX.Element => {
     if (!scratch) { return <></>; }

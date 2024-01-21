@@ -6,6 +6,7 @@ import { getRandomArrayItem, ProbabilityType } from "./logic.helpers";
 export type IWordPatternDictionary = {[patternName: string]: IWordPattern[]};
 
 export function getWordPatterns(language: ILanguage): IWordPattern[] {
+  if (!language.phonology.wordPatterns) { return []; }
   const tokens = language.phonology.wordPatterns.split('\n');
   let wordPatterns: IWordPattern[] = [];
   
