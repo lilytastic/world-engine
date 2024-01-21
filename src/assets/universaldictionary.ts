@@ -1526,7 +1526,7 @@ medicine (substance that makes one healthy)
 poison, toxin
 alcohol
 oil (a combustible fatty liquid that will not mix with water)
-oil (crude oil), petroleum
+petroleum, oil (crude oil)
 fat (oily/greasy material from animal adipose tissue or plant seeds)
 tar (dark viscous liquid obtained by destructive distillation)
 wax
