@@ -59,7 +59,7 @@ export function WordDictionary<T>(props: {item: AutoFormItem<T>, value: any, gen
       {wordsDisplayed.slice(page * pageLength, page * pageLength + pageLength).map((word, i) => (
         <InputGroup key={i + page * pageLength + word.label}>
           <InputGroup.Text style={{minWidth: '200px'}}>{word.label}</InputGroup.Text>
-          <Form.Control as='input' value={dictionary[word.label]} onChange={ev => change(word.label, ev.currentTarget.value)} onBlur={ev => blur(word.label, ev.currentTarget.value)}></Form.Control>
+          <Form.Control as='input' value={dictionary[word.label] || ''} onChange={ev => change(word.label, ev.currentTarget.value)} onBlur={ev => blur(word.label, ev.currentTarget.value)}></Form.Control>
           <Button variant='link' onClick={() => blur(word.label, generateWord?.() || '')}><i className={`fas fa-refresh`}></i></Button>
         </InputGroup>
       ))}
