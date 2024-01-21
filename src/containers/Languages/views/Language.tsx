@@ -5,18 +5,15 @@ import { ILanguage, IWord } from '../models/language.model';
 import { useDispatch, useSelector } from 'react-redux';
 import { getLanguages, updateLanguage } from '../reducers/language.reducer';
 import { useParams } from 'react-router';
-import { PhonemeClasses } from '../components/PhonemeClasses';
-import { WordPatterns } from '../components/WordPatterns';
 import { SampleWords } from '../components/SampleWords';
 import { Breadcrumb, Button, Col, Form, Row, Tab, Tabs } from 'react-bootstrap';
-import { ProbabilityDropoff } from '../components/ProbabilityDropoff';
-import { ForbiddenCombinations } from '../components/ForbiddenCombinations';
 import { LanguageOptions } from '../components/LanguageOptions';
 import { NavLink } from 'react-router-dom';
 import { PhoneticKeyboard } from '../components/PhoneticKeyboard';
-import { SoundChanges } from '../components/SoundChanges';
 import { AutoFormer } from '../../../components/AutoForm';
 import { LanguageForm } from '../../Root/models/language.form';
+import { universalWords } from '../../../assets/universaldictionary';
+
 
 export function Language(props: {children?: any}) {
 
@@ -39,6 +36,8 @@ export function Language(props: {children?: any}) {
   useEffect(() => {
     window.addEventListener('scroll', handleScroll, { passive: true });
 
+    console.log(universalWords.split('\n').filter(x => !!x).map(processWordFromDictionary));
+
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
@@ -56,6 +55,34 @@ export function Language(props: {children?: any}) {
       setSampleWords(getSampleWords(language));
     }
   }, [language]);
+
+  const processWordFromDictionary = (item: string) => {
+    let wordType = 'n';
+    let meaning = '';
+
+    const bracketStart = item.indexOf('(');
+    if (bracketStart !== -1) {
+      const bracketEnd = item.indexOf(')');
+      meaning = item.substring(bracketStart + 1, bracketEnd);
+      item = item.slice(0, bracketStart) + item.slice(bracketEnd + 1);
+    }
+
+    const sqBracketStart = item.indexOf('[');
+    if (sqBracketStart !== -1) {
+      const sqBracketEnd = item.indexOf(']');
+      wordType = item.substring(sqBracketStart + 1, sqBracketEnd);
+      item = item.slice(0, sqBracketStart) + item.slice(sqBracketEnd + 1);
+    }
+    const variations = item.split(',').map(x => x.trim()).filter(x => !!x);
+
+    const curlyBracketStart = item.indexOf('{');
+    if (curlyBracketStart !== -1) {
+      const curlyBracketEnd = item.indexOf('}');
+      item = item.slice(0, curlyBracketStart) + item.slice(curlyBracketEnd + 1);
+    }
+
+    return {id: `${variations[0]} [${wordType}]`, variations, meaning, wordType};
+  }
 
 
   if (!language) {

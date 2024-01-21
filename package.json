@@ -12,6 +12,7 @@
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
     "bootstrap": "^5.3.0-alpha1",
+    "fs": "^0.0.1-security",
     "inkjs": "^2.2.2",
     "node-sass": "^8.0.0",
     "react": "^18.2.0",
