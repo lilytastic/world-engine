@@ -3,7 +3,7 @@ import { getCharacters, updateCharacter } from "./character.reducers";
 import { useEffect, useState } from "react";
 import { ICharacter } from "./models/character.model";
 import { useParams } from "react-router";
-import { Form } from "react-bootstrap";
+import { Col, Form, Row } from "react-bootstrap";
 
 export function Character(props: {children?: any}) {
 
@@ -25,13 +25,32 @@ export function Character(props: {children?: any}) {
     return (
         <div>
           <Form.Group className='form-group'>
-            <Form.Label htmlFor='languageName'>Character name</Form.Label>
-            <Form.Control
-              as='input'
-              id='characterName'
-              value={character.name}
-              onChange={ev => dispatch(updateCharacter({...character, name: ev.currentTarget.value}))}
-            />
+            <Row>
+              <Col lg={7}>
+                <Form.Label htmlFor='name'>Name</Form.Label>
+                <Form.Control
+                  as='input'
+                  id='characterName'
+                  value={character.name}
+                  onChange={ev => dispatch(updateCharacter({...character, name: ev.currentTarget.value}))}
+                />
+              </Col>
+              <Col lg={5}>
+                <Form.Label htmlFor='gender'>Gender</Form.Label>
+                <Form.Select
+                    aria-label="Gender"
+                    value={character.gender}
+                    onChange={(ev) => {
+                      console.log(ev);
+                      dispatch(updateCharacter({...character, gender: ev.currentTarget.value}));
+                    }}>
+                  <option>Choose one</option>
+                  <option value="M">Male</option>
+                  <option value="F">Female</option>
+                  <option value="X">Non-binary</option>
+                </Form.Select>
+              </Col>
+            </Row>
           </Form.Group>
         </div>
     )
