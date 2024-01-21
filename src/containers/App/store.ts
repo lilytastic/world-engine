@@ -1,10 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit';
 import languageReducer from '../Languages/reducers/language.reducer';
 import SimulatorReducer from '../Simulator/Simulator.reducer';
+import characterReducers from '../Characters/character.reducers';
 
 export const store = configureStore({
   reducer: {
     language: languageReducer,
+    characters: characterReducers,
     simulator: SimulatorReducer
   },
   middleware(getDefaultMiddleware) {

@@ -3,6 +3,8 @@ import { Language } from '../Languages/views/Language';
 import { Languages } from '../Languages/Languages';
 import { LanguagePicker } from '../Languages/views/LanguagePicker';
 import { Simulator } from '../Simulator/Simulator';
+import { Characters } from '../Characters/Characters';
+import { Character } from '../Characters/Character';
 
 export const ROUTES = [
   {
@@ -48,7 +50,19 @@ export const ROUTES = [
     title: 'Characters',
     icon: 'users',
     showInNav: true,
-    element: <div></div>
+    element: <Characters></Characters>,
+    routes: [
+      { 
+        path: '',
+        title: 'Characters',
+        element: <></>
+      },
+      { 
+        path: '/characters/:id',
+        title: 'Character',
+        element: <Character />
+      }
+    ]
   },
   /*
   { 
