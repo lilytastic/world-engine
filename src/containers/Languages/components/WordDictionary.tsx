@@ -25,7 +25,7 @@ export function WordDictionary<T>(props: {item: AutoFormItem<T>, value: any, gen
   const wordsDisplayed = useMemo(() => {
     return Object.keys(value).filter(word => (!searchString || word.includes(searchString)))
       .sort((a, b) => a.toLowerCase() > b.toLowerCase() ? 1 : b.toLowerCase() > a.toLowerCase() ? -1 : 0);;
-  }, [searchString, page, pageLength]);
+  }, [searchString, page, pageLength, value]);
 
   useEffect(() => {
     setPages(Math.ceil(wordsDisplayed.length / pageLength));
