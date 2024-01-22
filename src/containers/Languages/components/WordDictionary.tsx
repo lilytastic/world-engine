@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Button, Col, Form, InputGroup, Row } from "react-bootstrap";
 import { AutoFormItem } from "../../Root/models/language.form";
-import { universalWords } from "../../../assets/universaldictionary";
 
 export function WordDictionary<T>(props: {item: AutoFormItem<T>, value: any, generateWord?: () => string, regenerateAllWords?: () => void, add: (key: string, value: string) => void, change: (key: string, value: string) => void, blur: (key: string, value: string) => void}) {
   const { value, add, change, blur, item, generateWord } = props;
@@ -13,11 +12,6 @@ export function WordDictionary<T>(props: {item: AutoFormItem<T>, value: any, gen
   const [searchString, setSearchString] = useState('');
   const [hideUnset, setHideUnset] = useState(true);
   const [page, setPage] = useState(0);
-
-  const dict = universalWords.split('\n')
-    .map(processWordFromDictionary)
-    .filter(x => !x.label.includes('undefined') && !!x.label)
-    .sort((a, b) => a.label.toLowerCase() > b.label.toLowerCase() ? 1 : b.label.toLowerCase() > a.label.toLowerCase() ? -1 : 0);
 
   const pageLength = 50;
   const [pages, setPages] = useState(1);

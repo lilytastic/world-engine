@@ -12,10 +12,9 @@ import { NavLink } from 'react-router-dom';
 import { PhoneticKeyboard } from '../components/PhoneticKeyboard';
 import { AutoFormer, mergeDeep } from '../../../components/AutoForm';
 import { AutoForm, AutoFormField } from '../../Root/models/language.form';
-import { universalWords } from '../../../assets/universaldictionary';
-import { generateRules } from '../helpers/phonology.helpers';
 import { ProbabilityType } from '../helpers/logic.helpers';
 import { processWordFromDictionary } from '../components/WordDictionary';
+import { universalWords } from '../../../assets/universaldictionary';
 
 
 
