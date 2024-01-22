@@ -87,26 +87,6 @@ export function Language(props: {children?: any}) {
                 children: [
                   {
                     type: AutoFormField.Control,
-                    label: 'Word Patterns',
-                    key: 'wordPatterns',
-                    as: 'textarea',
-                    popover: (<Popover id="popover-basic">
-                      <Popover.Body>
-                        <ul className='list'>
-                          <li>Word patterns are made of classes or actual phonemes, eg: zVC means the word will always start with z, then a random choice of V and C.</li>
-                          <li>Use brackets for optional patterns: CV(zV) means the zV pattern occurs 20% of the time. Manually change the probability by writing it after the brackets: CV(zV)50%.</li>
-                          <li>Patterns for particular parts-of-speech can be added after the default patterns, eg: part-of-speech = ...</li>
-                        </ul>
-                      </Popover.Body>
-                    </Popover>)
-                  },
-                ]
-              },
-              {
-                type: AutoFormField.Group,
-                children: [
-                  {
-                    type: AutoFormField.Control,
                     label: 'Phoneme Classes',
                     key: 'phonemeClasses',
                     as: 'textarea',
@@ -152,6 +132,26 @@ export function Language(props: {children?: any}) {
                       }
                     ]
                   }
+                ]
+              },
+              {
+                type: AutoFormField.Group,
+                children: [
+                  {
+                    type: AutoFormField.Control,
+                    label: 'Word Patterns',
+                    key: 'wordPatterns',
+                    as: 'textarea',
+                    popover: (<Popover id="popover-basic">
+                      <Popover.Body>
+                        <ul className='list'>
+                          <li>Word patterns are made of classes or actual phonemes, eg: zVC means the word will always start with z, then a random choice of V and C.</li>
+                          <li>Use brackets for optional patterns: CV(zV) means the zV pattern occurs 20% of the time. Manually change the probability by writing it after the brackets: CV(zV)50%.</li>
+                          <li>Patterns for particular parts-of-speech can be added after the default patterns, eg: part-of-speech = ...</li>
+                        </ul>
+                      </Popover.Body>
+                    </Popover>)
+                  },
                 ]
               },
               {
