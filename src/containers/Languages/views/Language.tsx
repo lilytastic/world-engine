@@ -40,7 +40,7 @@ export function Language(props: {children?: any}) {
   useEffect(() => {
     window.addEventListener('scroll', handleScroll, { passive: true });
 
-    console.log(universalWords.split('\n').filter(x => !!x).map(processWordFromDictionary).filter(x => !!x));
+    // console.log(universalWords.split('\n').filter(x => !!x).map(processWordFromDictionary).filter(x => !!x));
 
     return () => {
       window.removeEventListener('scroll', handleScroll);

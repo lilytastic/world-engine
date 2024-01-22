@@ -11,7 +11,7 @@ export function WordDictionary<T>(props: {item: AutoFormItem<T>, value: any, gen
   const [keyToAdd, setKeyToAdd] = useState('');
   const [valueToAdd, setValueToAdd] = useState('');
   const [searchString, setSearchString] = useState('');
-  const [hideUnset, setHideUnset] = useState(false);
+  const [hideUnset, setHideUnset] = useState(true);
   const [page, setPage] = useState(0);
 
   const dict = universalWords.split('\n')
@@ -35,21 +35,23 @@ export function WordDictionary<T>(props: {item: AutoFormItem<T>, value: any, gen
 
   return (
     <div>
+      {/*
       <InputGroup className="mb-3">
         <Form.Control style={{maxWidth: '200px'}} placeholder='key' as='input' value={keyToAdd} onChange={ev => setKeyToAdd(ev.currentTarget.value)}></Form.Control>
         <Form.Control placeholder='value' as='input' value={valueToAdd} onChange={ev => setValueToAdd(ev.currentTarget.value)}></Form.Control>
         <Button onClick={() => { add(keyToAdd, valueToAdd); setKeyToAdd(''); setValueToAdd(''); }}>Add</Button>
       </InputGroup>
+      */}
 
       <Row className="align-items-center mb-2">
-        <Col>
+        <Col className="d-flex align-items-center">
           <InputGroup>
             <InputGroup.Text><i className="fas fa-search"></i></InputGroup.Text>
             <Form.Control placeholder='Search for word...' as='input' value={searchString} onChange={ev => setSearchString(ev.currentTarget.value)}></Form.Control>
           </InputGroup>
-        </Col>
-        <Col>
+          <div className='w-10'></div>
           <Form.Check
+            className="w-100"
             label='Hide unset words'
             checked={hideUnset}
             onChange={ev => setHideUnset(ev.currentTarget.checked)}
