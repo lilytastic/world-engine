@@ -200,6 +200,26 @@ export function Language(props: {children?: any}) {
               },
               {
                 type: AutoFormField.Group,
+                key: 'vocabulary',
+                children: [
+                  {
+                    type: AutoFormField.Control,
+                    label: 'Generate Words',
+                    key: 'generateWords',
+                    as: 'textarea',
+                    placeholder: 'comely : adj\nhouse, home, residence : n\n'
+                  },
+                  {
+                    type: AutoFormField.Control,
+                    label: 'Derived Words',
+                    key: 'derivedWords',
+                    as: 'textarea',
+                    placeholder: 'government : n = govern-ACT.OF\nGod of War : n = war god'
+                  }
+                ]
+              },
+              {
+                type: AutoFormField.Group,
                 label: 'Dictionary',
                 children: [
                   {

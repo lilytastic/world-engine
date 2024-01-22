@@ -57,7 +57,6 @@ export function AutoFormer<T>(props: {children?: any, className?: string, form: 
 
     let update: any = {};
     if (key) {
-      console.log(key);
       update[key] = value;
     }
 
@@ -67,7 +66,7 @@ export function AutoFormer<T>(props: {children?: any, className?: string, form: 
       }
     });
 
-    console.log(key, data, update);
+    // console.log(key, data, update);
     
     // console.log(scratch, update, mergeDeep({...data}, update));
 
@@ -148,7 +147,10 @@ export function AutoFormer<T>(props: {children?: any, className?: string, form: 
     let value: any = scratch;
     parents?.forEach(parent => {
       if (!!parent.key) {
-        value = value[parent.key];
+        if (!value[parent.key]) { value = {}; }
+        else {
+          value = value[parent.key];
+        }
       }
     });
     if (item.key) {

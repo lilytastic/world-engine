@@ -44,7 +44,7 @@ export function WordDictionary<T>(props: {item: AutoFormItem<T>, value: any, gen
       */}
 
       <Row className="align-items-center mb-2">
-        <Col className="d-flex align-items-center">
+        <Col lg={9} className="d-flex align-items-center">
           <InputGroup>
             <InputGroup.Text><i className="fas fa-search"></i></InputGroup.Text>
             <Form.Control placeholder='Search for word...' as='input' value={searchString} onChange={ev => setSearchString(ev.currentTarget.value)}></Form.Control>
@@ -58,11 +58,13 @@ export function WordDictionary<T>(props: {item: AutoFormItem<T>, value: any, gen
             type='switch'
             id={'hide-unset'}></Form.Check>
         </Col>
-        <Col lg={3} className="d-flex align-items-center">
-          <Button variant='link' disabled={page <= 0} onClick={() => setPage(page - 1)}><i className="fas fa-chevron-left"></i></Button>
-          <div className="w-100 text-center">{page + 1} / {pages}</div>
-          <Button variant='link' disabled={page >= pages - 1} onClick={() => setPage(page + 1)}><i className="fas fa-chevron-right"></i></Button>
-        </Col>
+        {pages > 1 && (
+          <Col lg={3} className="d-flex align-items-center">
+            <Button variant='link' disabled={page <= 0} onClick={() => setPage(page - 1)}><i className="fas fa-chevron-left"></i></Button>
+            <div className="w-100 text-center">{page + 1} / {pages}</div>
+            <Button variant='link' disabled={page >= pages - 1} onClick={() => setPage(page + 1)}><i className="fas fa-chevron-right"></i></Button>
+          </Col>
+        )}
       </Row>
 
       {wordsDisplayed.slice(page * pageLength, page * pageLength + pageLength).map((word, i) => (
@@ -108,5 +110,5 @@ export const processWordFromDictionary = (item: string): DictionaryWord => {
   }
   const variations = item.split(',').map(x => x.trim()).filter(x => !!x);
 
-  return {label: `${variations[0]} [${wordType}]`, variations, meaning, wordType};
+  return {label: `${variations[0]} : ${wordType}`, variations, meaning, wordType};
 }
