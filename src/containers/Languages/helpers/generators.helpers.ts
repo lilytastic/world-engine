@@ -3,7 +3,7 @@ import { TypedSound, IPhonemeClass } from "../models/sounds.model";
 import { VOWELS } from "../data/vowels";
 import { CONSONANTS } from "../data/consonants";
 import { getAffectedSounds, getSoundByPhoneme } from "./sounds.helpers";
-import { getWordPatternDictionary, wordPatternToPhonemes } from "./word-patterns.helpers";
+import { getWordPatternDictionary, wordPatternToPhonemes, wordPatternToPhonemesV2 } from "./word-patterns.helpers";
 import { getRandomArrayItem } from "./logic.helpers";
 import { ILanguage, ISyllable, IWord } from "../models/language.model";
 import { IPhonologicalRule, IPhonologicalToken } from "../models/phonology.model";
@@ -80,15 +80,23 @@ export function getSampleWordsV2(language: ILanguage) {
   }
   return arr;
 }
+
 export function generateWordV2(language: ILanguage) {
   const wordPatterns = getWordPatternDictionary(language);
   const wordPattern = getRandomArrayItem(wordPatterns['word']);
-  const tokens = wordPatternToPhonemes(
-    language, // phonemeClasses,
-    wordPattern,
-    (phoneme) => (getSoundByPhoneme(phoneme)?.romanization)
+  const tokens = wordPatternToPhonemesV2(
+    language,
+    wordPattern
   );
-  return tokens.join('');
+  // console.log('word', tokens);
+  return tokens.map(x => {
+    const sound = x as TypedSound;
+    if (!!sound.phoneme) {
+      return sound.romanization || sound.phoneme
+    } else {
+      return x;
+    }
+  }).join('');
 }
 
 export function generateWord(language: ILanguage, rules: IPhonologicalRule[]) {
