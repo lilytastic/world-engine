@@ -5,12 +5,20 @@ import { IConsonant, IVowel } from "./sounds.model";
 export interface ILanguage {
   id: number;
   name: string;
-  dictionary: {[meaning: string]: string};
+  dictionary: {[word: string]: string};
   vowels: IVowel[];
   consonants: IConsonant[];
   phonology: IPhonology;
   ancestor?: ILanguage;
+  vocabulary: IVocabulary;
   type: string;
+}
+
+export interface IVocabulary {
+  generateWords: string;
+  derivedWords: string;
+  useDefaultRootWords: boolean;
+  useDefaultDerivedWords: boolean;
 }
 
 export interface IPhonology {
@@ -31,6 +39,12 @@ export const DEFAULT_LANGUAGE: ILanguage = {
   name: "",
   type: 'language',
   dictionary: {},
+  vocabulary: {
+    generateWords: '',
+    derivedWords: '',
+    useDefaultRootWords: true,
+    useDefaultDerivedWords: true
+  },
   vowels: [],
   consonants: [],
   phonology: {

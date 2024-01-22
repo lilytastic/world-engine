@@ -23,15 +23,16 @@ export function WordDictionary<T>(props: {item: AutoFormItem<T>, value: any, gen
   const [pages, setPages] = useState(1);
   
   const wordsDisplayed = useMemo(() => {
-    return dict.filter(word => (!searchString || word.label.includes(searchString)) && (!!dictionary[word.label] || !hideUnset));
-  }, [searchString, hideUnset, page, pageLength]);
+    return Object.keys(value).filter(word => (!searchString || word.includes(searchString)))
+      .sort((a, b) => a.toLowerCase() > b.toLowerCase() ? 1 : b.toLowerCase() > a.toLowerCase() ? -1 : 0);;
+  }, [searchString, page, pageLength]);
 
   useEffect(() => {
     setPages(Math.ceil(wordsDisplayed.length / pageLength));
     if (page > pages) {
       setPage(pages - 1);
     }
-  }, [wordsDisplayed, hideUnset, page, pages]);
+  }, [wordsDisplayed, page, pages]);
 
   return (
     <div>
@@ -49,6 +50,7 @@ export function WordDictionary<T>(props: {item: AutoFormItem<T>, value: any, gen
             <InputGroup.Text><i className="fas fa-search"></i></InputGroup.Text>
             <Form.Control placeholder='Search for word...' as='input' value={searchString} onChange={ev => setSearchString(ev.currentTarget.value)}></Form.Control>
           </InputGroup>
+          {/*
           <div className='w-10'></div>
           <Form.Check
             className="w-100"
@@ -57,6 +59,7 @@ export function WordDictionary<T>(props: {item: AutoFormItem<T>, value: any, gen
             onChange={ev => setHideUnset(ev.currentTarget.checked)}
             type='switch'
             id={'hide-unset'}></Form.Check>
+          */}
         </Col>
         {pages > 1 && (
           <Col lg={3} className="d-flex align-items-center">
@@ -68,10 +71,10 @@ export function WordDictionary<T>(props: {item: AutoFormItem<T>, value: any, gen
       </Row>
 
       {wordsDisplayed.slice(page * pageLength, page * pageLength + pageLength).map((word, i) => (
-        <InputGroup key={i + page * pageLength + word.label}>
-          <InputGroup.Text style={{minWidth: '200px'}}>{word.label}</InputGroup.Text>
-          <Form.Control as='input' value={dictionary[word.label] || ''} onChange={ev => change(word.label, ev.currentTarget.value)} onBlur={ev => blur(word.label, ev.currentTarget.value)}></Form.Control>
-          <Button variant='link' onClick={() => blur(word.label, generateWord?.() || '')}><i className={`fas fa-dice`}></i></Button>
+        <InputGroup key={i + page * pageLength + word}>
+          <InputGroup.Text style={{minWidth: '200px'}}>{word}</InputGroup.Text>
+          <Form.Control as='input' value={dictionary[word] || ''} onChange={ev => change(word, ev.currentTarget.value)} onBlur={ev => blur(word, ev.currentTarget.value)}></Form.Control>
+          <Button variant='link' onClick={() => blur(word, generateWord?.() || '')}><i className={`fas fa-dice`}></i></Button>
         </InputGroup>
       ))}
     </div>

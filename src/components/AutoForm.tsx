@@ -21,7 +21,7 @@ export function isObject(item: any) {
  * @param target
  * @param ...sources
  */
-export function mergeDeep<T>(target: any, source: Partial<T>[]): T {
+export function mergeDeep<T>(target: any, source: Partial<T>): T {
   let obj = {...target};
 
   if (isObject(obj) && isObject(source)) {
@@ -160,6 +160,8 @@ export function AutoFormer<T>(props: {children?: any, className?: string, form: 
     const newParents = [item, ...(parents || [])];
 
     switch (item.type) {
+      case AutoFormField.Button:
+        return <Button {...item.templateOptions}>{item.label}</Button>;
       case AutoFormField.Group:
         return displayFormGroup(item, <>{item.children?.map(next => displayFormItem(next, newParents))}</>);
       case AutoFormField.StringDictionary:
@@ -203,7 +205,7 @@ export function AutoFormer<T>(props: {children?: any, className?: string, form: 
               checked={value[option.key || ''] === true}
               onChange={ev => submit(option.key, ev.currentTarget.checked, [item, ...newParents])}
               name={item.key}
-              type='switch'
+              type='checkbox'
               id={option.key}
             />
           ))}

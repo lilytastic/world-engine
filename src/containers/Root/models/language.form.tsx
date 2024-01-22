@@ -1,10 +1,7 @@
 import { ElementType } from "react";
-import { ProbabilityType } from "../../Languages/helpers/logic.helpers";
-import { ILanguage } from "../../Languages/models/language.model";
 import { OverlayChildren } from "react-bootstrap/esm/Overlay";
-import { Popover } from "react-bootstrap";
 
-export enum AutoFormField { TabGroup, Tab, Group, Control, Radio, Select, TileView, CheckGroup, StringDictionary, WordDictionary }
+export enum AutoFormField { TabGroup, Button, Tab, Group, Control, Radio, Select, TileView, CheckGroup, StringDictionary, WordDictionary }
 
 export type AutoFormOption = {
   label: string;

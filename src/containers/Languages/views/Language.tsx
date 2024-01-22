@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { generateWord, generateWordV2, getSampleWords } from '../helpers/generators.helpers';
 
 import { ILanguage, IWord } from '../models/language.model';
@@ -10,7 +10,7 @@ import { Breadcrumb, Button, Col, Form, Popover, Row, Tab, Tabs } from 'react-bo
 import { LanguageOptions } from '../components/LanguageOptions';
 import { NavLink } from 'react-router-dom';
 import { PhoneticKeyboard } from '../components/PhoneticKeyboard';
-import { AutoFormer } from '../../../components/AutoForm';
+import { AutoFormer, mergeDeep } from '../../../components/AutoForm';
 import { AutoForm, AutoFormField } from '../../Root/models/language.form';
 import { universalWords } from '../../../assets/universaldictionary';
 import { generateRules } from '../helpers/phonology.helpers';
@@ -41,7 +41,6 @@ export function Language(props: {children?: any}) {
     window.addEventListener('scroll', handleScroll, { passive: true });
 
     // console.log(universalWords.split('\n').filter(x => !!x).map(processWordFromDictionary).filter(x => !!x));
-
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
@@ -58,6 +57,19 @@ export function Language(props: {children?: any}) {
       setTitle(language.name);
       setSampleWords(getSampleWords(language));
     }
+  }, [language]);
+
+  const generateDictionary = useCallback(() => {
+    if (!language) { return; }
+    const dictionary: {[word: string]: string} = {};
+    if (language?.vocabulary.useDefaultRootWords) {
+      universalWords.split('\n').forEach(word => {
+        const duh = processWordFromDictionary(word);
+        dictionary[duh.label] = generateWordV2(language);
+      });
+    }
+    console.log(dictionary);
+    dispatch(updateLanguage(mergeDeep<ILanguage>(language, { dictionary: dictionary })));
   }, [language]);
 
   const LanguageForm: AutoForm<ILanguage> = useMemo(() => {
@@ -215,7 +227,27 @@ export function Language(props: {children?: any}) {
                     key: 'derivedWords',
                     as: 'textarea',
                     placeholder: 'government : n = govern-ACT.OF\nGod of War : n = war god'
-                  }
+                  },
+                  {
+                    type: AutoFormField.CheckGroup,
+                    options: [
+                      {
+                        label: 'Use default root words',
+                        key: 'useDefaultRootWords'
+                      },
+                      {
+                        label: 'Use default derived words',
+                        key: 'useDefaultDerivedWords'
+                      }
+                    ]
+                  },
+                  {
+                    type: AutoFormField.Button,
+                    label: 'Generate',
+                    templateOptions: {
+                      onClick: () => generateDictionary()
+                    }
+                  },
                 ]
               },
               {
