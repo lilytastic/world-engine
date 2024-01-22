@@ -6,7 +6,7 @@ import { universalWords } from "../../../assets/universaldictionary";
 export function WordDictionary<T>(props: {item: AutoFormItem<T>, value: any, generateWord?: () => string, regenerateAllWords?: () => void, add: (key: string, value: string) => void, change: (key: string, value: string) => void, blur: (key: string, value: string) => void}) {
   const { value, add, change, blur, item, generateWord } = props;
   
-  const dictionary = value[item.key || ''];
+  const dictionary = value || {};
 
   const [keyToAdd, setKeyToAdd] = useState('');
   const [valueToAdd, setValueToAdd] = useState('');
@@ -69,7 +69,7 @@ export function WordDictionary<T>(props: {item: AutoFormItem<T>, value: any, gen
         <InputGroup key={i + page * pageLength + word.label}>
           <InputGroup.Text style={{minWidth: '200px'}}>{word.label}</InputGroup.Text>
           <Form.Control as='input' value={dictionary[word.label] || ''} onChange={ev => change(word.label, ev.currentTarget.value)} onBlur={ev => blur(word.label, ev.currentTarget.value)}></Form.Control>
-          <Button variant='link' onClick={() => blur(word.label, generateWord?.() || '')}><i className={`fas fa-refresh`}></i></Button>
+          <Button variant='link' onClick={() => blur(word.label, generateWord?.() || '')}><i className={`fas fa-dice`}></i></Button>
         </InputGroup>
       ))}
     </div>

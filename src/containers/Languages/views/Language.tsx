@@ -204,10 +204,10 @@ export function Language(props: {children?: any}) {
                 children: [
                   {
                     type: AutoFormField.WordDictionary,
+                    key: 'dictionary',
                     templateOptions: {
                       generateWord: language ? () => { return generateWordV2(language) } : null
-                    },
-                    key: 'dictionary'
+                    }
                   }
                 ]
               }

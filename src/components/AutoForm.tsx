@@ -7,38 +7,6 @@ import { EntityState } from '@reduxjs/toolkit';
 import { StringDictionary } from './StringDictionary';
 import { WordDictionary } from '../containers/Languages/components/WordDictionary';
 
-interface IStack<T> {
-  push(item: T): void;
-  pop(): T | undefined;
-  peek(): T | undefined;
-  size(): number;
-}
-
-class Stack<T> implements IStack<T> {
-  private storage: T[] = [];
-
-  constructor(private capacity: number = Infinity) {}
-
-  push(item: T): void {
-    if (this.size() === this.capacity) {
-      throw Error("Stack has reached max capacity, you cannot add more items");
-    }
-    this.storage.push(item);
-  }
-
-  pop(): T | undefined {
-    return this.storage.pop();
-  }
-
-  peek(): T | undefined {
-    return this.storage[this.size() - 1];
-  }
-
-  size(): number {
-    return this.storage.length;
-  }
-}
-
 /**
  * Simple object check.
  * @param item
@@ -85,17 +53,22 @@ export function AutoFormer<T>(props: {children?: any, className?: string, form: 
   }, [data]);
 
   const change = useCallback((key: string | undefined, value: any, parents?: AutoFormItem<T>[]) => {
-    if (!scratch || !key) { return; }
+    if (!scratch) { return; }
 
     let update: any = {};
-    update[key] = value;
-    
+    if (key) {
+      console.log(key);
+      update[key] = value;
+    }
+
     parents?.forEach(parent => {
       if (!!parent.key) {
         update = { [parent.key]: {...update} }
       }
     });
 
+    console.log(key, data, update);
+    
     // console.log(scratch, update, mergeDeep({...data}, update));
 
     // setScratch({...scratch, ...update});
@@ -103,10 +76,12 @@ export function AutoFormer<T>(props: {children?: any, className?: string, form: 
   }, [scratch]);
 
   const submit = useCallback((key: string | undefined, value: any, parents?: AutoFormItem<T>[]) => {
-    if (!data || !key) { return; }
+    if (!data) { return; }
 
     let update: any = {};
-    update[key] = value;
+    if (key) {
+      update[key] = value;
+    }
     
     parents?.forEach(parent => {
       if (!!parent.key) {
@@ -189,17 +164,17 @@ export function AutoFormer<T>(props: {children?: any, className?: string, form: 
         return <StringDictionary
           value={value}
           item={item}
-          add={(key, value) => submit(item.key, { [key]: value }, newParents)}
-          change={(key, value) => change(item.key, { [key]: value }, newParents)}
-          blur={(key, value) => submit(item.key, { [key]: value }, newParents)}
+          add={(key, value) => submit(item.key, { [key]: value }, parents)}
+          change={(key, value) => change(item.key, { [key]: value }, parents)}
+          blur={(key, value) => submit(item.key, { [key]: value }, parents)}
         ></StringDictionary>;
       case AutoFormField.WordDictionary:
         return <WordDictionary
           value={value}
           item={item}
-          add={(key, value) => submit(item.key, { [key]: value }, newParents)}
-          change={(key, value) => change(item.key, { [key]: value }, newParents)}
-          blur={(key, value) => submit(item.key, { [key]: value }, newParents)}
+          add={(key, value) => submit(item.key, { [key]: value }, parents)}
+          change={(key, value) => change(item.key, { [key]: value }, parents)}
+          blur={(key, value) => submit(item.key, { [key]: value }, parents)}
           {...item.templateOptions}
         ></WordDictionary>;
       case AutoFormField.Radio:
