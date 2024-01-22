@@ -1,23 +1,19 @@
 import { useEffect, useMemo, useState } from "react";
 import { Button, Col, Form, InputGroup, Row } from "react-bootstrap";
 import { AutoFormItem } from "../../Root/models/language.form";
-import { universalWords } from "../../../assets/universaldictionary";
 
-export function WordDictionary<T>(props: {item: AutoFormItem<T>, value: any, generateWord?: () => string, regenerateAllWords?: () => void, add: (key: string, value: string) => void, change: (key: string, value: string) => void, blur: (key: string, value: string) => void}) {
-  const { value, add, change, blur, item, generateWord } = props;
+// add: (key: string, value: string) => void,
+export function WordDictionary<T>(props: {item: AutoFormItem<T>, value: any, generateWord?: () => string, change: (key: string, value: string) => void, blur: (key: string, value: string) => void}) {
+  const { value, change, blur, generateWord } = props;
   
   const dictionary = value || {};
 
-  const [keyToAdd, setKeyToAdd] = useState('');
-  const [valueToAdd, setValueToAdd] = useState('');
+  // const [keyToAdd, setKeyToAdd] = useState('');
+  // const [valueToAdd, setValueToAdd] = useState('');
+  // const [hideUnset, setHideUnset] = useState(true);
+  
   const [searchString, setSearchString] = useState('');
-  const [hideUnset, setHideUnset] = useState(true);
   const [page, setPage] = useState(0);
-
-  const dict = universalWords.split('\n')
-    .map(processWordFromDictionary)
-    .filter(x => !x.label.includes('undefined') && !!x.label)
-    .sort((a, b) => a.label.toLowerCase() > b.label.toLowerCase() ? 1 : b.label.toLowerCase() > a.label.toLowerCase() ? -1 : 0);
 
   const pageLength = 50;
   const [pages, setPages] = useState(1);
@@ -25,7 +21,7 @@ export function WordDictionary<T>(props: {item: AutoFormItem<T>, value: any, gen
   const wordsDisplayed = useMemo(() => {
     return Object.keys(value).filter(word => (!searchString || word.includes(searchString)))
       .sort((a, b) => a.toLowerCase() > b.toLowerCase() ? 1 : b.toLowerCase() > a.toLowerCase() ? -1 : 0);;
-  }, [searchString, page, pageLength, value]);
+  }, [searchString, value]);
 
   useEffect(() => {
     setPages(Math.ceil(wordsDisplayed.length / pageLength));
@@ -61,18 +57,16 @@ export function WordDictionary<T>(props: {item: AutoFormItem<T>, value: any, gen
             id={'hide-unset'}></Form.Check>
           */}
         </Col>
-        {pages > 1 && (
-          <Col lg={3} className="d-flex align-items-center">
-            <Button variant='link' disabled={page <= 0} onClick={() => setPage(page - 1)}><i className="fas fa-chevron-left"></i></Button>
-            <div className="w-100 text-center">{page + 1} / {pages}</div>
-            <Button variant='link' disabled={page >= pages - 1} onClick={() => setPage(page + 1)}><i className="fas fa-chevron-right"></i></Button>
-          </Col>
-        )}
+        <Col lg={3} className="d-flex align-items-center">
+          <Button variant='link' disabled={page <= 0} onClick={() => setPage(page - 1)}><i className="fas fa-chevron-left"></i></Button>
+          <div className="w-100 text-center">{page + 1} / {Math.max(1, pages)}</div>
+          <Button variant='link' disabled={page >= pages - 1} onClick={() => setPage(page + 1)}><i className="fas fa-chevron-right"></i></Button>
+        </Col>
       </Row>
 
       {wordsDisplayed.slice(page * pageLength, page * pageLength + pageLength).map((word, i) => (
         <InputGroup key={i + page * pageLength + word}>
-          <InputGroup.Text style={{minWidth: '200px'}}>{word}</InputGroup.Text>
+          <InputGroup.Text>{word}</InputGroup.Text>
           <Form.Control as='input' value={dictionary[word] || ''} onChange={ev => change(word, ev.currentTarget.value)} onBlur={ev => blur(word, ev.currentTarget.value)}></Form.Control>
           <Button variant='link' onClick={() => blur(word, generateWord?.() || '')}><i className={`fas fa-dice`}></i></Button>
         </InputGroup>
@@ -82,10 +76,10 @@ export function WordDictionary<T>(props: {item: AutoFormItem<T>, value: any, gen
 }
 
 export type DictionaryWord = {
-    label: string;
-    variations: string[];
-    wordType: string;
-    meaning?: string;
+  label: string;
+  variations: string[];
+  wordType: string;
+  meaning?: string;
 }
 
 export const processWordFromDictionary = (item: string): DictionaryWord => {

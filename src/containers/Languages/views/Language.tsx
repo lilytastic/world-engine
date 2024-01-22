@@ -216,10 +216,10 @@ export function Language(props: {children?: any}) {
                 children: [
                   {
                     type: AutoFormField.Control,
-                    label: 'Generate Words',
-                    key: 'generateWords',
+                    label: 'Root Words',
+                    key: 'rootWords',
                     as: 'textarea',
-                    placeholder: 'comely : adj\nhouse, home, residence : n\n'
+                    placeholder: 'comely : adj\nhouse, home, residence : n\nqueen : n = khalisi'
                   },
                   {
                     type: AutoFormField.Control,
@@ -252,7 +252,6 @@ export function Language(props: {children?: any}) {
               },
               {
                 type: AutoFormField.Group,
-                label: 'Dictionary',
                 children: [
                   {
                     type: AutoFormField.WordDictionary,

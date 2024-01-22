@@ -176,7 +176,6 @@ export function AutoFormer<T>(props: {children?: any, className?: string, form: 
         return <WordDictionary
           value={value}
           item={item}
-          add={(key, value) => submit(item.key, { [key]: value }, parents)}
           change={(key, value) => change(item.key, { [key]: value }, parents)}
           blur={(key, value) => submit(item.key, { [key]: value }, parents)}
           {...item.templateOptions}
