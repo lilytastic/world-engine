@@ -83,10 +83,10 @@ export function generateWordV2(language: ILanguage): IWord {
 
 export type Syllable = (TypedSound | string)[];
 
-export interface IPositioning {
-  data: any;
-  index: number;
+export function syllablesToString(syllables: Syllable[]) {
+  return syllables.map(syllable => syllable.map(x => (x as TypedSound).phoneme || x).join('')).join('σ');
 }
+// σ
 
 export function wordPatternToSyllables(language: ILanguage, wordPattern: IWordPattern): Syllable[] {
   // Expand every uppercase letter
@@ -94,18 +94,21 @@ export function wordPatternToSyllables(language: ILanguage, wordPattern: IWordPa
   let syllables: Syllable[] = [];
 
   for (let i = 0; i < pattern.length; i++) {
-    syllables.push(syllableToPhonemes(pattern[i], language));
+    let prev = syllablesToString(syllables);
+    if (syllables.length > 0) { prev += 'σ'; }
+    syllables.push(syllableToPhonemes(pattern[i], language, `#${prev}_${pattern.slice(i + 1).join('')}#`));
   }
 
   return syllables;
 }
 
-export function syllableToPhonemes(syllable: string, language: ILanguage): Syllable {
+export function syllableToPhonemes(syllable: string, language: ILanguage, environment: string): Syllable {
   const ALL_PHONEMES = [...CONSONANTS, ...VOWELS];
   const phonemeClasses = getPhonemeClassDictionary(language);
   const phonemes = [];
 
   let timesLooped = 0;
+  // console.log(environment);
 
   for (let i = 0; i < syllable.length; i++) {
     const token = syllable[i];
@@ -126,12 +129,17 @@ export function syllableToPhonemes(syllable: string, language: ILanguage): Sylla
       timesLooped++;
     } else if (phoneme) {
       phonemes.push(phoneme);
+      const index = environment.indexOf('_');
+      environment = `${environment.slice(0, index)}${phoneme.phoneme}_${environment.slice(index + 1)}`;
+      console.log(environment);
       timesLooped = 0;
     } else {
       // This isn't a proper token, so just add it to the word. Might be an apostrophe or some other crap.
       phonemes.push(token);
     }
   }
+
+  // console.log(environment);
   return phonemes;
 }
 

@@ -3,8 +3,6 @@
 import React, { useEffect, useState } from 'react';
 import { ILanguage, IWord } from '../models/language.model';
 
-import { getLanguages } from '../reducers/language.reducer';
-import { useSelector } from 'react-redux';
 import { useParams } from 'react-router';
 
 import { getSampleWordsV2 } from '../helpers/generators.helpers';
