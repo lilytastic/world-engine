@@ -1,7 +1,7 @@
 
 
 import React, { useEffect, useState } from 'react';
-import { ILanguage } from '../models/language.model';
+import { ILanguage, IWord } from '../models/language.model';
 
 import { getLanguages } from '../reducers/language.reducer';
 import { useSelector } from 'react-redux';
@@ -13,7 +13,7 @@ export function SampleWords(props: {children?: any}) {
 
   const languages = useSelector(getLanguages);
   const [language, setLanguage] = useState(undefined as ILanguage | undefined);
-  const [currentSampleWords, setSampleWords] = useState([] as string[]);
+  const [currentSampleWords, setSampleWords] = useState([] as IWord[]);
   const params = useParams();
 
   useEffect(() => {
@@ -37,7 +37,7 @@ export function SampleWords(props: {children?: any}) {
         <button className='btn btn-link' onClick={() => setSampleWords(getSampleWordsV2(language))}><i className='fas fa-rotate-right'></i></button>
       </h3>
       <div>
-        <i>{currentSampleWords.join(', ')}</i>
+        <i>{currentSampleWords.map(x => x.transcription).join(', ')}</i>
       </div>
     </div>
   );

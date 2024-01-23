@@ -34,7 +34,6 @@ export function Language(props: {children?: any}) {
   }, [languages, params.id]);
 
   useEffect(() => {
-    console.log(language);
     if (!language) { return; }
     setScratch({...language});
   }, [language]);
@@ -70,7 +69,7 @@ export function Language(props: {children?: any}) {
     if (scratch?.vocabulary.useDefaultRootWords) {
       universalWords.split('\n').forEach(word => {
         const duh = processWordFromDictionary(word);
-        dictionary[duh.label] = generateWordV2(scratch);
+        dictionary[duh.label] = generateWordV2(scratch).transcription;
       });
     }
     console.log(dictionary);

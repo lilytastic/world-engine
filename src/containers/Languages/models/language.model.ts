@@ -1,6 +1,6 @@
 import { ProbabilityType } from "../helpers/logic.helpers";
 import { IPhonotactic } from "./phonology.model";
-import { IConsonant, IVowel } from "./sounds.model";
+import { IConsonant, IVowel, TypedSound } from "./sounds.model";
 
 export interface ILanguage {
   id: number;
@@ -61,8 +61,14 @@ export const DEFAULT_LANGUAGE: ILanguage = {
   }
 }
 
+/*
 export interface IWord {
   syllables: ISyllable[];
+}
+*/
+export interface IWord {
+  transcription: string;
+  sounds: TypedSound[];
 }
 
 export interface ISyllable {

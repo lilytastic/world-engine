@@ -1,6 +1,6 @@
 import { CONSONANTS } from "../data/consonants";
 import { VOWELS } from "../data/vowels";
-import { ILanguage } from "../models/language.model";
+import { ILanguage, ISyllable } from "../models/language.model";
 import { IWordPattern, TypedSound } from "../models/sounds.model";
 import { getPhonemeClassDictionary, getStringArray } from "./generators.helpers";
 import { getRandomArrayItem, ProbabilityType } from "./logic.helpers";
@@ -107,3 +107,4 @@ export function wordPatternToPhonemesV2(language: ILanguage, wordPattern: IWordP
   // console.log(phonemes, wordPatternTokens);
   return phonemes;
 }
+

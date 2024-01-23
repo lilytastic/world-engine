@@ -1,26 +1,12 @@
-import { generateRules } from "./phonology.helpers";
 import { TypedSound, IPhonemeClass } from "../models/sounds.model";
-import { VOWELS } from "../data/vowels";
-import { CONSONANTS } from "../data/consonants";
-import { getAffectedSounds, getSoundByPhoneme } from "./sounds.helpers";
-import { getWordPatternDictionary, wordPatternToPhonemes, wordPatternToPhonemesV2 } from "./word-patterns.helpers";
+import { getWordPatternDictionary, wordPatternToPhonemesV2 } from "./word-patterns.helpers";
 import { getRandomArrayItem } from "./logic.helpers";
-import { ILanguage, ISyllable, IWord } from "../models/language.model";
-import { IPhonologicalRule, IPhonologicalToken } from "../models/phonology.model";
+import { ILanguage, IWord } from "../models/language.model";
+import { IPhonologicalToken } from "../models/phonology.model";
 
 // TODO: Try to implement some of https://github.com/conlang-software-dev/Logopoeist
 // TODO: Also this https://www.vulgarlang.com/sound-changes
 
-
-export function transcribeWord(language: ILanguage, word: IWord) {
-  return word.syllables.map(syllable => 
-    syllable.sounds.map(phoneme => 
-      [...VOWELS, ...CONSONANTS].find(sound => sound.phoneme === phoneme)
-    ).map(x => 
-      x?.romanization || x?.phoneme || ''
-    )
-  ).flat().join('');
-}
 export function checkForToken(tokens: IPhonologicalToken[], key: string) {
   return tokens.find(x => !!x.items.find(x => x.toLowerCase() === key));
 }
@@ -72,7 +58,7 @@ export function getSampleWords(language: ILanguage) {
 */
 
 export function getSampleWordsV2(language: ILanguage) {
-  let arr: string[] = [];
+  let arr: IWord[] = [];
   // console.log('language', language);
   // console.log('phonemeClasses', phonemeClasses);
   // console.log('wordPatterns', wordPatterns);
@@ -82,7 +68,7 @@ export function getSampleWordsV2(language: ILanguage) {
   return arr;
 }
 
-export function generateWordV2(language: ILanguage) {
+export function generateWordV2(language: ILanguage): IWord {
   const wordPatterns = getWordPatternDictionary(language);
   const wordPattern = getRandomArrayItem(wordPatterns['word']);
   const tokens = wordPatternToPhonemesV2(
@@ -90,7 +76,7 @@ export function generateWordV2(language: ILanguage) {
     wordPattern
   );
   // console.log('word', tokens);
-  return tokens.map(x => {
+  const transcription = tokens.map(x => {
     const sound = x as TypedSound;
     if (!!sound.phoneme) {
       return sound.romanization || sound.phoneme
@@ -98,6 +84,14 @@ export function generateWordV2(language: ILanguage) {
       return x;
     }
   }).join('');
+  const sounds = tokens.filter(x => {
+    const sound = x as TypedSound;
+    if (!!sound.phoneme) {
+      return true;
+    }
+    return false;
+  }) as TypedSound[];
+  return { transcription, sounds }
 }
 
 /*

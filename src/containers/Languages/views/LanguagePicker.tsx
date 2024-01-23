@@ -1,5 +1,5 @@
 import React from 'react';
-import { Col, ListGroup, Row } from 'react-bootstrap';
+import { Button, Col, Dropdown, ListGroup, Row } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, NavLink, useLocation } from 'react-router-dom';
 import { addNewLanguage, getLanguages } from '../reducers/language.reducer';
@@ -26,13 +26,44 @@ export const LanguagePicker = (props: {children?: any, className?: string}) => {
         </div>
       </Col>
       <Col xs={12} md={6} lg={5}>
+
+        <Dropdown className='mb-3'>
+          <Dropdown.Toggle variant='primary' id="dropdown-basic">
+            <i className='fas fa-file-circle-plus fa-sm me-2'></i>New...<i className='fas fa-caret-down fa-sm ms-2'></i>
+          </Dropdown.Toggle>
+
+          <Dropdown.Menu>
+            <Dropdown.Item as={Button}
+                          onClick={() => { dispatch(addNewLanguage({history})); }}
+                          className='btn btn-link'>
+              Default
+            </Dropdown.Item>
+            <Dropdown.Divider></Dropdown.Divider>
+            <Dropdown.ItemText className='small'>Templates</Dropdown.ItemText>
+            <Dropdown.Item as={Button}
+                          onClick={() => { dispatch(addNewLanguage({history})); }}
+                          className='btn btn-link'>
+              English
+            </Dropdown.Item>
+            <Dropdown.Item as={Button}
+                          onClick={() => { dispatch(addNewLanguage({history})); }}
+                          className='btn btn-link'>
+              Spanish
+            </Dropdown.Item>
+            <Dropdown.Item as={Button}
+                          onClick={() => { dispatch(addNewLanguage({history})); }}
+                          className='btn btn-link'>
+              Arabic
+            </Dropdown.Item>
+            <Dropdown.Item as={Button}
+                          onClick={() => { dispatch(addNewLanguage({history})); }}
+                          className='btn btn-link'>
+              Korean
+            </Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
+
         <ListGroup className="flex-column overflow-hidden w-100 w-sm-75">
-          <ListGroup.Item action
-                          variant='primary'
-                          onClick={() => dispatch(addNewLanguage({history})) }>
-            <i className='fas fa-fw fa-sm fa-file-circle-plus me-2'></i>
-            Create New Language
-          </ListGroup.Item>
           {languages.ids.map(id => (
             <ListGroup.Item key={id}
                             as={NavLink}
