@@ -1,8 +1,10 @@
-import { TypedSound, IPhonemeClass } from "../models/sounds.model";
-import { getWordPatternDictionary, wordPatternToSyllables } from "./word-patterns.helpers";
-import { getRandomArrayItem } from "./logic.helpers";
+import { TypedSound, IPhonemeClass, IWordPattern } from "../models/sounds.model";
+import { getWordPatternDictionary } from "./word-patterns.helpers";
+import { ProbabilityType, getRandomArrayItem } from "./logic.helpers";
 import { ILanguage, IWord } from "../models/language.model";
 import { IPhonologicalToken } from "../models/phonology.model";
+import { CONSONANTS } from "../data/consonants";
+import { VOWELS } from "../data/vowels";
 
 // TODO: Try to implement some of https://github.com/conlang-software-dev/Logopoeist
 // TODO: Also this https://www.vulgarlang.com/sound-changes
@@ -77,6 +79,68 @@ export function generateWordV2(language: ILanguage): IWord {
   }) as TypedSound[];
 
   return { transcription, sounds };
+}
+
+export type Syllable = (TypedSound | string)[];
+
+export interface IPositioning {
+  data: any;
+  index: number;
+}
+
+export function wordPatternToSyllables(language: ILanguage, wordPattern: IWordPattern): Syllable[] {
+  // Expand every uppercase letter
+  const { pattern } = wordPattern;
+  let syllables: Syllable[] = [];
+
+  for (let i = 0; i < pattern.length; i++) {
+    syllables.push(syllableToPhonemes(pattern[i], language));
+  }
+
+  return syllables;
+}
+
+export function syllableToPhonemes(syllable: string, language: ILanguage): Syllable {
+  const ALL_PHONEMES = [...CONSONANTS, ...VOWELS];
+  const phonemeClasses = getPhonemeClassDictionary(language);
+  const phonemes = [];
+
+  let timesLooped = 0;
+
+  for (let i = 0; i < syllable.length; i++) {
+    const token = syllable[i];
+    const phoneme = ALL_PHONEMES.find(x => x.phoneme === token);
+
+    if (token === token.toUpperCase() && phonemeClasses[token] && timesLooped < 10) {
+      
+      // This is, in fact, a class! Huzzah! Get all the tokens.
+      const classTokens = filterForbiddenCombinations(language, phonemeClasses[token].tokens);
+      // TODO: Filter the list for anything not permitted.
+      // console.log('filter me', phonemeClasses[token].tokens, language.phonology.forbiddenCombinations);
+      
+      const item = getRandomArrayItem(classTokens, language.phonology.dropoffRate || ProbabilityType.MediumDropoff);
+      // Item is now either a random phoneme fitting the class, or another class token, or nothing.
+      
+      syllable = syllable.slice(0, i) + item + syllable.slice(i + 1);
+      i -= 1;
+      timesLooped++;
+    } else if (phoneme) {
+      phonemes.push(phoneme);
+      timesLooped = 0;
+    } else {
+      // This isn't a proper token, so just add it to the word. Might be an apostrophe or some other crap.
+      phonemes.push(token);
+    }
+  }
+  return phonemes;
+}
+
+export function filterForbiddenCombinations(language: ILanguage, tokens: string[]): string[] {
+  if (!language.phonology.forbiddenCombinations) {
+    return tokens;
+  }
+  // console.log(positioning);
+  return tokens;
 }
 
 /*

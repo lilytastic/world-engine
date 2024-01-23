@@ -9,22 +9,18 @@ import { useParams } from 'react-router';
 
 import { getSampleWordsV2 } from '../helpers/generators.helpers';
 
-export function SampleWords(props: {children?: any}) {
+export function SampleWords(props: {children?: any, language: ILanguage}) {
 
-  const languages = useSelector(getLanguages);
-  const [language, setLanguage] = useState(undefined as ILanguage | undefined);
+  const { language } = props;
+
   const [currentSampleWords, setSampleWords] = useState([] as IWord[]);
   const params = useParams();
 
   useEffect(() => {
-    if (params.id) {
-      const language = languages.entities[params.id];
-      if (language) {
-        setLanguage(language);
-        setSampleWords(getSampleWordsV2(language));
-      }
+    if (language) {
+      setSampleWords(getSampleWordsV2(language));
     }
-  }, [languages, params.id]);
+  }, [language, params.id]);
 
   if (!language) {
     return <></>;

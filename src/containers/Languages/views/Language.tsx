@@ -108,7 +108,7 @@ export function Language(props: {children?: any}) {
         <LanguageOptions scratch={scratch} language={language} className='position-absolute top-0 end-0 d-flex'></LanguageOptions>
       </h1>
 
-      <SampleWords></SampleWords>
+      {scratch && <SampleWords language={scratch}></SampleWords>}
 
       <AutoFormer data={scratch} form={LanguageForm} update={setScratch}></AutoFormer>
     </div>
