@@ -121,9 +121,20 @@ export function processWordPattern(language: ILanguage, env: string): string {
   return environment;
 }
 
+export const extrudeAlternatingRule = (rule: string): string[] => {
+  const index = rule.indexOf('{');
+  const lastIndex = rule.indexOf('}');
+  if (index === -1 || lastIndex === -1) {
+    return [];
+  }
+  const enclosed = rule.slice(index + 1, lastIndex).split(',');
+  // console.log(enclosed, rule);
+  return enclosed.map(token => rule.slice(0, index) + token + rule.slice(lastIndex + 1));
+}
+
 export function filterForbiddenCombinations(environment: string, language: ILanguage, collection: string[]): string[] {
 
-  const forbiddenCombinations = language.phonology.forbiddenCombinations.split(' ');
+  const forbiddenCombinations = language.phonology.forbiddenCombinations.split(' ').map(x => ([x, ...extrudeAlternatingRule(x)])).flat();
   let environmentWithClasses = environment.toString();
   const phonemeClasses = getPhonemeClassDictionary(language);
 
@@ -136,10 +147,12 @@ export function filterForbiddenCombinations(environment: string, language: ILang
   });
 
   const allowed = collection.filter(_token => {
-    const tokens = [
+    let tokens = [
       _token,
       // ...(_token.toLowerCase() === _token ? Object.keys(phonemeClasses).filter(t => phonemeClasses[t].tokens.includes(_token)) : [])
+      // ...extrudeAlternatingRule(_token)
     ];
+    
 
     for (let i = 0; i < forbiddenCombinations.length; i++) {
       // TODO: Turn phonemes into their classes to check that too
