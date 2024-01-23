@@ -79,6 +79,7 @@ export function wordPatternToPhonemesV2(language: ILanguage, wordPattern: IWordP
   const phonemeClasses = getPhonemeClassDictionary(language);
   let wordPatternTokens = pattern; // Note -- these are syllables, whatever the tokens are initially.
   let phonemes: (TypedSound | string)[] = [];
+  let timesLooped = 0;
   for (let i = 0; i < wordPatternTokens.length; i++) {
     let token = wordPatternTokens[i];
     if (token === token.toUpperCase() && phonemeClasses[token]) {
@@ -89,9 +90,11 @@ export function wordPatternToPhonemesV2(language: ILanguage, wordPattern: IWordP
       if (item) {
         if (phoneme) {
           phonemes.push(phoneme);
-        } else {
+          timesLooped = 0;
+        } else if (timesLooped < 10) {
           wordPatternTokens = [...wordPatternTokens.slice(0, i), ...getStringArray(item), ...wordPatternTokens.slice(i + 1)];
           i -= 1;
+          timesLooped++;
         }
       } else {
         console.error('no item');

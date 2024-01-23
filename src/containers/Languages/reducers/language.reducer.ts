@@ -14,6 +14,7 @@ const languageAdapter = createEntityAdapter<ILanguage>({
 // Define a type for the slice state
 interface LanguageState {
   languages: EntityState<ILanguage>;
+  scratch: ILanguage | null;
 }
 
 let storedLanguages = null;
@@ -29,7 +30,8 @@ try {
 }
 // Define the initial state using that type
 const initialState: LanguageState = {
-  languages: storedLanguages || languageAdapter.getInitialState()
+  languages: storedLanguages || languageAdapter.getInitialState(),
+  scratch: DEFAULT_LANGUAGE
 }
 
 export const languageSlice = createSlice({
@@ -47,6 +49,16 @@ export const languageSlice = createSlice({
       }
       return {...state, languages: {...languages}};
     },
+    updateScratch: (state, action) => {
+      // console.log(action.payload);
+      const lang: ILanguage = action.payload;
+      return {...state, scratch: lang};
+    },
+    clearScratch: (state, action) => {
+      // console.log(action.payload);
+      const lang: ILanguage = action.payload;
+      return {...state, scratch: DEFAULT_LANGUAGE};
+    },
     updateLanguage: (state, action) => {
       // console.log(action.payload);
       const lang: ILanguage = action.payload;
@@ -62,9 +74,11 @@ export const languageSlice = createSlice({
   }
 })
 
-export const { addNewLanguage, updateLanguage, deleteLanguage } = languageSlice.actions;
+export const { addNewLanguage, updateLanguage, deleteLanguage, updateScratch, clearScratch } = languageSlice.actions;
 
-export const getLanguages = createSelector((state: RootState) => state.language, (state) => state.languages);
+const getFeatureState = (state: RootState) => state.language;
+export const getLanguages = createSelector(getFeatureState, (state) => state.languages);
+export const getScratch = createSelector(getFeatureState, (state) => state.scratch)
 
 
 export default languageSlice.reducer;

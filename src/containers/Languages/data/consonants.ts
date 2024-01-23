@@ -130,7 +130,8 @@ export const CONSONANTS: IConsonant[] = [
   {
     place: Place.Palatal,
     manner: Manner.Nasal,
-    phoneme: 'ɲ'
+    phoneme: 'ɲ',
+    romanization: 'ñ'
   },
   {
     place: Place.Uvular,

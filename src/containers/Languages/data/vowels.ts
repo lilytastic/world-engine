@@ -44,6 +44,7 @@ export const VOWELS: IVowel[] = [
     openness: VowelLon.NearClose,
     frontness: VowelLat.Front,
     phoneme: 'ʏ',
+    romanization: 'ü',
     rounded: true
   },
   {

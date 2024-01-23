@@ -27,6 +27,10 @@ body {
   background-color: var(--bs-body-bg) !important;
 }
 
+::placeholder {
+  font-style: italic;
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;

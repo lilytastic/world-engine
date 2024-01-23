@@ -56,7 +56,7 @@ export function getPhonemeClassDictionary(language: ILanguage) {
   return dictionary;
 }
 
-
+/*
 export function getSampleWords(language: ILanguage) {
   let arr: IWord[] = [];
   if (language.vowels.length === 0 || language.consonants.length === 0) { return arr; }
@@ -69,6 +69,7 @@ export function getSampleWords(language: ILanguage) {
   }
   return arr;
 }
+*/
 
 export function getSampleWordsV2(language: ILanguage) {
   let arr: string[] = [];
@@ -99,6 +100,7 @@ export function generateWordV2(language: ILanguage) {
   }).join('');
 }
 
+/*
 export function generateWord(language: ILanguage, rules: IPhonologicalRule[]) {
   let length = 1 + Math.floor(Math.random() * 3);
   const splitSyllableShape = language.phonology.syllableShape.split('\n');
@@ -163,12 +165,6 @@ export function generateWord(language: ILanguage, rules: IPhonologicalRule[]) {
                 isApplicable = true;
               }
             }
-            /*
-            if (env[selfIndex + 1].items.includes('C') && morphologyMapped[i + 1] === 'C') {
-              isApplicable = true;
-              // console.log('IT DO!');
-            }
-            */ 
           }
           //isRuleApplicable({syllableShape: morphologyMapped, letter: i}, env);
 
@@ -210,3 +206,4 @@ export function generateWord(language: ILanguage, rules: IPhonologicalRule[]) {
   };
   return word;
 }
+*/

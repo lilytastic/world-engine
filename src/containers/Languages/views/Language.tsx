@@ -1,20 +1,20 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { generateWord, generateWordV2, getSampleWords } from '../helpers/generators.helpers';
+import { generateWordV2 } from '../helpers/generators.helpers';
 
-import { ILanguage, IWord } from '../models/language.model';
+import { ILanguage } from '../models/language.model';
 import { useDispatch, useSelector } from 'react-redux';
-import { getLanguages, updateLanguage } from '../reducers/language.reducer';
+import { getLanguages, updateLanguage, updateScratch } from '../reducers/language.reducer';
 import { useParams } from 'react-router';
 import { SampleWords } from '../components/SampleWords';
-import { Breadcrumb, Button, Col, Form, Popover, Row, Tab, Tabs } from 'react-bootstrap';
+import { Breadcrumb, Button, Col, Row } from 'react-bootstrap';
 import { LanguageOptions } from '../components/LanguageOptions';
 import { NavLink } from 'react-router-dom';
 import { PhoneticKeyboard } from '../components/PhoneticKeyboard';
 import { AutoFormer, mergeDeep } from '../../../components/AutoForm';
-import { AutoForm, AutoFormField } from '../../Root/models/language.form';
-import { ProbabilityType } from '../helpers/logic.helpers';
+import { AutoForm } from '../../Root/models/language.form';
 import { processWordFromDictionary } from '../components/WordDictionary';
 import { universalWords } from '../../../assets/universaldictionary';
+import { compileLanguageForm } from '../forms/language.form';
 
 
 
@@ -22,16 +22,23 @@ export function Language(props: {children?: any}) {
 
   const dispatch = useDispatch();
   const languages = useSelector(getLanguages);
+  const [scratch, setScratch] = useState(null as ILanguage | null);
   const [language, setLanguage] = useState(undefined as ILanguage | undefined);
   const params = useParams();
 
   useEffect(() => {
     if (params.id) {
-      setLanguage(languages.entities[params.id]);
+      const lang = languages.entities[params.id];
+      setLanguage(lang);
     }
   }, [languages, params.id]);
 
-  const [sampleWords, setSampleWords] = useState([] as IWord[]);
+  useEffect(() => {
+    console.log(language);
+    if (!language) { return; }
+    setScratch({...language});
+  }, [language]);
+
   const [title, setTitle] = useState('');
 
   const [scrollPosition, setScrollPosition] = useState(0);
@@ -54,220 +61,23 @@ export function Language(props: {children?: any}) {
     if (!!language) {
       localStorage.setItem('language', JSON.stringify(language));
       setTitle(language.name);
-      setSampleWords(getSampleWords(language));
     }
   }, [language]);
 
   const generateDictionary = useCallback(() => {
-    if (!language) { return; }
+    if (!scratch) { return; }
     const dictionary: {[word: string]: string} = {};
-    if (language?.vocabulary.useDefaultRootWords) {
+    if (scratch?.vocabulary.useDefaultRootWords) {
       universalWords.split('\n').forEach(word => {
         const duh = processWordFromDictionary(word);
-        dictionary[duh.label] = generateWordV2(language);
+        dictionary[duh.label] = generateWordV2(scratch);
       });
     }
     console.log(dictionary);
-    dispatch(updateLanguage(mergeDeep<ILanguage>(language, { dictionary: dictionary })));
-  }, [language]);
+    setScratch(mergeDeep<ILanguage>(scratch, { dictionary: dictionary }));
+  }, [scratch]);
 
-  const LanguageForm: AutoForm<ILanguage> = useMemo(() => {
-    if (!language) { return []; }
-    return [
-      {
-        type: AutoFormField.TabGroup,
-        children: [
-          {
-            type: AutoFormField.Tab,
-            label: 'Phonology',
-            key: 'phonology', // In this case, all children will attempt to modify 'phonology.X' on the base object.
-            children: [
-              {
-                type: AutoFormField.Group,
-                children: [
-                  {
-                    type: AutoFormField.Control,
-                    label: 'Phoneme Classes',
-                    key: 'phonemeClasses',
-                    as: 'textarea',
-                    footerText: `most frequent <-> least frequent`,
-                    popover: (<Popover id="popover-basic">
-                      <Popover.Body>
-                        <ul className='list'>
-                          <li>Assign phonemes to classes (uppercase letters), which act as placeholders for Word Patterns</li>
-                          <li>The uppercase letters don't inherently mean anything, and any phoneme can be assigned to any class</li>
-                          <li>Classes contain sequences of phonemes (A = ion lar mel) and sequences of other classes (S = CV VC)</li>
-                          <li>If you need more than 26 classes, the following Greek letters can be used: ΓΔΘΛΞΠΣΦΨΩ</li>
-                        </ul>
-                      </Popover.Body>
-                    </Popover>)
-                  },
-                  {
-                    type: AutoFormField.Radio,
-                    label: 'Probability Dropoff',
-                    key: 'dropoffRate',
-                    popover: (
-                      <Popover id="popover-basic">
-                        <Popover.Body>
-                          <ul className='list'>
-                            <li>Phonemes are ranked by frequency from left (most frequent) to right (least frequent).</li>
-                            <li><b>Fast</b> rate makes frequent phonemes even more frequent, <b>Medium</b> creates a more even spread, and <b>Equiprobable</b> creates a perfectly even spread.</li>
-                            <li>When using Equiprobable, phonemes can be custom weighted by writing *multiplier. For example, p*10 makes p ten times more common than a phoneme without a multiplier. To make it less likely, multiply by a decimal: p*0.4.</li>
-                          </ul>
-                        </Popover.Body>
-                      </Popover>
-                    ),
-                    options: [
-                      {
-                        label: 'Fast dropoff',
-                        value: ProbabilityType.FastDropoff
-                      },
-                      {
-                        label: 'Medium dropoff',
-                        value: ProbabilityType.MediumDropoff
-                      },
-                      {
-                        label: 'Equiprobable',
-                        value: ProbabilityType.Equiprobable
-                      }
-                    ]
-                  }
-                ]
-              },
-              {
-                type: AutoFormField.Group,
-                children: [
-                  {
-                    type: AutoFormField.Control,
-                    label: 'Word Patterns',
-                    key: 'wordPatterns',
-                    as: 'textarea',
-                    popover: (<Popover id="popover-basic">
-                      <Popover.Body>
-                        <ul className='list'>
-                          <li>Word patterns are made of classes or actual phonemes, eg: zVC means the word will always start with z, then a random choice of V and C.</li>
-                          <li>Use brackets for optional patterns: CV(zV) means the zV pattern occurs 20% of the time. Manually change the probability by writing it after the brackets: CV(zV)50%.</li>
-                          <li>Patterns for particular parts-of-speech can be added after the default patterns, eg: part-of-speech = ...</li>
-                        </ul>
-                      </Popover.Body>
-                    </Popover>)
-                  },
-                ]
-              },
-              {
-                type: AutoFormField.Group,
-                children: [
-                  {
-                    type: AutoFormField.Control,
-                    label: 'Forbidden Combinations',
-                    key: 'forbiddenCombinations',
-                    placeholder: '#ŋ dt',
-                    as: 'textarea'
-                  },
-                  {
-                    type: AutoFormField.CheckGroup,
-                    label: 'Probability Dropoff',
-                    options: [
-                      {
-                        label: 'Ban two of the same vowels in a row',
-                        key: 'banSameVowels'
-                      },
-                      {
-                        label: 'Ban two of the same consonants in a row',
-                        key: 'banSameConsonants'
-                      }
-                    ]
-                  }
-                ]
-              },
-              {
-                type: AutoFormField.Group,
-                children: [
-                  {
-                    type: AutoFormField.Control,
-                    label: 'Sound Changes',
-                    key: 'soundChanges',
-                    placeholder: 'ʒ > d / _#',
-                    as: 'textarea'
-                  },
-                ]
-              }
-            ]
-          },
-          {
-            type: AutoFormField.Tab,
-            label: 'Vocabulary',
-            id: 'vocabulary',
-            children: [
-              {
-                type: AutoFormField.Group,
-                children: [
-                  {
-                    type: AutoFormField.Control,
-                    key: 'name',
-                    label: 'Language Name'
-                  }
-                ]
-              },
-              {
-                type: AutoFormField.Group,
-                key: 'vocabulary',
-                children: [
-                  {
-                    type: AutoFormField.Control,
-                    label: 'Root Words',
-                    key: 'rootWords',
-                    as: 'textarea',
-                    placeholder: 'comely : adj\nhouse, home, residence : n\nqueen : n = khalisi'
-                  },
-                  {
-                    type: AutoFormField.Control,
-                    label: 'Derived Words',
-                    key: 'derivedWords',
-                    as: 'textarea',
-                    placeholder: 'government : n = govern-ACT.OF\nGod of War : n = war god'
-                  },
-                  {
-                    type: AutoFormField.CheckGroup,
-                    options: [
-                      {
-                        label: 'Use default root words',
-                        key: 'useDefaultRootWords'
-                      },
-                      {
-                        label: 'Use default derived words',
-                        key: 'useDefaultDerivedWords'
-                      }
-                    ]
-                  },
-                  {
-                    type: AutoFormField.Button,
-                    label: 'Generate',
-                    templateOptions: {
-                      onClick: () => generateDictionary()
-                    }
-                  },
-                ]
-              },
-              {
-                type: AutoFormField.Group,
-                children: [
-                  {
-                    type: AutoFormField.WordDictionary,
-                    key: 'dictionary',
-                    templateOptions: {
-                      generateWord: language ? () => { return generateWordV2(language) } : null
-                    }
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      }
-    ]
-  }, [language]);
-  
+  const LanguageForm: AutoForm<ILanguage> = useMemo(() => compileLanguageForm(language, generateDictionary), [language, generateDictionary]);
 
   if (!language) {
     return <div></div>;
@@ -296,40 +106,13 @@ export function Language(props: {children?: any}) {
       <h1 className='d-flex align-items-start position-relative lh-1 mb-4'>
         {language.type === 'Proto-language' ? 'Proto-' : ''}{language.name || 'Untitled'}{language.type === 'Family' ? ' Family' : ''}
 
-        <LanguageOptions language={language} className='position-absolute top-0 end-0 d-flex'></LanguageOptions>
+        <LanguageOptions scratch={scratch} language={language} className='position-absolute top-0 end-0 d-flex'></LanguageOptions>
       </h1>
 
       <SampleWords></SampleWords>
 
-      <AutoFormer data={language} form={LanguageForm} update={updateLanguage}></AutoFormer>
+      <AutoFormer data={scratch} form={LanguageForm} update={setScratch}></AutoFormer>
+      <Button onClick={() => {console.log(scratch); dispatch(updateLanguage(scratch)); }}>Save</Button>
     </div>
   );
 }
-
-/*
-
-      <h2>Lexicon <button className='btn btn-link' onClick={() => setIsEditingLexicon(true)}>Edit</button></h2>
-      <div>
-        <h4>Samples <button className='btn btn-link' onClick={() => setSampleWords(getSampleWords(language))}>Regenerate</button></h4>
-        <div>
-          <i>{sampleWords.map(word => transcribeWord(language, word)).join(', ')}</i>
-        </div>
-      </div>
-      
-
-      <h2>Phonology <button className='btn btn-link' onClick={() => setIsEditingPhonotactics(true)}>Edit</button></h2>
-
-      <h4>Syllable shape</h4>
-      {language.phonology.syllableShape}
-
-      <h4>Rules</h4>
-      <ul>
-        {language.phonology.phonotactics.map((x, i) => (
-          <div key={x.id} className='mb-3'>
-            <label className='small'>{i+1}) {x.description || 'No description'}</label>
-            <div><code>{x.script}</code></div>
-          </div>
-        ))}
-      </ul>
-
-*/

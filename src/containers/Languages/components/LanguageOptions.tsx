@@ -3,20 +3,24 @@ import { Button, Dropdown } from 'react-bootstrap';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { ILanguage } from '../models/language.model';
-import { addNewLanguage, deleteLanguage } from '../reducers/language.reducer';
+import { addNewLanguage, deleteLanguage, updateLanguage } from '../reducers/language.reducer';
 
 
-export const LanguageOptions = (props: {children?: any, language: ILanguage, className?: string}) => {
+export const LanguageOptions = (props: {children?: any, language: ILanguage, scratch: ILanguage | null, className?: string}) => {
 
-  const {language} = props;
+  const { language, scratch } = props;
 
   const dispatch = useDispatch();
   const history = useNavigate();
 
   return (
     <Dropdown className={props.className}>
-      <Dropdown.Toggle variant='primary' id="dropdown-basic">
-        <i className='fas fa-file-pen fa-sm me-2'></i>Edit<i className='fas fa-caret-down fa-sm ms-2'></i>
+      <Button disabled={scratch === null} onClick={() => dispatch(updateLanguage(scratch))}>
+        <i className='fas fa-floppy-disk me-2'></i>
+        Save
+      </Button>
+      <Dropdown.Toggle variant='link' id="dropdown-basic">
+        <i className='fas fa-ellipsis fa-sm me-2'></i>
       </Dropdown.Toggle>
 
       <Dropdown.Menu>

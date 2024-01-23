@@ -40,7 +40,7 @@ export function WordDictionary<T>(props: {item: AutoFormItem<T>, value: any, gen
       </InputGroup>
       */}
 
-      <Row className="align-items-center mb-2">
+      <Row className="align-items-center mb-3">
         <Col lg={9} className="d-flex align-items-center">
           <InputGroup>
             <InputGroup.Text><i className="fas fa-search"></i></InputGroup.Text>

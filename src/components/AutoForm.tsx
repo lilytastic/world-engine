@@ -90,7 +90,7 @@ export function AutoFormer<T>(props: {children?: any, className?: string, form: 
 
     // console.log(data, update, mergeDeep(data, update));
 
-    dispatch(props.update(mergeDeep(data, update)));
+    props.update(mergeDeep(data, update));
   }, [data]);
 
   const displayFormGroup = (item: AutoFormItem<T>, content: JSX.Element): JSX.Element => {
