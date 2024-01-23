@@ -147,7 +147,9 @@ export function syllableToPhonemes(syllable: string, language: ILanguage, enviro
     } else if (phoneme) {
       phonemes.push(phoneme);
       const index = env.indexOf('_');
-      env = `${env.slice(0, index)}${phoneme.phoneme}_${env.slice(index + 2)}`;
+      if (env[index + 1] !== '#') {
+        env = `${env.slice(0, index)}${phoneme.phoneme}_${env.slice(index + 2)}`;
+      }
       console.log(env, 'adding phoneme', phoneme.phoneme);
       timesLooped = 0;
     } else if (token) {
