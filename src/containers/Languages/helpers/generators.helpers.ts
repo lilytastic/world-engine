@@ -83,8 +83,8 @@ export function generateWordV2(language: ILanguage): IWord {
 
 export type Syllable = (TypedSound | string)[];
 
-export function syllablesToString(syllables: Syllable[]) {
-  return syllables.map(syllable => syllable.map(x => (x as TypedSound).phoneme || x).join('')).join('σ');
+export function syllablesToString(syllables: Syllable[], includeUnknown: boolean = false) {
+  return syllables.map(syllable => syllable.map(x => (x as TypedSound).phoneme || (includeUnknown ? x : '')).filter(x => x !== '').join('')).join('σ');
 }
 // σ
 
@@ -108,16 +108,16 @@ export function syllableToPhonemes(syllable: string, language: ILanguage, enviro
   const phonemes = [];
 
   let timesLooped = 0;
-  // console.log(environment);
 
   for (let i = 0; i < syllable.length; i++) {
     const token = syllable[i];
+    // console.log(environment);
     const phoneme = ALL_PHONEMES.find(x => x.phoneme === token);
 
     if (token === token.toUpperCase() && phonemeClasses[token] && timesLooped < 10) {
       
       // This is, in fact, a class! Huzzah! Get all the tokens.
-      const classTokens = filterForbiddenCombinations(language, phonemeClasses[token].tokens);
+      const classTokens = filterForbiddenCombinations(environment, language.phonology.forbiddenCombinations, phonemeClasses[token].tokens);
       // TODO: Filter the list for anything not permitted.
       // console.log('filter me', phonemeClasses[token].tokens, language.phonology.forbiddenCombinations);
       
@@ -125,13 +125,15 @@ export function syllableToPhonemes(syllable: string, language: ILanguage, enviro
       // Item is now either a random phoneme fitting the class, or another class token, or nothing.
       
       syllable = syllable.slice(0, i) + item + syllable.slice(i + 1);
+      // const index = environment.indexOf('_');
+      // environment = `${environment.slice(0, index)}_${item}${environment.slice(index + 1)}`;
       i -= 1;
       timesLooped++;
     } else if (phoneme) {
       phonemes.push(phoneme);
       const index = environment.indexOf('_');
       environment = `${environment.slice(0, index)}${phoneme.phoneme}_${environment.slice(index + 1)}`;
-      console.log(environment);
+      // console.log(environment);
       timesLooped = 0;
     } else {
       // This isn't a proper token, so just add it to the word. Might be an apostrophe or some other crap.
@@ -143,14 +145,19 @@ export function syllableToPhonemes(syllable: string, language: ILanguage, enviro
   return phonemes;
 }
 
-export function filterForbiddenCombinations(language: ILanguage, tokens: string[]): string[] {
-  if (!language.phonology.forbiddenCombinations) {
-    return tokens;
-  }
-  // console.log(positioning);
-  return tokens;
+export function filterForbiddenCombinations(environment: string, forbiddenCombinationsStr: string, collection: string[]): string[] {
+  const forbiddenCombinations = forbiddenCombinationsStr.split(' ');
+  const allowed = collection.filter(token => {
+    for (let i = 0; i < forbiddenCombinations.length; i++) {
+      if (environment.replace('_', token).includes(forbiddenCombinations[i])) {
+        return false;
+      }
+    }
+    return true;
+  });
+  // console.log(environment, forbiddenCombinations, allowed);
+  return allowed;
 }
-
 /*
 export function generateWord(language: ILanguage, rules: IPhonologicalRule[]) {
   let length = 1 + Math.floor(Math.random() * 3);
