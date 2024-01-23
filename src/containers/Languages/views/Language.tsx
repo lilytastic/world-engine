@@ -112,7 +112,6 @@ export function Language(props: {children?: any}) {
       <SampleWords></SampleWords>
 
       <AutoFormer data={scratch} form={LanguageForm} update={setScratch}></AutoFormer>
-      <Button onClick={() => {console.log(scratch); dispatch(updateLanguage(scratch)); }}>Save</Button>
     </div>
   );
 }

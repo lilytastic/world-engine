@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Dropdown } from 'react-bootstrap';
+import { Button, ButtonGroup, Dropdown } from 'react-bootstrap';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { ILanguage } from '../models/language.model';
@@ -15,13 +15,15 @@ export const LanguageOptions = (props: {children?: any, language: ILanguage, scr
 
   return (
     <Dropdown className={props.className}>
-      <Button disabled={scratch === null} onClick={() => dispatch(updateLanguage(scratch))}>
-        <i className='fas fa-floppy-disk me-2'></i>
-        Save
-      </Button>
-      <Dropdown.Toggle variant='link' id="dropdown-basic">
-        <i className='fas fa-ellipsis fa-sm me-2'></i>
-      </Dropdown.Toggle>
+      <ButtonGroup>
+        <Button disabled={scratch === null} onClick={() => dispatch(updateLanguage(scratch))}>
+          <i className='fas fa-file-arrow-down me-2'></i>
+          Save
+        </Button>
+        <Dropdown.Toggle variant='primary' id="dropdown-basic">
+          <i className='fas fa-caret-down'></i>
+        </Dropdown.Toggle>
+      </ButtonGroup>
 
       <Dropdown.Menu>
         <Dropdown.Item as={Button}
