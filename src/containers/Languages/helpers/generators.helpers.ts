@@ -105,7 +105,8 @@ export function processWordPattern(language: ILanguage, env: string): string {
         i -= 1;
         timesLooped++;
       } else if (!phoneme) {
-        console.error('no options for ', phonemeClasses[token].tokens, currentEnvironment);
+        // console.error('no options for ', phonemeClasses[token].tokens, currentEnvironment);
+        // We can't do anything with this token. Start over.
         i = 0;
         timesLooped++;
         environment = env;
