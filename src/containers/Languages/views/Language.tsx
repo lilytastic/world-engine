@@ -88,7 +88,7 @@ export function Language(props: {children?: any}) {
         {children}
       </Col>
       <Col sm={6} md={4} className="position-relative overflow-hidden d-none d-lg-block">
-        <div style={{transition: 'transform .5s ease-in-out .03s', transform: `translateY(${scrollPosition}px)`}}>
+        <div style={{transition: 'transform .3s ease-in-out .03s', transform: `translateY(${scrollPosition}px)`}}>
           <PhoneticKeyboard />
         </div>
       </Col>
