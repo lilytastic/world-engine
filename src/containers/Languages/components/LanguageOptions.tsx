@@ -28,6 +28,12 @@ export const LanguageOptions = (props: {children?: any, language: ILanguage, scr
       <Dropdown.Menu>
         <Dropdown.Item as={Button}
                        className='btn btn-link'>
+          <i className='fas fa-download fa-sm fa-fw me-2'></i>
+          Download
+        </Dropdown.Item>
+        <Dropdown.Divider />
+        <Dropdown.Item as={Button}
+                       className='btn btn-link'>
           <i className='fas fa-user-group fa-sm fa-fw me-2'></i>
           Change Parent
         </Dropdown.Item>

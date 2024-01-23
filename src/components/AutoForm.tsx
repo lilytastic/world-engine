@@ -224,9 +224,8 @@ export function AutoFormer<T>(props: {children?: any, className?: string, form: 
       case AutoFormField.TabGroup:
         return (<Tabs
             defaultActiveKey={item.children?.[0]?.key}
-            variant='pills'
             key={item.key}
-            className="mt-4 mb-4 mx-auto rounded"
+            className="mt-4 mb-4 mx-auto rounded w-100"
             style={{width: 'fit-content'}}
           >
             {item.children?.map(tab => (<Tab key={tab.id || tab.key} eventKey={tab.id || tab.key} title={tab.label}>
