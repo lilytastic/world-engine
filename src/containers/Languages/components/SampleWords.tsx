@@ -5,7 +5,7 @@ import { ILanguage, IWord } from '../models/language.model';
 
 import { useParams } from 'react-router';
 
-import { getSampleWordsV2 } from '../helpers/generators.helpers';
+import { getSampleWords } from '../helpers/generators.helpers';
 
 export function SampleWords(props: {children?: any, language: ILanguage}) {
 
@@ -16,7 +16,7 @@ export function SampleWords(props: {children?: any, language: ILanguage}) {
 
   useEffect(() => {
     if (language) {
-      setSampleWords(getSampleWordsV2(language));
+      setSampleWords(getSampleWords(language));
     }
   }, [language, params.id]);
 
@@ -28,7 +28,7 @@ export function SampleWords(props: {children?: any, language: ILanguage}) {
     <div style={{minHeight: '9em'}}>
       <h3>
         Samples
-        <button className='btn btn-link' onClick={() => setSampleWords(getSampleWordsV2(language))}><i className='fas fa-rotate-right'></i></button>
+        <button className='btn btn-link' onClick={() => setSampleWords(getSampleWords(language))}><i className='fas fa-rotate-right'></i></button>
       </h3>
       <div>
         <i>{currentSampleWords.map(x => x.transcription).join(', ')}</i>

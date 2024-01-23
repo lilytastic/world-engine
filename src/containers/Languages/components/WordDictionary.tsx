@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { Button, Col, Form, InputGroup, Row } from "react-bootstrap";
-import { AutoFormItem } from "../../Root/models/language.form";
+import { AutoFormItem } from "../../Root/models/form.model";
+import { IWord } from "../models/language.model";
 
 // add: (key: string, value: string) => void,
-export function WordDictionary<T>(props: {item: AutoFormItem<T>, value: any, generateWord?: () => string, change: (key: string, value: string) => void, blur: (key: string, value: string) => void}) {
+export function WordDictionary<T>(props: {item: AutoFormItem<T>, value: any, generateWord?: () => IWord, change: (key: string, value: string) => void, blur: (key: string, value: string) => void}) {
   const { value, change, blur, generateWord } = props;
   
   const dictionary = value || {};
@@ -68,7 +69,7 @@ export function WordDictionary<T>(props: {item: AutoFormItem<T>, value: any, gen
         <InputGroup key={i + page * pageLength + word}>
           <InputGroup.Text>{word}</InputGroup.Text>
           <Form.Control as='input' value={dictionary[word] || ''} onChange={ev => change(word, ev.currentTarget.value)} onBlur={ev => blur(word, ev.currentTarget.value)}></Form.Control>
-          <Button variant='link' onClick={() => blur(word, generateWord?.() || '')}><i className={`fas fa-dice`}></i></Button>
+          <Button variant='link' onClick={() => blur(word, generateWord?.().transcription || '')}><i className={`fas fa-dice`}></i></Button>
         </InputGroup>
       ))}
     </div>

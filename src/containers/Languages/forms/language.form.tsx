@@ -1,8 +1,8 @@
 import { Popover } from "react-bootstrap";
-import { AutoForm, AutoFormField } from "../../Root/models/language.form";
+import { AutoForm, AutoFormField } from "../../Root/models/form.model";
 import { ILanguage } from "../models/language.model";
 import { ProbabilityType } from "../helpers/logic.helpers";
-import { generateWordV2 } from "../helpers/generators.helpers";
+import { generateWord } from "../helpers/generators.helpers";
 
 export const compileLanguageForm = (language: ILanguage | undefined, generateDictionary: () => void): AutoForm<ILanguage> => {
     if (!language) { return []; }
@@ -129,6 +129,12 @@ export const compileLanguageForm = (language: ILanguage | undefined, generateDic
           },
           {
             type: AutoFormField.Tab,
+            label: 'Spelling',
+            key: 'spelling',
+            children: []
+          },
+          {
+            type: AutoFormField.Tab,
             label: 'Vocabulary',
             id: 'vocabulary',
             children: [
@@ -189,7 +195,7 @@ export const compileLanguageForm = (language: ILanguage | undefined, generateDic
                     type: AutoFormField.WordDictionary,
                     key: 'dictionary',
                     templateOptions: {
-                      generateWord: language ? () => { return generateWordV2(language) } : null
+                      generateWord: language ? () => { return generateWord(language) } : null
                     }
                   }
                 ]

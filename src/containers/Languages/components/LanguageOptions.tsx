@@ -17,8 +17,8 @@ export const LanguageOptions = (props: {children?: any, language: ILanguage, scr
     <Dropdown className={props.className}>
       <ButtonGroup>
         <Button disabled={scratch === null} onClick={() => dispatch(updateLanguage(scratch))}>
-          <i className='fas fa-file-arrow-down me-2'></i>
-          Save
+          <i className='fas fa-pen-to-square me-2'></i>
+          Save changes
         </Button>
         <Dropdown.Toggle variant='primary' id="dropdown-basic">
           <i className='fas fa-caret-down'></i>

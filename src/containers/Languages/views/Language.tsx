@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { generateWordV2 } from '../helpers/generators.helpers';
+import { generateWord } from '../helpers/generators.helpers';
 
 import { ILanguage } from '../models/language.model';
 import { useDispatch, useSelector } from 'react-redux';
@@ -11,7 +11,7 @@ import { LanguageOptions } from '../components/LanguageOptions';
 import { NavLink } from 'react-router-dom';
 import { PhoneticKeyboard } from '../components/PhoneticKeyboard';
 import { AutoFormer, mergeDeep } from '../../../components/AutoForm';
-import { AutoForm } from '../../Root/models/language.form';
+import { AutoForm } from '../../Root/models/form.model';
 import { processWordFromDictionary } from '../components/WordDictionary';
 import { universalWords } from '../../../assets/universaldictionary';
 import { compileLanguageForm } from '../forms/language.form';
@@ -69,7 +69,7 @@ export function Language(props: {children?: any}) {
     if (scratch?.vocabulary.useDefaultRootWords) {
       universalWords.split('\n').forEach(word => {
         const duh = processWordFromDictionary(word);
-        dictionary[duh.label] = generateWordV2(scratch).transcription;
+        dictionary[duh.label] = generateWord(scratch).transcription;
       });
     }
     console.log(dictionary);

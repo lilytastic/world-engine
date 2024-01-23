@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Button, Col, Form, InputGroup, OverlayTrigger, Popover, Row, Tab, Tabs } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { AutoForm, AutoFormField, AutoFormItem } from '../containers/Root/models/language.form';
+import { AutoForm, AutoFormField, AutoFormItem } from '../containers/Root/models/form.model';
 import { EntityState } from '@reduxjs/toolkit';
 import { StringDictionary } from './StringDictionary';
 import { WordDictionary } from '../containers/Languages/components/WordDictionary';
