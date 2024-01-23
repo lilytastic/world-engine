@@ -1,5 +1,5 @@
 import { TypedSound, IPhonemeClass } from "../models/sounds.model";
-import { getWordPatternDictionary, wordPatternToPhonemesV2 } from "./word-patterns.helpers";
+import { getWordPatternDictionary, wordPatternToSyllables } from "./word-patterns.helpers";
 import { getRandomArrayItem } from "./logic.helpers";
 import { ILanguage, IWord } from "../models/language.model";
 import { IPhonologicalToken } from "../models/phonology.model";
@@ -42,26 +42,8 @@ export function getPhonemeClassDictionary(language: ILanguage) {
   return dictionary;
 }
 
-/*
-export function getSampleWords(language: ILanguage) {
-  let arr: IWord[] = [];
-  if (language.vowels.length === 0 || language.consonants.length === 0) { return arr; }
-
-  const rules = generateRules(language.phonology.phonotactics);
-  //console.log('rules', rules);
-  for (let i = 0; i < 30; i++) {
-    arr.push(generateWord(language, rules));
-    //arr.push(generateWordV2(language, phonemeClasses, wordPatterns));
-  }
-  return arr;
-}
-*/
-
 export function getSampleWordsV2(language: ILanguage) {
   let arr: IWord[] = [];
-  // console.log('language', language);
-  // console.log('phonemeClasses', phonemeClasses);
-  // console.log('wordPatterns', wordPatterns);
   for (let i = 0; i < 30; i++) {
     arr.push(generateWordV2(language));
   }
@@ -71,12 +53,13 @@ export function getSampleWordsV2(language: ILanguage) {
 export function generateWordV2(language: ILanguage): IWord {
   const wordPatterns = getWordPatternDictionary(language);
   const wordPattern = getRandomArrayItem(wordPatterns['word']);
-  const tokens = wordPatternToPhonemesV2(
+  const syllables = wordPatternToSyllables(
     language,
     wordPattern
   );
-  // console.log('word', tokens);
-  const transcription = tokens.map(x => {
+  const phonemes = syllables.flat();
+
+  const transcription = phonemes.map(x => {
     const sound = x as TypedSound;
     if (!!sound.phoneme) {
       return sound.romanization || sound.phoneme
@@ -84,14 +67,16 @@ export function generateWordV2(language: ILanguage): IWord {
       return x;
     }
   }).join('');
-  const sounds = tokens.filter(x => {
+
+  const sounds = phonemes.filter(x => {
     const sound = x as TypedSound;
     if (!!sound.phoneme) {
       return true;
     }
     return false;
   }) as TypedSound[];
-  return { transcription, sounds }
+
+  return { transcription, sounds };
 }
 
 /*
