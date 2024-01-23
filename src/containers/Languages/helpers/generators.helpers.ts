@@ -163,11 +163,24 @@ export function syllableToPhonemes(syllable: string, language: ILanguage, enviro
 }
 
 export function filterForbiddenCombinations(environment: string, forbiddenCombinationsStr: string, collection: string[]): string[] {
+
   const forbiddenCombinations = forbiddenCombinationsStr.split(' ');
+
+  // Count syllable boundaries as word boundaries
+  for (let i = 0; i < forbiddenCombinations.length; i++) {
+    if (forbiddenCombinations[i].includes('σ')) {
+      forbiddenCombinations.push(forbiddenCombinations[i].replace('σ', '#'));
+    }
+  }
+
   const allowed = collection.filter(token => {
     for (let i = 0; i < forbiddenCombinations.length; i++) {
       const forbiddenCombination = forbiddenCombinations[i];
-      const test = forbiddenCombination.length > 0 && (environment.replace('_', token).includes(forbiddenCombination) || environment.replace('_', token).includes(forbiddenCombination.replace('σ', '#')));
+      const includes = environment.replace('_', token).includes(forbiddenCombination);
+      const includesWithoutBoundaries = environment.replace('_', token).replace('/σ/g', '').replace('/#/g', '').includes(forbiddenCombination);
+      const test = forbiddenCombination.length > 0
+                  && (includes || includesWithoutBoundaries);
+                  // TODO: 
       if (test) {
         console.log('testing', environment.replace('_', token), `${test} (${forbiddenCombination})`);
         return false;
