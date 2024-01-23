@@ -3,7 +3,26 @@ import { Button, Col, Dropdown, ListGroup, Row } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, NavLink, useLocation } from 'react-router-dom';
 import { addNewLanguage, getLanguages } from '../reducers/language.reducer';
+import { DEFAULT_LANGUAGE, ILanguage } from '../models/language.model';
 
+export const ENGLISH_TEMPLATE: Partial<ILanguage> = {
+  phonology: {
+    ...DEFAULT_LANGUAGE.phonology,
+    phonemeClasses: `C = f g h\nV = a e\nS = CVC`
+  }
+};
+
+export interface ILanguageTemplate {
+  template: Partial<ILanguage>;
+  label: string;
+}
+
+const TEMPLATES: ILanguageTemplate[] = [
+  {
+    template: ENGLISH_TEMPLATE,
+    label: 'English'
+  }
+]
 
 export const LanguagePicker = (props: {children?: any, className?: string}) => {
 
@@ -40,26 +59,14 @@ export const LanguagePicker = (props: {children?: any, className?: string}) => {
             </Dropdown.Item>
             <Dropdown.Divider></Dropdown.Divider>
             <Dropdown.ItemText className='small'>Templates</Dropdown.ItemText>
-            <Dropdown.Item as={Button}
-                          onClick={() => { dispatch(addNewLanguage({history})); }}
-                          className='btn btn-link'>
-              English
-            </Dropdown.Item>
-            <Dropdown.Item as={Button}
-                          onClick={() => { dispatch(addNewLanguage({history})); }}
-                          className='btn btn-link'>
-              Spanish
-            </Dropdown.Item>
-            <Dropdown.Item as={Button}
-                          onClick={() => { dispatch(addNewLanguage({history})); }}
-                          className='btn btn-link'>
-              Arabic
-            </Dropdown.Item>
-            <Dropdown.Item as={Button}
-                          onClick={() => { dispatch(addNewLanguage({history})); }}
-                          className='btn btn-link'>
-              Korean
-            </Dropdown.Item>
+
+            {TEMPLATES.map(templateDef => (
+              <Dropdown.Item as={Button}
+                             onClick={() => { dispatch(addNewLanguage({history, spread: templateDef.template})); }}
+                             className='btn btn-link'>
+                {templateDef.label}
+              </Dropdown.Item>
+            ))}
           </Dropdown.Menu>
         </Dropdown>
 

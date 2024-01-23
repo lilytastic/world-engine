@@ -37,7 +37,7 @@ export const LanguageOptions = (props: {children?: any, language: ILanguage, scr
           <i className='fas fa-user-group fa-sm fa-fw me-2'></i>
           Change Parent
         </Dropdown.Item>
-        <Dropdown.Item onClick={ev => dispatch(addNewLanguage({language: {name: language.name, parent: language.id}, history}))}
+        <Dropdown.Item onClick={ev => dispatch(addNewLanguage({spread: {name: language.name, parent: language.id}, history}))}
                        as={Button}
                        className='btn btn-link'>
           <i className='fas fa-user-plus fa-sm fa-fw me-2'></i>

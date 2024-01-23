@@ -40,7 +40,11 @@ export const languageSlice = createSlice({
   initialState,
   reducers: {
     addNewLanguage: (state, action) => {
-      const newLanguage = { ...DEFAULT_LANGUAGE, ...(action.payload.language || {}), id: Math.max(0, Math.max(...state.languages.ids.map(x => +x)) + 1) };
+      const template = action.payload.template || DEFAULT_LANGUAGE;
+      const spread = action.payload.spread || {};
+      const newLanguage = { ...template, ...spread, id: Math.max(0, Math.max(...state.languages.ids.map(x => +x)) + 1) };
+      console.log(newLanguage);
+      return {...state};
       const languages = languageAdapter.upsertOne({...state.languages}, newLanguage);
       localStorage.setItem('languages', JSON.stringify(languages));
       if (action.payload.history) {

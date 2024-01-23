@@ -105,13 +105,14 @@ export function processWordPattern(language: ILanguage, env: string): string {
         i -= 1;
         timesLooped++;
       } else if (!phoneme) {
-        // console.error('no options for ', phonemeClasses[token].tokens, currentEnvironment);
+        console.error('no options for ', phonemeClasses[token].tokens, currentEnvironment);
         i = 0;
         timesLooped++;
         environment = env;
       }
     } else if (phoneme) {
       environment = `${environment.slice(0, i)}${phoneme.phoneme}${environment.slice(i + 1)}`;
+      timesLooped = 0;
     } else {
       environment = `${environment.slice(0, i)}${token}${environment.slice(i + 1)}`;
     }
