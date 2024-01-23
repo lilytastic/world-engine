@@ -1,8 +1,9 @@
 import { createSlice, createEntityAdapter, EntityState } from '@reduxjs/toolkit'
 import type { RootState } from '../../Root/store'
 import { createSelector } from 'reselect'
-import { DEFAULT_LANGUAGE, ILanguage } from '../models/language.model';
+import { ILanguage } from '../models/language.model';
 import { NavigateFunction, Navigation } from 'react-router';
+import { DEFAULT_LANGUAGE } from '../data/templates';
 
 const languageAdapter = createEntityAdapter<ILanguage>({
   // Assume IDs are stored in a field other than `book.id`
@@ -43,8 +44,6 @@ export const languageSlice = createSlice({
       const template = action.payload.template || DEFAULT_LANGUAGE;
       const spread = action.payload.spread || {};
       const newLanguage = { ...template, ...spread, id: Math.max(0, Math.max(...state.languages.ids.map(x => +x)) + 1) };
-      console.log(newLanguage);
-      return {...state};
       const languages = languageAdapter.upsertOne({...state.languages}, newLanguage);
       localStorage.setItem('languages', JSON.stringify(languages));
       if (action.payload.history) {

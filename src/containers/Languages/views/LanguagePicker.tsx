@@ -3,26 +3,8 @@ import { Button, Col, Dropdown, ListGroup, Row } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, NavLink, useLocation } from 'react-router-dom';
 import { addNewLanguage, getLanguages } from '../reducers/language.reducer';
-import { DEFAULT_LANGUAGE, ILanguage } from '../models/language.model';
-
-export const ENGLISH_TEMPLATE: Partial<ILanguage> = {
-  phonology: {
-    ...DEFAULT_LANGUAGE.phonology,
-    phonemeClasses: `C = f g h\nV = a e\nS = CVC`
-  }
-};
-
-export interface ILanguageTemplate {
-  template: Partial<ILanguage>;
-  label: string;
-}
-
-const TEMPLATES: ILanguageTemplate[] = [
-  {
-    template: ENGLISH_TEMPLATE,
-    label: 'English'
-  }
-]
+import { ILanguage } from '../models/language.model';
+import { TEMPLATES } from '../data/templates';
 
 export const LanguagePicker = (props: {children?: any, className?: string}) => {
 

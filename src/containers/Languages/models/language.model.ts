@@ -34,33 +34,6 @@ export interface IPhonology {
   dropoffRate: ProbabilityType;
 }
 
-export const DEFAULT_LANGUAGE: ILanguage = {
-  id: 1,
-  name: "",
-  type: 'language',
-  dictionary: {},
-  vocabulary: {
-    generateWords: '',
-    derivedWords: '',
-    useDefaultRootWords: true,
-    useDefaultDerivedWords: true
-  },
-  vowels: [],
-  consonants: [],
-  phonology: {
-    syllableShape: 'CV(C)',
-    phonemeClasses: 'C = b k p t d r s v w q g\nL = l m n\nV = a e i o u\nS = CV CVL VC',
-    wordPatterns: 'S\nSS\nSSS\n\narticle = \nS\nV\n\npronoun = \nS\nSS\n\ndeterminer = \nS',
-    soundChanges: '',
-    forbiddenCombinations: '',
-    banSameVowels: true,
-    banSameConsonants: false,
-    dropoffRate: ProbabilityType.FastDropoff,
-    stressSystem: '',
-    phonotactics: []
-  }
-}
-
 /*
 export interface IWord {
   syllables: ISyllable[];
