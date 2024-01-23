@@ -96,7 +96,11 @@ export function wordPatternToSyllables(language: ILanguage, wordPattern: IWordPa
   for (let i = 0; i < pattern.length; i++) {
     let prev = syllablesToString(syllables);
     if (syllables.length > 0) { prev += 'σ'; }
-    syllables.push(syllableToPhonemes(pattern[i], language, `#${prev}_${pattern.slice(i + 1).join('')}#`));
+    let future = pattern.slice(i + 1).join('');
+    if (future.length > 0) {
+      future = 'σ' + future;
+    }
+    syllables.push(syllableToPhonemes(pattern[i], language, `#${prev}_${future}#`));
   }
 
   return syllables;
@@ -106,42 +110,53 @@ export function syllableToPhonemes(syllable: string, language: ILanguage, enviro
   const ALL_PHONEMES = [...CONSONANTS, ...VOWELS];
   const phonemeClasses = getPhonemeClassDictionary(language);
   const phonemes = [];
+  let env = environment;
 
   let timesLooped = 0;
 
   for (let i = 0; i < syllable.length; i++) {
     const token = syllable[i];
-    // console.log(environment);
+    console.log(env);
     const phoneme = ALL_PHONEMES.find(x => x.phoneme === token);
 
     if (token === token.toUpperCase() && phonemeClasses[token] && timesLooped < 10) {
       
       // This is, in fact, a class! Huzzah! Get all the tokens.
-      const classTokens = filterForbiddenCombinations(environment, language.phonology.forbiddenCombinations, phonemeClasses[token].tokens);
+      const index = env.indexOf('_');
+      if (env[index + 1] !== '#') {
+        env = `${env.slice(0, index)}_${env.slice(index + 2)}`;
+      }
+      const classTokens = filterForbiddenCombinations(env, language.phonology.forbiddenCombinations, phonemeClasses[token].tokens);
       // TODO: Filter the list for anything not permitted.
       // console.log('filter me', phonemeClasses[token].tokens, language.phonology.forbiddenCombinations);
       
       const item = getRandomArrayItem(classTokens, language.phonology.dropoffRate || ProbabilityType.MediumDropoff);
       // Item is now either a random phoneme fitting the class, or another class token, or nothing.
-      
-      syllable = syllable.slice(0, i) + item + syllable.slice(i + 1);
-      // const index = environment.indexOf('_');
-      // environment = `${environment.slice(0, index)}_${item}${environment.slice(index + 1)}`;
-      i -= 1;
-      timesLooped++;
+      if (item) {
+        syllable = syllable.slice(0, i) + item + syllable.slice(i + 1);
+        if (item.toUpperCase() === item && phonemeClasses[token]) {
+          const index = env.indexOf('_');
+          env = `${env.slice(0, index)}_${item}${env.slice(index + 1)}`;
+          console.log(env, 'adding', item);
+        }
+        i -= 1;
+        timesLooped++;
+      } else {
+        console.error('no options for ', phonemeClasses[token].tokens, env);
+      }
     } else if (phoneme) {
       phonemes.push(phoneme);
-      const index = environment.indexOf('_');
-      environment = `${environment.slice(0, index)}${phoneme.phoneme}_${environment.slice(index + 1)}`;
-      // console.log(environment);
+      const index = env.indexOf('_');
+      env = `${env.slice(0, index)}${phoneme.phoneme}_${env.slice(index + 2)}`;
+      console.log(env, 'adding phoneme', phoneme.phoneme);
       timesLooped = 0;
-    } else {
+    } else if (token) {
       // This isn't a proper token, so just add it to the word. Might be an apostrophe or some other crap.
       phonemes.push(token);
     }
   }
 
-  // console.log(environment);
+  // console.log(env);
   return phonemes;
 }
 
@@ -149,10 +164,14 @@ export function filterForbiddenCombinations(environment: string, forbiddenCombin
   const forbiddenCombinations = forbiddenCombinationsStr.split(' ');
   const allowed = collection.filter(token => {
     for (let i = 0; i < forbiddenCombinations.length; i++) {
-      if (environment.replace('_', token).includes(forbiddenCombinations[i])) {
+      const forbiddenCombination = forbiddenCombinations[i];
+      const test = forbiddenCombination.length > 0 && (environment.replace('_', token).includes(forbiddenCombination) || environment.replace('_', token).includes(forbiddenCombination.replace('σ', '#')));
+      if (test) {
+        console.log('testing', environment.replace('_', token), `${test} (${forbiddenCombination})`);
         return false;
       }
     }
+    console.log('testing', environment.replace('_', token), `OK!`);
     return true;
   });
   // console.log(environment, forbiddenCombinations, allowed);
