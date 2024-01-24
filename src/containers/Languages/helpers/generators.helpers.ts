@@ -87,8 +87,8 @@ export function processWordPattern(language: ILanguage, env: string): string {
     const token = environment[i];
     if (token === '#') { continue; }
 
-    if (timesLooped > 10) {
-      // TRY AGAIN
+    if (timesLooped > 20) {
+      // Go back and start again.
       // console.error('I SURRENDER', env);
       return processWordPattern(language, env);
     }
@@ -98,7 +98,6 @@ export function processWordPattern(language: ILanguage, env: string): string {
       let currentEnvironment = `${environment.slice(0, i)}_${environment.slice(i + 2)}`;
       if (!currentEnvironment.endsWith('#')) {currentEnvironment += '#';}
       const classTokens = filterForbiddenCombinations(currentEnvironment, language, phonemeClasses[token].tokens);
-      // console.log(currentEnvironment, classTokens);
       const item = getRandomArrayItem(classTokens, language.phonology.dropoffRate || ProbabilityType.MediumDropoff);
       if (item) {
         environment = `${environment.slice(0, i)}${item}${environment.slice(i + 1)}`;

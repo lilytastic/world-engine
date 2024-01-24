@@ -133,7 +133,20 @@ export const compileLanguageForm = (language: ILanguage | undefined, generateDic
             type: AutoFormField.Tab,
             label: 'Spelling',
             key: 'spelling',
-            children: []
+            children: [
+              {
+                type: AutoFormField.Group,
+                children: [
+                  {
+                    type: AutoFormField.Control,
+                    key: 'spellingRules',
+                    label: 'Spelling Rules',
+                    as: 'textarea',
+                    placeholder: `eɪ̯ > a\nð > th\nθ > th\nʍ > wh\nŋg > ng`
+                  }
+                ]
+              },
+            ]
           },
           {
             type: AutoFormField.Tab,
