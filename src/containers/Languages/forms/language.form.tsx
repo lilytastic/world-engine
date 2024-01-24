@@ -113,7 +113,6 @@ export const compileLanguageForm = (language: ILanguage | undefined, generateDic
                   }
                 ]
               },
-              /*
               {
                 type: AutoFormField.Group,
                 children: [
@@ -126,7 +125,6 @@ export const compileLanguageForm = (language: ILanguage | undefined, generateDic
                   },
                 ]
               }
-              */
             ]
           },
           {

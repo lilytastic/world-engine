@@ -21,32 +21,35 @@ export function generateWord(language: ILanguage, type = 'word'): IWord {
   const appropriatePatterns = filterForbiddenCombinations(EMPTY_ENVIRONMENT, language, wordPatterns.map(x => x.pattern.join('')));
   const wordPattern = getRandomArrayItem(appropriatePatterns);
   
-  const processedWordStr = processWordPattern(language, wordPattern);
+  const filledWordStr = fillWordPattern(language, wordPattern);
 
-  const phonemes = extractPhonemeStringArray(processedWordStr);
+  const phonemes = extractPhonemeStringArray(filledWordStr);
   const transcription = transcribePhonemeStringArray(phonemes);
   const sounds = filterSoundsFromPhonemeStringArray(phonemes);
 
   return { transcription, sounds };
 }
 
-export function processWordPattern(language: ILanguage, env: string): string {
-  let environment = env;
+export function fillWordPattern(language: ILanguage, wordPattern: string): string {
+  let environment = wordPattern;
   const phonemeClasses = getPhonemeClassDictionary(language);
-  let timesLooped = 0;
 
-  for (let pos = 0; pos < environment.length; pos++) {
+  let timesLooped = 0;
+  for (let position = 0; position < environment.length; position++) {
     if (timesLooped > 20) {
-      return processWordPattern(language, env); // Go back and start again to prevent an infinite loop.
+      return fillWordPattern(language, wordPattern); // Go back and start again to prevent an infinite loop.
     }
 
-    const insert = processToken(language, phonemeClasses, { environment, position: pos });
+    const insert = processToken(language, phonemeClasses, { environment, position });
     if (!!insert) {
-      environment = insertString(environment, insert.token, pos);
-      if (insert.type === PhonologicalToken.ClassToken) { pos -= 1; timesLooped++; }
+      environment = insertString(environment, insert.token, position);
+      if (insert.type === PhonologicalToken.ClassToken) {
+        position -= 1;
+        timesLooped++;
+      }
     } else {
-      environment = env;
-      pos = 0;
+      environment = wordPattern;
+      position = 0;
       timesLooped++;
     }
   }
