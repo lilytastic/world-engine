@@ -36,19 +36,42 @@ export function getSoundChanges(language: ILanguage): string[] {
   return language.phonology.soundChanges.split('\n');
 }
 
+export function splitVariableToken(token: string) {
+  const openingBracket = token.indexOf('{');
+  const closingBracket = token.indexOf('}');
+  if (openingBracket !== -1 && closingBracket !== -1) {
+    return token.slice(openingBracket + 1, closingBracket).split(',').map(x => x.trim());
+  } else {
+    return [ token ];
+  }
+}
+
 export function getSoundChange(insert: PhonologicalToken, env: StringEnvironment, language: ILanguage): PhonologicalToken | null {
   const soundChanges = getSoundChanges(language);
   env.environment = `#${env.environment}#`;
   const environment = markPositionInEnvironment(env);
-  soundChanges.forEach(chng => {
-    const [instruction, inEnvironmentOf] = chng.split('/').map(x => x.trim());
+
+  for (let i = 0; i < soundChanges.length; i++) {
+    const changeRule = soundChanges[i];
+    let instruction = changeRule;
+
+    let applies = true;
+    if (changeRule.includes('/')) {
+      let tokens = changeRule.split('/').map(x => x.trim());
+      instruction = tokens[0];
+      applies = environment.includes(tokens[1]);
+    }
+
     const [target, result] = instruction.split('>').map(x => x.trim());
-    if ( environment.includes(inEnvironmentOf) ) {
-      if (insert.token === target) {
+    const targets = splitVariableToken(target);
+    
+    if (applies) {
+      if (targets.includes(insert.token)) {
         insert.token = result;
+        return insert;
       }
     }
-  });
+  };
   return null;
 }
 
