@@ -5,11 +5,13 @@ import {
   filterSoundsFromPhonemeStringArray,
   getRandomArrayItem,
   insertString,
-  processToken,
-  transcribePhonemeStringArray
+  fillToken,
+  transcribePhonemeStringArray,
+  StringEnvironment,
+  markPositionInEnvironment
 } from "./logic.helpers";
 import { getWordPatternDictionary } from "./word-patterns.helpers";
-import { PhonologicalToken, getPhonemeClassDictionary } from "./phonology.helpers";
+import { PhonologicalToken, PhonologicalTokenType, getPhonemeClassDictionary } from "./phonology.helpers";
 import { ILanguage, IWord } from "../models/language.model";
 
 // TODO: Try to implement some of https://github.com/conlang-software-dev/Logopoeist
@@ -30,6 +32,26 @@ export function generateWord(language: ILanguage, type = 'word'): IWord {
   return { transcription, sounds };
 }
 
+export function getSoundChanges(language: ILanguage): string[] {
+  return language.phonology.soundChanges.split('\n');
+}
+
+export function getSoundChange(insert: PhonologicalToken, env: StringEnvironment, language: ILanguage): PhonologicalToken | null {
+  const soundChanges = getSoundChanges(language);
+  env.environment = `#${env.environment}#`;
+  const environment = markPositionInEnvironment(env);
+  soundChanges.forEach(chng => {
+    const [instruction, inEnvironmentOf] = chng.split('/').map(x => x.trim());
+    const [target, result] = instruction.split('>').map(x => x.trim());
+    if ( environment.includes(inEnvironmentOf) ) {
+      if (insert.token === target) {
+        insert.token = result;
+      }
+    }
+  });
+  return null;
+}
+
 export function fillWordPattern(language: ILanguage, wordPattern: string): string {
   let environment = wordPattern;
   const phonemeClasses = getPhonemeClassDictionary(language);
@@ -40,10 +62,14 @@ export function fillWordPattern(language: ILanguage, wordPattern: string): strin
       return fillWordPattern(language, wordPattern); // Go back and start again to prevent an infinite loop.
     }
 
-    const insert = processToken(language, phonemeClasses, { environment, position });
+    const env: StringEnvironment = { environment, position };
+
+    let insert = fillToken(language, phonemeClasses, env);
     if (!!insert) {
+      insert = getSoundChange(insert, env, language) || insert;
+      // TODO: sound changes go here
       environment = insertString(environment, insert.token, position);
-      if (insert.type === PhonologicalToken.ClassToken) {
+      if (insert.type === PhonologicalTokenType.ClassToken) {
         position -= 1;
         timesLooped++;
       }

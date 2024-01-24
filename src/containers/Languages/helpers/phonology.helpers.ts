@@ -2,8 +2,10 @@ import { VOWELS } from "../data/vowels";
 import { ILanguage } from "../models/language.model";
 import { BOUNDARY_MARKERS, IPhonologicalRule, IPhonologicalToken, IPhonotactic, ISoundRules, PhonologicalTokenCollectionTypes, PhonologicalTokens, SoundPositions } from "../models/phonology.model";
 import { IPhonemeClass, ISound } from "../models/sounds.model";
+import { toDictionary } from "./logic.helpers";
 
-export enum PhonologicalToken { ClassToken, Phoneme, Unknown };
+export enum PhonologicalTokenType { ClassToken, Phoneme, Unknown };
+export type PhonologicalToken = {token: string, type: PhonologicalTokenType};
 
 export function getDefaultPositions(language: ILanguage, phoneme: string): SoundPositions[] {
   if (!!VOWELS.find(x => x.phoneme === phoneme)) {
@@ -42,13 +44,7 @@ export function getPhonemeClasses(language: ILanguage): IPhonemeClass[] {
 
 export type PhonemeClassDictionary = {[id: string]: IPhonemeClass};
 export function getPhonemeClassDictionary(language: ILanguage): PhonemeClassDictionary {
-  const classes = getPhonemeClasses(language);
-  const dictionary: {[className: string]: IPhonemeClass} = {};
-  classes.forEach(c => {
-    dictionary[c.className] = c;
-  });
-
-  return dictionary;
+  return toDictionary(getPhonemeClasses(language), (o) => o.className);
 }
 
 

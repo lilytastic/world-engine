@@ -2,7 +2,7 @@ import { ILanguage } from "../models/language.model";
 import { IPhonologicalToken } from "../models/phonology.model";
 import { TypedSound } from "../models/sounds.model";
 import { ALL_PHONEMES } from "./generators.old.helpers";
-import { PhonemeClassDictionary, PhonologicalToken, getPhonemeClassDictionary } from "./phonology.helpers";
+import { PhonemeClassDictionary, PhonologicalToken, PhonologicalTokenType, getPhonemeClassDictionary } from "./phonology.helpers";
 
 export type PhonemeOrString = TypedSound | string;
 export type PhonemeStringArray = PhonemeOrString[];
@@ -51,6 +51,15 @@ export function transcribePhonemeStringArray(phonemes: PhonemeStringArray): stri
   return phonemes.map(transcribePhonemeOrString).join('');
 }
 
+export function toDictionary<T>(arr: T[], indexBy?: (obj: T) => string): {[id: string]: T} {
+  const dictionary: {[id: string]: T} = {};
+  arr.forEach((obj, i) => {
+    dictionary[indexBy?.(obj) ?? i] = obj;
+  });
+
+  return dictionary;
+}
+
 export const extrudeAlternatingRule = (rule: string): string[] => {
   const index = rule.indexOf('{');
   const lastIndex = rule.indexOf('}');
@@ -83,7 +92,7 @@ export const filterSoundsFromPhonemeStringArray = (phonemes: PhonemeStringArray)
   return phonemes.filter(x => !!(x as TypedSound).phoneme) as TypedSound[]
 }
 
-export function processToken(language: ILanguage, phonemeClasses: PhonemeClassDictionary, env: StringEnvironment): {token: string, type: PhonologicalToken} | null {
+export function fillToken(language: ILanguage, phonemeClasses: PhonemeClassDictionary, env: StringEnvironment): PhonologicalToken | null {
   const {environment, position} = env;
   const token = environment[position];
   const phoneme = ALL_PHONEMES.find(x => x.phoneme === token);
@@ -94,15 +103,15 @@ export function processToken(language: ILanguage, phonemeClasses: PhonemeClassDi
     const randomAppropriateToken = getRandomArrayItem(appropriateTokens, dropoff);
     const isClassToken = !!phonemeClasses[randomAppropriateToken] || randomAppropriateToken.toLowerCase() !== randomAppropriateToken;
     if (randomAppropriateToken) {
-      return { token: randomAppropriateToken, type: isClassToken ? PhonologicalToken.ClassToken : PhonologicalToken.Phoneme };
+      return { token: randomAppropriateToken, type: isClassToken ? PhonologicalTokenType.ClassToken : PhonologicalTokenType.Phoneme };
     } else if (!phoneme) {
       console.error('no options for ', phonemeClasses[token].tokens, environment);
       return null;
     }
   } else if (phoneme) {
-    return { token: phoneme.phoneme, type: PhonologicalToken.Phoneme };
+    return { token: phoneme.phoneme, type: PhonologicalTokenType.Phoneme };
   } else {
-    return { token, type: PhonologicalToken.Unknown };
+    return { token, type: PhonologicalTokenType.Unknown };
     // environment = insertString(environment, token, pos);
   }
   return null;
