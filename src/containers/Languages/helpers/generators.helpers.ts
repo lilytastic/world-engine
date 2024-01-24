@@ -23,7 +23,7 @@ export function generateWord(language: ILanguage, type = 'word'): IWord {
   const appropriatePatterns = filterForbiddenCombinations(EMPTY_ENVIRONMENT, language, wordPatterns.map(x => x.pattern.join('')));
   const wordPattern = getRandomArrayItem(appropriatePatterns);
   
-  const filledWordStr = fillWordPattern(language, wordPattern);
+  const filledWordStr = applySoundChanges(language, fillWordPattern(language, wordPattern));
 
   const phonemes = extractPhonemeStringArray(filledWordStr);
   const transcription = transcribePhonemeStringArray(phonemes);
@@ -46,8 +46,32 @@ export function splitVariableToken(token: string) {
   }
 }
 
-export function modulateWithSoundChanges(token: string, env: StringEnvironment, language: ILanguage): string {
-  return token;
+export function applySoundChanges(language: ILanguage, filledWordStr: string): string {
+  const soundChanges = getSoundChanges(language);
+  let environment = `#${filledWordStr}#`;
+  soundChanges.forEach(changeRule => {
+    let instruction = changeRule;
+    let inEnvironmentOf = '';
+
+    let applies = true;
+    if (changeRule.includes('/')) {
+      let tokens = changeRule.split('/').map(x => x.trim());
+      instruction = tokens[0];
+      inEnvironmentOf = tokens[1];
+      // applies = environment.includes(tokens[1]);
+    }
+    let [target, result] = instruction.split('>').map(x => x.trim());
+    if (inEnvironmentOf) {
+      const results: RegExpMatchArray | null = environment.match(inEnvironmentOf.replace('_', `[${target}]`));
+      if (results) {
+        console.log(environment, target, environment.match(new RegExp(target, 'g')), [...results], '>', result);
+        results.forEach(res => {
+          environment = environment.replaceAll(res, result);
+        });
+      }
+    }
+  });
+  return environment.slice(1, environment.length - 1);
 }
 
 export function getSoundChange(insert: PhonologicalToken, env: StringEnvironment, language: ILanguage): PhonologicalToken | null {
@@ -93,9 +117,6 @@ export function fillWordPattern(language: ILanguage, wordPattern: string): strin
 
     let insert = fillToken(language, phonemeClasses, env);
     if (!!insert) {
-      // insert.token = modulateWithSoundChanges(insert.token, env, language)
-      insert = getSoundChange(insert, env, language) || insert;
-      // TODO: sound changes go here
       environment = insertString(environment, insert.token, position);
       if (insert.type === PhonologicalTokenType.ClassToken) {
         position -= 1;
