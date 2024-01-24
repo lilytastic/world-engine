@@ -46,6 +46,10 @@ export function splitVariableToken(token: string) {
   }
 }
 
+export function modulateWithSoundChanges(token: string, env: StringEnvironment, language: ILanguage): string {
+  return token;
+}
+
 export function getSoundChange(insert: PhonologicalToken, env: StringEnvironment, language: ILanguage): PhonologicalToken | null {
   const soundChanges = getSoundChanges(language);
   env.environment = `#${env.environment}#`;
@@ -89,6 +93,7 @@ export function fillWordPattern(language: ILanguage, wordPattern: string): strin
 
     let insert = fillToken(language, phonemeClasses, env);
     if (!!insert) {
+      // insert.token = modulateWithSoundChanges(insert.token, env, language)
       insert = getSoundChange(insert, env, language) || insert;
       // TODO: sound changes go here
       environment = insertString(environment, insert.token, position);
