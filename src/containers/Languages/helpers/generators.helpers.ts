@@ -133,9 +133,11 @@ export const extrudeAlternatingRule = (rule: string): string[] => {
 }
 
 export function filterForbiddenCombinations(environment: string, language: ILanguage, collection: string[]): string[] {
-
+  
   const forbiddenCombinations = language.phonology.forbiddenCombinations.split(' ').map(x => ([x, ...extrudeAlternatingRule(x)])).flat();
   let environmentWithClasses = environment.toString();
+  
+  // TODO: Interpret all consonants as C and all vowels as V. Ignore the phoneme classes.
   const phonemeClasses = getPhonemeClassDictionary(language);
 
   Object.keys(phonemeClasses).forEach(classToken => {
@@ -155,7 +157,6 @@ export function filterForbiddenCombinations(environment: string, language: ILang
     
 
     for (let i = 0; i < forbiddenCombinations.length; i++) {
-      // TODO: Turn phonemes into their classes to check that too
       const forbiddenCombination = forbiddenCombinations[i];
 
       for (let i = 0; i < tokens.length; i++) {
