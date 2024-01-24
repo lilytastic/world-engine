@@ -1,14 +1,11 @@
 import { CONSONANTS } from "../data/consonants";
 import { VOWELS } from "../data/vowels";
-import { ILanguage, IWord } from "../models/language.model";
-import { IWordPattern, TypedSound } from "../models/sounds.model";
-import { filterForbiddenCombinations, getPhonemeClassDictionary } from "./generators.helpers";
-import { ProbabilityType, getRandomArrayItem } from "./logic.helpers";
-import { getWordPatternDictionary } from "./word-patterns.helpers";
+import { TypedSound } from "../models/sounds.model";
 
 export type Syllable = (TypedSound | string)[];
-const ALL_PHONEMES = [...CONSONANTS, ...VOWELS];
+export const ALL_PHONEMES = [...CONSONANTS, ...VOWELS];
 
+/*
 export function generateWordV1(language: ILanguage): IWord {
   const wordPatterns = getWordPatternDictionary(language);
   const wordPattern = getRandomArrayItem(wordPatterns['word']);

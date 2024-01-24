@@ -3,7 +3,6 @@ import { Button, Col, Dropdown, ListGroup, Row } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, NavLink, useLocation } from 'react-router-dom';
 import { addNewLanguage, getLanguages } from '../reducers/language.reducer';
-import { ILanguage } from '../models/language.model';
 import { TEMPLATES } from '../data/templates';
 
 export const LanguagePicker = (props: {children?: any, className?: string}) => {

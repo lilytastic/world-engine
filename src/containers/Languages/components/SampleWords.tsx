@@ -5,7 +5,7 @@ import { ILanguage, IWord } from '../models/language.model';
 
 import { useParams } from 'react-router';
 
-import { getSampleWords } from '../helpers/generators.helpers';
+import { generateWord } from '../helpers/generators.helpers';
 
 export function SampleWords(props: {children?: any, language: ILanguage}) {
 
@@ -19,6 +19,14 @@ export function SampleWords(props: {children?: any, language: ILanguage}) {
       setSampleWords(getSampleWords(language));
     }
   }, [language, params.id]);
+
+  function getSampleWords(language: ILanguage) {
+    let arr: IWord[] = [];
+    for (let i = 0; i < 30; i++) {
+      arr.push(generateWord(language));
+    }
+    return arr;
+  }
 
   if (!language) {
     return <></>;

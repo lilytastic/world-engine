@@ -1,9 +1,6 @@
-import { CONSONANTS } from "../data/consonants";
-import { VOWELS } from "../data/vowels";
 import { ILanguage } from "../models/language.model";
-import { IWordPattern, TypedSound } from "../models/sounds.model";
-import { getPhonemeClassDictionary, getStringArray } from "./generators.helpers";
-import { getRandomArrayItem, ProbabilityType } from "./logic.helpers";
+import { IWordPattern } from "../models/sounds.model";
+import { getStringArray } from "./logic.helpers";
 
 export type IWordPatternDictionary = {[patternName: string]: IWordPattern[]};
 

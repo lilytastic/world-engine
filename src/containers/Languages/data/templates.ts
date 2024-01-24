@@ -23,7 +23,7 @@ export const DEFAULT_LANGUAGE: ILanguage = {
   consonants: [],
   phonology: {
     syllableShape: 'CV(C)',
-    phonemeClasses: 'C = b k p t d r s v w q g\nL = l m n\nV = a e i o u\nS = CV CVL VC',
+    phonemeClasses: 'S = CV CVL VL\nC = f d t r\nO =  l n C m g\nV = a e i o u\nL = b k C p r q g',
     wordPatterns: 'S\nSS\nSSS\n\narticle = \nS\nV\n\npronoun = \nS\nSS\n\ndeterminer = \nS',
     soundChanges: '',
     forbiddenCombinations: '',
