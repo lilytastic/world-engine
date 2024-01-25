@@ -60,13 +60,14 @@ export function applySoundChanges(language: ILanguage, filledWordStr: string): s
       // applies = environment.includes(tokens[1]);
     }
     let [target, result] = instruction.split('>').map(x => x.trim());
-    const matchFor = `[${target}]`;
+
+    let matchFor = `(${splitVariableToken(target).join('|')})`;
     const test = inEnvironmentOf
       ? new RegExp(inEnvironmentOf.replace('_', matchFor), 'g')
       : new RegExp(matchFor, 'g');
     const matches: RegExpMatchArray | null = environment.match(test);
     if (matches) {
-      // console.log(environment, target, inEnvironmentOf, environment.match(new RegExp(matchFor, 'g')), matches, '>', result);
+      // console.log(environment, target, inEnvironmentOf, matchFor, environment.match(new RegExp(matchFor, 'g')), matches, '>', result);
       // console.log(matches.index);
       matches.forEach((match: string) => {
         const realTarget = match.match(matchFor)?.[0];
