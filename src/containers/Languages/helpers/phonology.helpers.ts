@@ -2,7 +2,7 @@ import { VOWELS } from "../data/vowels";
 import { ILanguage } from "../models/language.model";
 import { BOUNDARY_MARKERS, IPhonologicalRule, IPhonologicalToken, IPhonotactic, ISoundRules, PhonologicalTokenCollectionTypes, PhonologicalTokens, SoundPositions } from "../models/phonology.model";
 import { IPhonemeClass, ISound } from "../models/sounds.model";
-import { insertString, splitVariableToken, toDictionary } from "./logic.helpers";
+import { getRandomArrayItem, insertString, splitVariableToken, toDictionary } from "./logic.helpers";
 
 export enum PhonologicalTokenType { ClassToken, Phoneme, Unknown };
 export type PhonologicalToken = {token: string, type: PhonologicalTokenType};
@@ -78,7 +78,8 @@ export function applySoundChange(environment: string, changeRule: string) {
       if (!realTarget) { console.log('???'); return; }
       const index = environment.indexOf(realTarget, environment.indexOf(match));
       // console.log(environment, match, result, realTarget, index);
-      environment = insertString(environment, result, index, realTarget.length - 1);
+      const finalResult = getRandomArrayItem(splitVariableToken(result));
+      environment = insertString(environment, finalResult, index, realTarget.length - 1);
     });
   }
   return environment;
