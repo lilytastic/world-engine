@@ -53,7 +53,6 @@ export function applySoundChanges(language: ILanguage, filledWordStr: string): s
     let instruction = changeRule;
     let inEnvironmentOf = '';
 
-    let applies = true;
     if (changeRule.includes('/')) {
       let tokens = changeRule.split('/').map(x => x.trim());
       instruction = tokens[0];
@@ -61,14 +60,20 @@ export function applySoundChanges(language: ILanguage, filledWordStr: string): s
       // applies = environment.includes(tokens[1]);
     }
     let [target, result] = instruction.split('>').map(x => x.trim());
-    if (inEnvironmentOf) {
-      const results: RegExpMatchArray | null = environment.match(inEnvironmentOf.replace('_', `[${target}]`));
-      if (results) {
-        console.log(environment, target, environment.match(new RegExp(target, 'g')), [...results], '>', result);
-        results.forEach(res => {
-          environment = environment.replaceAll(res, result);
-        });
-      }
+    const test = inEnvironmentOf
+      ? new RegExp(inEnvironmentOf.replace('_', `[${target}]`), 'g')
+      : new RegExp(`[${target}]`, 'g');
+    const matches: RegExpMatchArray | null = environment.match(test);
+    if (matches) {
+      // console.log(environment, target, inEnvironmentOf, environment.match(new RegExp(`[${target}]`, 'g')), matches, '>', result);
+      // console.log(matches.index);
+      matches.forEach((match: any) => {
+        // console.log(match);
+        environment = environment.replace(new RegExp(match, 'g'), result);
+        if (!environment.endsWith('#')) {
+          environment += '#';
+        }
+      });
     }
   });
   return environment.slice(1, environment.length - 1);
