@@ -60,19 +60,20 @@ export function applySoundChanges(language: ILanguage, filledWordStr: string): s
       // applies = environment.includes(tokens[1]);
     }
     let [target, result] = instruction.split('>').map(x => x.trim());
+    const matchFor = `[${target}]`;
     const test = inEnvironmentOf
-      ? new RegExp(inEnvironmentOf.replace('_', `[${target}]`), 'g')
-      : new RegExp(`[${target}]`, 'g');
+      ? new RegExp(inEnvironmentOf.replace('_', matchFor), 'g')
+      : new RegExp(matchFor, 'g');
     const matches: RegExpMatchArray | null = environment.match(test);
     if (matches) {
-      // console.log(environment, target, inEnvironmentOf, environment.match(new RegExp(`[${target}]`, 'g')), matches, '>', result);
+      // console.log(environment, target, inEnvironmentOf, environment.match(new RegExp(matchFor, 'g')), matches, '>', result);
       // console.log(matches.index);
-      matches.forEach((match: any) => {
-        // console.log(match);
-        environment = environment.replace(new RegExp(match, 'g'), result);
-        if (!environment.endsWith('#')) {
-          environment += '#';
-        }
+      matches.forEach((match: string) => {
+        const realTarget = match.match(matchFor)?.[0];
+        if (!realTarget) { console.log('???'); return; }
+        const index = environment.indexOf(realTarget, environment.indexOf(match));
+        // console.log(environment, match, result, realTarget, index);
+        environment = insertString(environment, result, index, realTarget.length - 1);
       });
     }
   });
