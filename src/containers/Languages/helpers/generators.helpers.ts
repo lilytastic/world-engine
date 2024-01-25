@@ -48,8 +48,10 @@ export function splitVariableToken(token: string) {
 
 export function applySoundChanges(language: ILanguage, filledWordStr: string): string {
   const soundChanges = getSoundChanges(language);
-  let environment = `#${filledWordStr}#`;
+  let environment = filledWordStr; // `#${filledWordStr}#`;
   soundChanges.forEach(changeRule => {
+    changeRule = changeRule.replace(/#/g, '\\b');
+    // console.log(changeRule);
     let instruction = changeRule;
     let inEnvironmentOf = '';
 
@@ -78,7 +80,7 @@ export function applySoundChanges(language: ILanguage, filledWordStr: string): s
       });
     }
   });
-  return environment.slice(1, environment.length - 1);
+  return environment;
 }
 
 export function getSoundChange(insert: PhonologicalToken, env: StringEnvironment, language: ILanguage): PhonologicalToken | null {
