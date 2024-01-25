@@ -80,6 +80,16 @@ export const markPositionInEnvironment = (env: StringEnvironment, mark = '_') =>
   return insertString(environment, mark, position, 1);
 }
 
+export function splitVariableToken(token: string) {
+  const openingBracket = token.indexOf('{');
+  const closingBracket = token.indexOf('}');
+  if (openingBracket !== -1 && closingBracket !== -1) {
+    return token.slice(openingBracket + 1, closingBracket).split(',').map(x => x.trim());
+  } else {
+    return [ token ];
+  }
+}
+
 export const transcribePhonemeOrString = (str: PhonemeOrString) => {
   const sound = (str as TypedSound);
   if (sound.phoneme) {

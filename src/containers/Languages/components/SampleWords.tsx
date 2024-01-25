@@ -22,7 +22,7 @@ export function SampleWords(props: {children?: any, language: ILanguage}) {
 
   function getSampleWords(language: ILanguage) {
     let arr: IWord[] = [];
-    for (let i = 0; i < 30; i++) {
+    for (let i = 0; i < 60; i++) {
       arr.push(generateWord(language));
     }
     return arr;

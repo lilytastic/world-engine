@@ -2,7 +2,7 @@ import { VOWELS } from "../data/vowels";
 import { ILanguage } from "../models/language.model";
 import { BOUNDARY_MARKERS, IPhonologicalRule, IPhonologicalToken, IPhonotactic, ISoundRules, PhonologicalTokenCollectionTypes, PhonologicalTokens, SoundPositions } from "../models/phonology.model";
 import { IPhonemeClass, ISound } from "../models/sounds.model";
-import { toDictionary } from "./logic.helpers";
+import { insertString, splitVariableToken, toDictionary } from "./logic.helpers";
 
 export enum PhonologicalTokenType { ClassToken, Phoneme, Unknown };
 export type PhonologicalToken = {token: string, type: PhonologicalTokenType};
@@ -47,6 +47,51 @@ export function getPhonemeClassDictionary(language: ILanguage): PhonemeClassDict
   return toDictionary(getPhonemeClasses(language), (o) => o.className);
 }
 
+export function getSoundChanges(language: ILanguage): string[] {
+  return language.phonology.soundChanges.split('\n');
+}
+
+export function applySoundChange(environment: string, changeRule: string) {
+  changeRule = changeRule.replace(/#/g, '\\b');
+  // console.log(changeRule);
+  let instruction = changeRule;
+  let inEnvironmentOf = '';
+
+  if (changeRule.includes('/')) {
+    let tokens = changeRule.split('/').map(x => x.trim());
+    instruction = tokens[0];
+    inEnvironmentOf = tokens[1];
+    // applies = environment.includes(tokens[1]);
+  }
+  let [target, result] = instruction.split('>').map(x => x.trim());
+
+  let matchFor = `(${splitVariableToken(target).join('|')})`;
+  const test = inEnvironmentOf
+    ? new RegExp(inEnvironmentOf.replace('_', matchFor), 'g')
+    : new RegExp(matchFor, 'g');
+  const matches: RegExpMatchArray | null = environment.match(test);
+  if (matches) {
+    // console.log(environment, target, inEnvironmentOf, matchFor, environment.match(new RegExp(matchFor, 'g')), matches, '>', result);
+    // console.log(matches.index);
+    matches.forEach((match: string) => {
+      const realTarget = match.match(matchFor)?.[0];
+      if (!realTarget) { console.log('???'); return; }
+      const index = environment.indexOf(realTarget, environment.indexOf(match));
+      // console.log(environment, match, result, realTarget, index);
+      environment = insertString(environment, result, index, realTarget.length - 1);
+    });
+  }
+  return environment;
+}
+
+export function applySoundChanges(language: ILanguage, filledWordStr: string): string {
+  const soundChanges = getSoundChanges(language);
+  let environment = filledWordStr; // `#${filledWordStr}#`;
+  soundChanges.forEach(changeRule => {
+    environment = applySoundChange(environment, changeRule);
+  });
+  return environment;
+}
 
 export const getTokens = (script: string) => {
   let tokens: IPhonologicalToken[] = [];
