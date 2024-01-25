@@ -64,6 +64,7 @@ export const extrudeAlternatingRule = (rule: string): string[] => {
   const index = rule.indexOf('{');
   const lastIndex = rule.indexOf('}');
   if (index === -1 || lastIndex === -1) {
+    // console.log(rule);
     return [];
   }
   const enclosed = rule.slice(index + 1, lastIndex).split(',');
@@ -130,6 +131,7 @@ export function fillToken(language: ILanguage, phonemeClasses: PhonemeClassDicti
 
 export function filterForbiddenCombinations(environment: string, language: ILanguage, collection: string[]): string[] {
   environment = `#${environment}#`;
+  // console.log(language.phonology.forbiddenCombinations);
   const forbiddenCombinations = language.phonology.forbiddenCombinations.split(' ').map(x => ([x, ...extrudeAlternatingRule(x)])).flat();
   let environmentWithClasses = environment.toString();
   

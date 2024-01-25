@@ -7,22 +7,33 @@ import { useParams } from 'react-router';
 
 import { generateWord } from '../helpers/generators.helpers';
 
-export function SampleWords(props: {children?: any, language: ILanguage}) {
+export function SampleWords(props: {children?: any, amount?: number, language: ILanguage}) {
 
-  const { language } = props;
+  const { language, amount } = props;
 
   const [currentSampleWords, setSampleWords] = useState([] as IWord[]);
   const params = useParams();
 
+  const [lastLanguageUsed, setLastLanguageUsed] = useState(null as ILanguage | null);
+
   useEffect(() => {
     if (language) {
+      /*
+      const detectChangesTo = ['phonemeClasses', 'wordPatterns', 'forbiddenCombinations'];
+      // @ts-ignore;
+      if (!lastLanguageUsed || !!detectChangesTo.find((x) => language.phonology[x] !== lastLanguageUsed.phonology[x])) {
+        setSampleWords(getSampleWords(language));
+        setLastLanguageUsed(language);  
+      }
+      */
       setSampleWords(getSampleWords(language));
+      setLastLanguageUsed(language);  
     }
-  }, [language, params.id]);
+  }, [language, lastLanguageUsed, params.id]);
 
   function getSampleWords(language: ILanguage) {
     let arr: IWord[] = [];
-    for (let i = 0; i < 60; i++) {
+    for (let i = 0; i < (amount || 20); i++) {
       arr.push(generateWord(language));
     }
     return arr;
