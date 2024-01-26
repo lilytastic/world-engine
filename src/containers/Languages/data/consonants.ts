@@ -225,7 +225,7 @@ export const CONSONANTS: IConsonant[] = [
     romanization: 'th'
   },
   {
-    place: Place.Dental,
+    place: Place.Alveolar,
     manner: Manner.NonSibilantFricative,
     phoneme: 'ð',
     romanization: 'th',

@@ -1,8 +1,10 @@
 import React, { MouseEvent, useState } from 'react';
-import { Button, ButtonGroup, Dropdown, Form } from "react-bootstrap";
+import { Button, Dropdown } from "react-bootstrap";
 import { CONSONANTS } from '../data/consonants';
 import { VOWELS } from '../data/vowels';
-import { MANNERS, PLACES, VOWELCLOSENESS, VOWELFRONTNESS } from '../models/sounds.model';
+import { MANNERS, PLACES, TypedSound, VOWELCLOSENESS, VOWELFRONTNESS } from '../models/sounds.model';
+import { capitalize } from 'rot-js/lib/util';
+// import audio from '../../../assets/audio';
 
 const ARTICULATIONS: {phoneme: string, name: string}[] = [
   {name: 'Aspirated', phoneme: 'ʰ'},
@@ -25,10 +27,33 @@ const TONES: {phoneme: string, name: string}[] = [
   {name: 'Upstep', phoneme: 'ꜛ'},
 ];
 
+
 export const PhoneticKeyboard = (props: {children?: any}) => {
 
   const [consonantViewType, setConsonantViewType] = useState('Place');
   const [vowelViewType, setVowelViewType] = useState('Frontness');
+
+  const speakCharacter = (ev: MouseEvent, sound: TypedSound) => {
+    const voiceStr = sound.voiced ? 'voiced' : 'voiceless';
+    if (sound.type === 'consonant') {
+      const soundAttributes = [sound.place.toLowerCase(), sound.manner.toLowerCase()];
+      let tokens = [voiceStr, ...soundAttributes];
+      tokens[0] = capitalize(tokens[0]);
+      let audioName = `${tokens.join('_')}.ogg.mp3`;
+      let audio = new Audio(`${process.env.PUBLIC_URL}/audio/${audioName}`);
+      console.log(audioName);
+      audio.play().then(res => {
+        // Success
+      }).catch(err => {
+        tokens = [...soundAttributes];
+        tokens[0] = capitalize(tokens[0]);
+        audioName = `${tokens.join('_')}.ogg.mp3`;
+        let audio2 = new Audio(`${process.env.PUBLIC_URL}/audio/${audioName}`);
+        audio2.play();
+        console.log(audioName);
+      });
+    }
+  }
 
   const typeCharacter = (ev: MouseEvent, str: string) => {
     const activeElement = document.activeElement as HTMLInputElement | HTMLTextAreaElement;
@@ -42,6 +67,12 @@ export const PhoneticKeyboard = (props: {children?: any}) => {
     }
     ev.preventDefault();
   }
+
+  const selectSound = (ev: MouseEvent, sound: TypedSound) => {
+    speakCharacter(ev, sound);
+    typeCharacter(ev, sound.phoneme);
+  }
+
   return (<div>
     <label className='text-muted d-flex justify-content-between align-items-center'>
       Vowels
@@ -65,7 +96,7 @@ export const PhoneticKeyboard = (props: {children?: any}) => {
               {VOWELS.filter(x => x.openness === t.key).reverse().map(sound =>
                 <Button key={sound.phoneme}
                         className='d-inline p-0 me-1 text-decoration-none lh-1'
-                        onMouseDown={ev => typeCharacter(ev, sound.phoneme)}
+                        onMouseDown={ev => selectSound(ev, sound)}
                         variant='link'>
                   {sound.phoneme}
                 </Button>
@@ -81,7 +112,7 @@ export const PhoneticKeyboard = (props: {children?: any}) => {
               {VOWELS.filter(x => x.frontness === t.key).reverse().map(sound =>
                 <Button key={sound.phoneme}
                         className='d-inline p-0 me-1 text-decoration-none lh-1'
-                        onMouseDown={ev => typeCharacter(ev, sound.phoneme)}
+                        onMouseDown={ev => selectSound(ev, sound)}
                         variant='link'>
                   {sound.phoneme}
                 </Button>
@@ -114,7 +145,7 @@ export const PhoneticKeyboard = (props: {children?: any}) => {
               {CONSONANTS.filter(x => x.place === place.key).map(consonant =>
                 <Button key={consonant.phoneme}
                         className='d-inline p-0 me-1 text-decoration-none lh-1'
-                        onMouseDown={ev => typeCharacter(ev, consonant.phoneme)}
+                        onMouseDown={ev => selectSound(ev, consonant)}
                         variant='link'>
                   {consonant.phoneme}
                 </Button>
@@ -130,7 +161,7 @@ export const PhoneticKeyboard = (props: {children?: any}) => {
               {CONSONANTS.filter(x => x.manner === manner.key).map(consonant =>
                 <Button key={consonant.phoneme}
                         className='d-inline p-0 me-1 text-decoration-none lh-1'
-                        onMouseDown={ev => typeCharacter(ev, consonant.phoneme)}
+                        onMouseDown={ev => selectSound(ev, consonant)}
                         variant='link'>
                   {consonant.phoneme}
                 </Button>
