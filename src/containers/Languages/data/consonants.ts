@@ -222,7 +222,8 @@ export const CONSONANTS: IConsonant[] = [
     place: Place.Dental,
     manner: Manner.NonSibilantFricative,
     phoneme: 'θ',
-    romanization: 'th'
+    romanization: 'th',
+    audio: 'Voiceless_dental_fricative.ogg.mp3'
   },
   {
     place: Place.Alveolar,

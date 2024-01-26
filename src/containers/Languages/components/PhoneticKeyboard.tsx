@@ -35,8 +35,12 @@ export const PhoneticKeyboard = (props: {children?: any}) => {
 
   const speakCharacter = (ev: MouseEvent, sound: TypedSound) => {
     const voiceStr = sound.voiced ? 'voiced' : 'voiceless';
-    if (sound.type === 'consonant') {
-      const soundAttributes = [sound.place.toLowerCase(), sound.manner.toLowerCase()];
+    if (sound.audio) {
+      let audio = new Audio(`${process.env.PUBLIC_URL}/audio/${sound.audio}`);
+      console.log(sound.audio);
+      audio.play();
+    } else  if (sound.type === 'consonant') {
+      const soundAttributes = [sound.place.toLowerCase(), sound.manner.toLowerCase()].map(x => x.replace(/(non-sibilant\s)/g, 'non-sibilant_'));
       let tokens = [voiceStr, ...soundAttributes];
       tokens[0] = capitalize(tokens[0]);
       let audioName = `${tokens.join('_')}.ogg.mp3`;

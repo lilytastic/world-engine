@@ -17,19 +17,21 @@ export interface IVowel extends ITypedSound<'vowel'> {
   openness: string;
   rounded?: boolean;
   long?: boolean;
+  audio?: string;
 }
 export interface IConsonant extends ITypedSound<'consonant'> {
   place: string;
   manner: string;
+  audio?: string;
 }
 
 export enum Place {
   Bilabial = 'Bilabial',
-  LabioDental = 'Labio-dental',
-  LinguoLabial = 'Linguo-labial',
+  LabioDental = 'Labiodental',
+  LinguoLabial = 'Linguolabial',
   Dental = 'Dental',
   Alveolar = 'Alveolar',
-  PostAlveolar = 'Post­-alveolar',
+  PostAlveolar = 'Postalveolar',
   Retroflex = 'Retroflex',
   Palatal = 'Palatal',
   Velar = 'Velar',
