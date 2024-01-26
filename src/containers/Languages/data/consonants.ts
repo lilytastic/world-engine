@@ -115,7 +115,7 @@ export const CONSONANTS: IConsonant[] = [
     phoneme: 'ɢ',
     romanization: 'gh',
     voiced: true,
-    audio: 'Voiced_uvular_plosive.ogg.mp3'
+    audio: 'Voiced_uvular_stop.oga.mp3'
   },
   {
     place: Place.Glottal,
@@ -284,7 +284,7 @@ export const CONSONANTS: IConsonant[] = [
     place: Place.Velar,
     manner: Manner.NonSibilantFricative,
     phoneme: 'x',
-    romanization: 'kh',
+    romanization: 'ch',
     audio: 'Voiceless_velar_fricative.ogg.mp3'
   },
   {
@@ -345,7 +345,7 @@ export const CONSONANTS: IConsonant[] = [
     place: Place.Alveolar,
     manner: Manner.Tap,
     phoneme: 'ɾ',
-    romanization: 'r',
+    romanization: 'rh',
     audio: 'Alveolar_tap.ogg.mp3'
   },
   {
