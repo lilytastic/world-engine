@@ -17,12 +17,12 @@ export interface IVowel extends ITypedSound<'vowel'> {
   openness: string;
   rounded?: boolean;
   long?: boolean;
-  audio?: string;
+  audio?: string | null;
 }
 export interface IConsonant extends ITypedSound<'consonant'> {
   place: string;
   manner: string;
-  audio?: string;
+  audio?: string | null;
 }
 
 export enum Place {

@@ -73,8 +73,15 @@ export const PhoneticKeyboard = (props: {children?: any}) => {
   }
 
   const selectSound = (ev: MouseEvent, sound: TypedSound) => {
+    const activeElement = document.activeElement as HTMLInputElement | HTMLTextAreaElement;
+    const {value, selectionStart} = activeElement;
+    if (value) {
+      if (selectionStart) {
+        typeCharacter(ev, sound.phoneme);
+        return;
+      }
+    }
     speakCharacter(ev, sound);
-    typeCharacter(ev, sound.phoneme);
   }
 
   return (<div>
