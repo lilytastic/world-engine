@@ -75,7 +75,7 @@ export function applySoundChange(environment: string, changeRule: string) {
     // console.log(matches.index);
     matches.forEach((match: string) => {
       const realTarget = match.match(matchFor)?.[0];
-      if (!realTarget) { console.log('???'); return; }
+      if (!realTarget) { console.error(`couldn't find a real target`, match, matchFor); return; }
       const index = environment.indexOf(realTarget, environment.indexOf(match));
       // console.log(environment, match, result, realTarget, index);
       const finalResult = getRandomArrayItem(splitVariableToken(result));

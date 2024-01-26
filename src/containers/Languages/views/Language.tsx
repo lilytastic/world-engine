@@ -111,10 +111,6 @@ export function Language(props: {children?: any}) {
       {scratch && <SampleWords amount={40} language={scratch}></SampleWords>}
 
       <AutoFormer data={scratch} form={LanguageForm} update={setScratch}></AutoFormer>
-
-      <div className='mt-4'>
-        {scratch && <SampleWords amount={60} language={scratch}></SampleWords>}
-      </div>
     </div>
   );
 }

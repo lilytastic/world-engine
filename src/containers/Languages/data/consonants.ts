@@ -229,7 +229,8 @@ export const CONSONANTS: IConsonant[] = [
     manner: Manner.NonSibilantFricative,
     phoneme: 'ð',
     romanization: 'th',
-    voiced: true
+    voiced: true,
+    audio: 'Voiced_alveolar_non-sibilant_fricative.ogg'
   },
   {
     place: Place.Alveolar,
