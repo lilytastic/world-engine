@@ -92,26 +92,30 @@ export const CONSONANTS: IConsonant[] = [
   {
     place: Place.Velar,
     manner: Manner.Plosive,
-    phoneme: 'k'
+    phoneme: 'k',
+    audio: 'Voiceless_velar_plosive.ogg.mp3'
   },
   {
     place: Place.Velar,
     manner: Manner.Plosive,
     phoneme: 'g',
-    voiced: true
+    voiced: true,
+    audio: 'Voiced_velar_plosive.ogg.mp3'
   },
   {
     place: Place.Uvular,
     manner: Manner.Plosive,
     phoneme: 'q',
     romanization: 'q',
+    audio: 'Voiceless_uvular_plosive.ogg.mp3'
   },
   {
     place: Place.Uvular,
     manner: Manner.Plosive,
     phoneme: 'ɢ',
     romanization: 'gh',
-    voiced: true
+    voiced: true,
+    audio: 'Voiced_uvular_plosive.ogg.mp3'
   },
   {
     place: Place.Glottal,
@@ -126,43 +130,50 @@ export const CONSONANTS: IConsonant[] = [
   {
     place: Place.Bilabial,
     manner: Manner.Nasal,
-    phoneme: 'm'
+    phoneme: 'm',
+    audio: 'Bilabial_nasal.ogg.mp3'
   },
   {
     place: Place.LabioDental,
     manner: Manner.Nasal,
     phoneme: 'ɱ',
-    romanization: 'm'
+    romanization: 'm',
+    audio: 'Labiodental_nasal.ogg.mp3'
   },
   {
     place: Place.Alveolar,
     manner: Manner.Nasal,
     phoneme: 'n',
-    romanization: 'n'
+    romanization: 'n',
+    audio: 'Alveolar_nasal.ogg.mp3'
   },
   {
     place: Place.Palatal,
     manner: Manner.Nasal,
     phoneme: 'ɲ',
-    romanization: 'ñ'
+    romanization: 'ñ',
+    audio: 'Palatal_nasal.ogg.mp3'
   },
   {
     place: Place.Uvular,
     manner: Manner.Nasal,
     phoneme: 'ɴ',
-    romanization: 'ng'
+    romanization: 'ng',
+    audio: 'Uvular_nasal.ogg.mp3'
   },
   {
     place: Place.Velar,
     manner: Manner.Nasal,
     phoneme: 'ŋ',
-    romanization: 'ng'
+    romanization: 'ng',
+    audio: 'Velar_nasal.ogg.mp3'
   },
   {
     place: Place.Retroflex,
     manner: Manner.Nasal,
     phoneme: 'ɳ',
-    romanization: 'ng'
+    romanization: 'ng',
+    audio: 'Retroflex_nasal.ogg.mp3'
   },
 
 
@@ -392,7 +403,8 @@ export const CONSONANTS: IConsonant[] = [
     place: Place.LabioDental,
     manner: Manner.Approximant,
     phoneme: 'ʋ',
-    romanization: 'w'
+    romanization: 'w',
+    audio: 'Labiodental_approximant.ogg.mp3'
   },
   {
     place: Place.Alveolar,
