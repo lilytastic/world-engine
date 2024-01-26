@@ -4,132 +4,154 @@ export const VOWELS: IVowel[] = [
   {
     openness: VowelLon.Close,
     frontness: VowelLat.Front,
-    phoneme: 'i'
+    phoneme: 'i',
+    audio: 'Close_front_unrounded_vowel.ogg.mp3'
   },
   {
     openness: VowelLon.Close,
     frontness: VowelLat.Front,
-    phoneme: 'y'
+    phoneme: 'y',
+    audio: 'Close_front_rounded_vowel.ogg.mp3'
   },
   {
     openness: VowelLon.Close,
     frontness: VowelLat.Central,
-    phoneme: 'ɨ'
+    phoneme: 'ɨ',
+    audio: 'Close_central_unrounded_vowel.ogg.mp3'
   },
   {
     openness: VowelLon.Close,
     frontness: VowelLat.Central,
     phoneme: 'ʉ',
-    rounded: true
+    rounded: true,
+    audio: 'Close_central_rounded_vowel.ogg.mp3'
   },
   {
     openness: VowelLon.Close,
     frontness: VowelLat.Back,
-    phoneme: 'ɯ'
+    phoneme: 'ɯ',
+    audio: 'Close_back_unrounded_vowel.ogg.mp3'
   },
   {
     openness: VowelLon.Close,
     frontness: VowelLat.Back,
     phoneme: 'u',
-    rounded: true
+    rounded: true,
+    audio: 'Close_back_rounded_vowel.ogg.mp3'
   },
 
 
   {
     openness: VowelLon.NearClose,
     frontness: VowelLat.Front,
-    phoneme: 'ɪ'
+    phoneme: 'ɪ',
+    audio: 'Near-close_near-front_unrounded_vowel.ogg.mp3'
   },
   {
     openness: VowelLon.NearClose,
     frontness: VowelLat.Front,
     phoneme: 'ʏ',
     romanization: 'ü',
-    rounded: true
+    rounded: true,
+    audio: 'Near-close_near-front_rounded_vowel.ogg.mp3'
   },
   {
     openness: VowelLon.NearClose,
     frontness: VowelLat.Back,
     phoneme: 'ʊ',
-    rounded: true
+    rounded: true,
+    audio: 'Near-close_near-back_rounded_vowel.ogg.mp3'
   },
 
 
   {
     openness: VowelLon.Mid,
     frontness: VowelLat.Central,
-    phoneme: 'ə'
+    phoneme: 'ə',
+    audio: 'Mid-central_vowel.ogg.mp3'
   },
 
   
   {
     openness: VowelLon.CloseMid,
     frontness: VowelLat.Front,
-    phoneme: 'e'
+    phoneme: 'e',
+    audio: 'Close-mid_front_unrounded_vowel.ogg.mp3'
   },
   {
     openness: VowelLon.CloseMid,
     frontness: VowelLat.Front,
     phoneme: 'ø',
-    rounded: true
+    rounded: true,
+    audio: 'Close-mid_front_rounded_vowel.ogg.mp3'
   },
   {
     openness: VowelLon.CloseMid,
     frontness: VowelLat.Central,
-    phoneme: 'ɘ'
+    phoneme: 'ɘ',
+    audio: 'Close-mid_central_unrounded_vowel.ogg.mp3'
   },
   {
     openness: VowelLon.CloseMid,
     frontness: VowelLat.Central,
     phoneme: 'ɵ',
-    rounded: true
+    rounded: true,
+    audio: 'Close-mid_central_rounded_vowel.ogg.mp3'
   },
   {
     openness: VowelLon.CloseMid,
     frontness: VowelLat.Back,
-    phoneme: 'ɤ'
+    phoneme: 'ɤ',
+    audio: 'Close-mid_back_unrounded_vowel.ogg.mp3'
   },
   {
     openness: VowelLon.CloseMid,
     frontness: VowelLat.Back,
     phoneme: 'o',
-    rounded: true
+    rounded: true,
+    audio: 'Close-mid_back_rounded_vowel.ogg.mp3'
   },
 
 
   {
     openness: VowelLon.OpenMid,
     frontness: VowelLat.Front,
-    phoneme: 'ɛ'
+    phoneme: 'ɛ',
+    audio: 'Open-mid_front_unrounded_vowel.ogg.mp3'
   },
   {
     openness: VowelLon.OpenMid,
     frontness: VowelLat.Front,
     phoneme: 'œ',
-    rounded: true
+    rounded: true,
+    audio: 'Open-mid_front_rounded_vowel.ogg.mp3'
   },
   {
     openness: VowelLon.OpenMid,
     frontness: VowelLat.Central,
-    phoneme: 'ɜ'
+    phoneme: 'ɜ',
+    audio: 'Open-mid_central_unrounded_vowel.ogg.mp3'
   },
   {
     openness: VowelLon.OpenMid,
     frontness: VowelLat.Central,
     phoneme: 'ɞ',
-    rounded: true
+    rounded: true,
+    audio: 'Open-mid_central_rounded_vowel.ogg.mp3'
   },
 
   {
     openness: VowelLon.OpenMid,
     frontness: VowelLat.Back,
-    phoneme: 'ʌ'
+    phoneme: 'ʌ',
+    audio: 'PR-open-mid_back_unrounded_vowel2.ogg.mp3'
   },
   {
     openness: VowelLon.OpenMid,
     frontness: VowelLat.Back,
     phoneme: 'ɔ',
-    rounded: true
+    rounded: true,
+    audio: 'PR-open-mid_back_rounded_vowel.ogg.mp3'
   },
 
 
@@ -138,46 +160,54 @@ export const VOWELS: IVowel[] = [
     openness: VowelLon.NearOpen,
     frontness: VowelLat.Front,
     phoneme: 'æ',
-    romanization: 'ae'
+    romanization: 'ae',
+    audio: 'Near-open_front_unrounded_vowel.ogg.mp3'
   },
   {
     openness: VowelLon.NearOpen,
     frontness: VowelLat.Central,
-    phoneme: 'ɐ'
+    phoneme: 'ɐ',
+    audio: 'Near-open_central_unrounded_vowel.ogg.mp3'
   },
 
   {
     openness: VowelLon.Open,
     frontness: VowelLat.Front,
-    phoneme: 'a'
+    phoneme: 'a',
+    audio: 'PR-open_front_unrounded_vowel.ogg.mp3'
   },
   {
     openness: VowelLon.Open,
     frontness: VowelLat.Front,
     phoneme: 'a:',
     romanization: 'aa',
-    long: true
+    long: true,
+    audio: 'Open_central_unrounded_vowel.ogg.mp3'
   },
   {
     openness: VowelLon.Open,
     frontness: VowelLat.Front,
     phoneme: 'ɶ',
-    rounded: true
+    rounded: true,
+    audio: 'Open_front_rounded_vowel.ogg.mp3'
   },
   {
     openness: VowelLon.Open,
     frontness: VowelLat.Central,
-    phoneme: 'ä'
+    phoneme: 'ä',
+    audio: 'Open_central_unrounded_vowel.ogg.mp3'
   },
   {
     openness: VowelLon.Open,
     frontness: VowelLat.Back,
-    phoneme: 'ɑ'
+    phoneme: 'ɑ',
+    audio: 'Open_back_unrounded_vowel.ogg.mp3'
   },
   {
     openness: VowelLon.Open,
     frontness: VowelLat.Back,
-    phoneme: 'ɒ'
+    phoneme: 'ɒ',
+    audio: 'Open_back_rounded_vowel.ogg.mp3'
   },
 
 ].map(x => ({...x, type: 'vowel'}));
