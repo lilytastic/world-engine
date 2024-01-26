@@ -48,7 +48,7 @@ export function getPhonemeClassDictionary(language: ILanguage): PhonemeClassDict
 }
 
 export function getSoundChanges(language: ILanguage): string[] {
-  return language.phonology.soundChanges.split('\n');
+  return language.phonology.soundChanges.split('\n').filter(x => x.trim().length > 0);
 }
 
 export function applySoundChange(environment: string, changeRule: string) {
