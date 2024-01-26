@@ -65,7 +65,7 @@ export const CONSONANTS: IConsonant[] = [
     manner: Manner.Plosive,
     phoneme: 'ʈ',
     romanization: 't',
-    audio: 'Voiceless_retroflex_stop.ogg.mp3'
+    audio: 'Voiceless_retroflex_stop.oga.mp3'
   },
   {
     place: Place.Retroflex,
@@ -73,7 +73,7 @@ export const CONSONANTS: IConsonant[] = [
     phoneme: 'ɖ',
     romanization: 'd',
     voiced: true,
-    audio: 'Voiced_retroflex_stop.ogg.mp3'
+    audio: 'Voiced_retroflex_stop.oga.mp3'
   },
 
   {
@@ -117,7 +117,8 @@ export const CONSONANTS: IConsonant[] = [
     place: Place.Glottal,
     manner: Manner.Plosive,
     phoneme: 'ʔ',
-    romanization: 'gh'
+    romanization: 'gh',
+    audio: 'Glottal_stop.ogg.mp3'
   },
 
   // Nasal
@@ -171,64 +172,74 @@ export const CONSONANTS: IConsonant[] = [
     place: Place.PostAlveolar,
     manner: Manner.SibilantFricative,
     phoneme: 'ʃ',
-    romanization: 'sh'
+    romanization: 'sh',
+    audio: 'Voiceless_palato-alveolar_sibilant.ogg.mp3'
   },
   {
     place: Place.PostAlveolar,
     manner: Manner.SibilantFricative,
     phoneme: 'ʒ',
     romanization: 'j',
-    voiced: true
+    voiced: true,
+    audio: 'Voiced_palato-alveolar_sibilant.ogg.mp3'
   },
   {
     place: Place.Retroflex,
     manner: Manner.SibilantFricative,
     phoneme: 'ʂ',
-    romanization: 'sh'
+    romanization: 'sh',
+    audio: 'Voiceless_retroflex_sibilant.ogg.mp3'
   },
   {
     place: Place.Retroflex,
     manner: Manner.SibilantFricative,
     phoneme: 'ʐ',
     romanization: 'j',
-    voiced: true
+    voiced: true,
+    audio: 'Voiced_retroflex_sibilant.ogg.mp3'
   },
   {
     place: Place.Palatal,
     manner: Manner.NonSibilantFricative,
     phoneme: 'ç',
-    romanization: 'sh'
+    romanization: 'sh',
+    audio: 'Voiceless_palatal_fricative.ogg.mp3'
   },
   {
     place: Place.Palatal,
     manner: Manner.NonSibilantFricative,
     phoneme: 'ʝ',
     romanization: 'y',
-    voiced: true
+    voiced: true,
+    audio: 'Voiced_palatal_fricative.ogg.mp3'
   },
   {
     place: Place.Bilabial,
     manner: Manner.NonSibilantFricative,
     phoneme: 'ɸ',
-    romanization: 'th'
+    romanization: 'th',
+    audio: 'Voiceless_bilabial_fricative.ogg.mp3'
   },
   {
     place: Place.Bilabial,
     manner: Manner.NonSibilantFricative,
     phoneme: 'β',
     romanization: 'th',
-    voiced: true
+    voiced: true,
+    audio: 'Voiced_bilabial_fricative.ogg.mp3'
   },
   {
     place: Place.LabioDental,
     manner: Manner.NonSibilantFricative,
-    phoneme: 'f'
+    phoneme: 'f',
+    audio: 'Voiceless_labio-dental_fricative.ogg.mp3'
   },
   {
     place: Place.LabioDental,
     manner: Manner.NonSibilantFricative,
     phoneme: 'v',
-    voiced: true
+    voiced: true,
+    audio: 'Voiced_labio-dental_fricative.ogg.mp3'
   },
   {
     place: Place.Dental,
@@ -243,18 +254,20 @@ export const CONSONANTS: IConsonant[] = [
     phoneme: 'ð',
     romanization: 'th',
     voiced: true,
-    audio: 'Voiced_alveolar_non-sibilant_fricative.ogg'
+    audio: 'Voiced_alveolar_non-sibilant_fricative.ogg.mp3'
   },
   {
     place: Place.Alveolar,
     manner: Manner.SibilantFricative,
-    phoneme: 's'
+    phoneme: 's',
+    audio: 'Voiceless_alveolar_sibilant.ogg.mp3'
   },
   {
     place: Place.Alveolar,
     manner: Manner.SibilantFricative,
     phoneme: 'z',
-    voiced: true
+    voiced: true,
+    audio: 'Voiced_alveolar_sibilant.ogg.mp3'
   },
   {
     place: Place.Velar,
@@ -321,51 +334,59 @@ export const CONSONANTS: IConsonant[] = [
     place: Place.Alveolar,
     manner: Manner.Tap,
     phoneme: 'ɾ',
-    romanization: 'r'
+    romanization: 'r',
+    audio: 'Alveolar_tap.ogg.mp3'
   },
   {
     place: Place.LabioDental,
     manner: Manner.Tap,
     phoneme: 'ⱱ',
-    romanization: 'vr'
+    romanization: 'vr',
+    audio: 'Labiodental_flap.ogg.mp3'
   },
   {
     place: Place.Retroflex,
     manner: Manner.Tap,
     phoneme: 'ɽ',
-    romanization: 'r'
+    romanization: 'r',
+    audio: 'Retroflex_flap.ogg.mp3'
   },
 
   {
     place: Place.Bilabial,
     manner: Manner.Trill,
     phoneme: 'ʙ',
-    romanization: 'b'
+    romanization: 'b',
+    audio: 'Bilabial_trill.ogg.mp3'
   },
   {
     place: Place.Alveolar,
     manner: Manner.Trill,
     phoneme: 'r',
-    romanization: 'r'
+    romanization: 'r',
+    audio: 'Alveolar_trill.ogg.mp3'
   },
   {
     place: Place.Uvular,
     manner: Manner.Trill,
     phoneme: 'ʀ',
-    romanization: 'r'
+    romanization: 'r',
+    audio: 'Uvular_trill.ogg.mp3'
   },
 
   {
     place: Place.Alveolar,
     manner: Manner.LateralFricative,
     phoneme: 'ɬ',
-    romanization: 'sh'
+    romanization: 'sh',
+    audio: 'Voiceless_alveolar_lateral_fricative.ogg.mp3'
   },
   {
     place: Place.Alveolar,
     manner: Manner.LateralFricative,
     phoneme: 'ɮ',
-    romanization: 'j'
+    romanization: 'j',
+    audio: 'Voiced_alveolar_lateral_fricative.ogg.mp3'
   },
   {
     place: Place.LabioDental,
@@ -377,49 +398,57 @@ export const CONSONANTS: IConsonant[] = [
     place: Place.Alveolar,
     manner: Manner.Approximant,
     phoneme: 'ɹ',
-    romanization: 'wr'
+    romanization: 'wr',
+    audio: 'Alveolar_approximant.ogg.mp3'
   },
   {
     place: Place.Retroflex,
     manner: Manner.Approximant,
     phoneme: 'ɻ',
-    romanization: 'rh'
+    romanization: 'rh',
+    audio: 'Retroflex_Approximant2.oga.mp3'
   },
   {
     place: Place.Palatal,
     manner: Manner.Approximant,
     phoneme: 'j',
-    romanization: 'y'
+    romanization: 'y',
+    audio: 'Palatal_approximant.ogg.mp3'
   },
   {
     place: Place.Velar,
     manner: Manner.Approximant,
     phoneme: 'ɰ',
-    romanization: 'hr'
+    romanization: 'hr',
+    audio: 'Voiced_velar_approximant.ogg.mp3'
   },
 
   {
     place: Place.Alveolar,
     manner: Manner.LateralApproximant,
-    phoneme: 'l'
+    phoneme: 'l',
+    audio: 'Alveolar_lateral_approximant.ogg.mp3'
   },
   {
     place: Place.Retroflex,
     manner: Manner.LateralApproximant,
     phoneme: 'ɭ',
-    romanization: 'l'
+    romanization: 'l',
+    audio: 'Retroflex_lateral_approximant.ogg.mp3'
   },
   {
     place: Place.Palatal,
     manner: Manner.LateralApproximant,
     phoneme: 'ʎ',
-    romanization: 'y'
+    romanization: 'y',
+    audio: 'Palatal_lateral_approximant.ogg.mp3'
   },
   {
     place: Place.Velar,
     manner: Manner.LateralApproximant,
     phoneme: 'ʟ',
-    romanization: 'wl'
+    romanization: 'wl',
+    audio: 'Velar_lateral_approximant.ogg.mp3'
   },
 
 
