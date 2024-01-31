@@ -6,13 +6,11 @@ import {
   getRandomArrayItem,
   insertString,
   fillToken,
-  transcribePhonemeStringArray,
   StringEnvironment,
-  PhonemeStringArray,
-  splitVariableToken
+  PhonemeStringArray
 } from "./logic.helpers";
 import { getWordPatternDictionary } from "./word-patterns.helpers";
-import { PhonologicalTokenType, applySoundChanges, getPhonemeClassDictionary } from "./phonology.helpers";
+import { PhonologicalTokenType, applyPhonologicalRule, applySoundChanges, getPhonemeClassDictionary } from "./phonology.helpers";
 import { ILanguage, IWord } from "../models/language.model";
 import { TypedSound } from "../models/sounds.model";
 
@@ -52,34 +50,7 @@ export function spellPhonemeStringArray(language: ILanguage, phonemes: PhonemeSt
     const spellingRules = language.spelling?.spellingRules.split('\n');
     // console.log(spellingRules);
     spellingRules.forEach(spellingRule => {
-      spellingRule = spellingRule.replace(/#/g, '\\b');
-      const [rule, inEnvironmentOf] = spellingRule.split('/').map(x => x.trim());
-      const [target, result] = rule.split('>').map(x => x.trim());
-
-      let matchFor = `(${splitVariableToken(target).join('|')})`;
-      const test = inEnvironmentOf
-        ? new RegExp(inEnvironmentOf.replace('_', matchFor), 'g')
-        : new RegExp(matchFor, 'g');
-      const matches: RegExpMatchArray | null = environment.match(test);
-      if (matches) {
-        if (inEnvironmentOf) {
-          console.log(matches, inEnvironmentOf.replace('_', matchFor), environment);
-        } else {
-          console.log(matches, environment);
-        }
-      }
-      if (matches) {
-        // console.log(environment, target, inEnvironmentOf, matchFor, environment.match(new RegExp(matchFor, 'g')), matches, '>', result);
-        // console.log(matches.index);
-        matches.forEach((match: string) => {
-          const realTarget = match.match(matchFor)?.[0];
-          if (!realTarget) { console.error(`couldn't find a real target`, match, matchFor); return; }
-          const index = environment.indexOf(realTarget, environment.indexOf(match));
-          // console.log(environment, match, result, realTarget, index);
-          const finalResult = getRandomArrayItem(splitVariableToken(result));
-          environment = insertString(environment, finalResult, index, realTarget.length - 1);
-        });
-      }
+      environment = applyPhonologicalRule(environment, spellingRule);
       // environment = environment.replace(new RegExp(target, 'g'), result);
     });
   }

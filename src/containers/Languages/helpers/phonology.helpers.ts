@@ -51,7 +51,7 @@ export function getSoundChanges(language: ILanguage): string[] {
   return language.phonology.soundChanges.split('\n').filter(x => x.trim().length > 0);
 }
 
-export function applySoundChange(environment: string, changeRule: string) {
+export function applyPhonologicalRule(environment: string, changeRule: string) {
   changeRule = changeRule.replace(/#/g, '\\b');
   // console.log(changeRule);
   let instruction = changeRule;
@@ -89,7 +89,7 @@ export function applySoundChanges(language: ILanguage, filledWordStr: string): s
   const soundChanges = getSoundChanges(language);
   let environment = filledWordStr; // `#${filledWordStr}#`;
   soundChanges.forEach(changeRule => {
-    environment = applySoundChange(environment, changeRule);
+    environment = applyPhonologicalRule(environment, changeRule);
   });
   return environment;
 }
