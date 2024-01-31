@@ -158,7 +158,7 @@ export const CONSONANTS: IConsonant[] = [
     place: Place.Uvular,
     manner: Manner.Nasal,
     phoneme: 'ɴ',
-    romanization: 'ng',
+    romanization: 'nm',
     audio: 'Uvular_nasal.ogg.mp3'
   },
   {
@@ -172,7 +172,7 @@ export const CONSONANTS: IConsonant[] = [
     place: Place.Retroflex,
     manner: Manner.Nasal,
     phoneme: 'ɳ',
-    romanization: 'ng',
+    romanization: 'nh',
     audio: 'Retroflex_nasal.ogg.mp3'
   },
 

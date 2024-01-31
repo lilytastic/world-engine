@@ -7,6 +7,7 @@ export interface ILanguage {
   name: string;
   dictionary: {[word: string]: string};
   vowels: IVowel[];
+  spelling: {spellingRules: string};
   consonants: IConsonant[];
   phonology: IPhonology;
   ancestor?: ILanguage;

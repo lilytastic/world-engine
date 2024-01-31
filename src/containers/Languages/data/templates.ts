@@ -19,6 +19,9 @@ export const DEFAULT_LANGUAGE: ILanguage = {
     useDefaultRootWords: true,
     useDefaultDerivedWords: true
   },
+  spelling: {
+    spellingRules: ''
+  },
   vowels: [],
   consonants: [],
   phonology: {

@@ -51,6 +51,14 @@ export function transcribePhonemeStringArray(phonemes: PhonemeStringArray): stri
   return phonemes.map(transcribePhonemeOrString).join('');
 }
 
+export const transcribePhonemeOrString = (str: PhonemeOrString) => {
+  const sound = (str as TypedSound);
+  if (sound.phoneme) {
+    return sound.romanization || sound.phoneme;
+  }
+  return str;
+}
+
 export function toDictionary<T>(arr: T[], indexBy?: (obj: T) => string): {[id: string]: T} {
   const dictionary: {[id: string]: T} = {};
   arr.forEach((obj, i) => {
@@ -89,14 +97,6 @@ export function splitVariableToken(token: string) {
   } else {
     return [ token ];
   }
-}
-
-export const transcribePhonemeOrString = (str: PhonemeOrString) => {
-  const sound = (str as TypedSound);
-  if (sound.phoneme) {
-    return sound.romanization || sound.phoneme;
-  }
-  return str;
 }
 
 export const filterSoundsFromPhonemeStringArray = (phonemes: PhonemeStringArray): TypedSound[] => {
