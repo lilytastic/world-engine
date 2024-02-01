@@ -56,10 +56,13 @@ const REGEX_ALL_CONSONANTS = `(${CONSONANTS.map(x => x.phoneme).join('|')})`;
 const REGEX_ALL_VOWELS = `(${VOWELS.map(x => x.phoneme).join('|')})`;
 
 export function applyPhonologicalRule(environment: string, changeRule: string) {
-  changeRule = changeRule.replace(/#/g, '\\b')
-                         .replace(/(\((.*?)\))/g, `($2?)`)
-                         .replace(new RegExp('C', 'g'), REGEX_ALL_CONSONANTS)
-                         .replace(new RegExp('V', 'g'), REGEX_ALL_VOWELS)
+  changeRule = changeRule
+                        .replace(/_#/g, '_$')
+                        .replace(/#_/g, '^_')
+                        .replace(/#/g, '\\b')
+                        .replace(/(\((.*?)\))/g, `($2?)`)
+                        .replace(new RegExp('C', 'g'), REGEX_ALL_CONSONANTS)
+                        .replace(new RegExp('V', 'g'), REGEX_ALL_VOWELS)
 
   let instruction = changeRule;
   let inEnvironmentOf = '';
@@ -70,6 +73,13 @@ export function applyPhonologicalRule(environment: string, changeRule: string) {
     inEnvironmentOf = tokens[1];
     // applies = environment.includes(tokens[1]);
   }
+
+  // NOTE: Conflicts with regex on line 60
+  const openingBracket = inEnvironmentOf.indexOf('(');
+  const closingBracket = inEnvironmentOf.indexOf(')');
+  if (openingBracket !== -1 && closingBracket !== -1) {
+    inEnvironmentOf = `(${inEnvironmentOf.slice(0, openingBracket + 1)}(${splitVariableToken(inEnvironmentOf).join('|')})${inEnvironmentOf.slice(closingBracket)})`;
+  }
   let [target, result] = instruction.split('>').map(x => x.trim());
 
   let isNegated = false;
@@ -78,13 +88,7 @@ export function applyPhonologicalRule(environment: string, changeRule: string) {
     inEnvironmentOf = inEnvironmentOf.slice(1);
   }
 
-  // TODO: PRESERVE THE STARTING AND ENDING TAGS NUMBNUTS!!!!
-  const openingBracket = target.indexOf('(');
-  const closingBracket = target.indexOf(')');
   let matchFor = target;
-  if (openingBracket !== -1 && closingBracket !== -1) {
-    matchFor = `${target.slice(0, openingBracket + 1)}(${splitVariableToken(target).join('|')})${target.slice(closingBracket)}`;
-  }
   const test = inEnvironmentOf
     ? new RegExp(inEnvironmentOf.replace('_', matchFor), 'g')
     : new RegExp(matchFor, 'g');
@@ -96,9 +100,12 @@ export function applyPhonologicalRule(environment: string, changeRule: string) {
     contramatches = matches;
     matches = environment.match(new RegExp(matchFor, 'g'));
     // TODO: Contramatches, negated matches, aren't implemented yet.
+    //console.log(contramatches, changeRule);
   }
 
+  // console.log(changeRule, matches, matchFor, inEnvironmentOf, matches);
   if (matches && matches.length > 0) {
+    //console.log(changeRule, matches, matchFor, inEnvironmentOf, matches);
     // console.log(environment, target, inEnvironmentOf, matchFor, environment.match(new RegExp(matchFor, 'g')), matches, '>', result);
     matches.forEach((match: string) => {
       const realTarget = match.match(matchFor)?.[0];
