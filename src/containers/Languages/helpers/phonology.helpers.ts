@@ -74,13 +74,21 @@ export function applyPhonologicalRule(environment: string, changeRule: string) {
     // applies = environment.includes(tokens[1]);
   }
 
-  // NOTE: Conflicts with regex on line 60
-  const openingBracket = inEnvironmentOf.indexOf('(');
-  const closingBracket = inEnvironmentOf.indexOf(')');
+  // NOTE: Conflicts with regex on line 60. And do it for instruction too.
+  const openingBracket = inEnvironmentOf.indexOf('{');
+  const closingBracket = inEnvironmentOf.indexOf('}');
   if (openingBracket !== -1 && closingBracket !== -1) {
-    inEnvironmentOf = `(${inEnvironmentOf.slice(0, openingBracket + 1)}(${splitVariableToken(inEnvironmentOf).join('|')})${inEnvironmentOf.slice(closingBracket)})`;
+    inEnvironmentOf = `(${inEnvironmentOf.slice(0, openingBracket)}(${splitVariableToken(inEnvironmentOf).join('|')})${inEnvironmentOf.slice(closingBracket + 1)})`;
+    // console.log(inEnvironmentOf);
   }
   let [target, result] = instruction.split('>').map(x => x.trim());
+
+  const _openingBracket = target.indexOf('{');
+  const _closingBracket = target.indexOf('}');
+  if (_openingBracket !== -1 && _closingBracket !== -1) {
+    target = `(${target.slice(0, _openingBracket)}(${splitVariableToken(target).join('|')})${target.slice(_closingBracket + 1)})`;
+    // console.log(target, instruction);
+  }
 
   let isNegated = false;
   if (inEnvironmentOf.startsWith('!')) {
@@ -95,6 +103,7 @@ export function applyPhonologicalRule(environment: string, changeRule: string) {
 
   let matches: RegExpMatchArray | null = environment.match(test);
   let contramatches: RegExpMatchArray | null = null;
+  // console.log(matches, matchFor, inEnvironmentOf, environment);
 
   if (isNegated) {
     contramatches = matches;
