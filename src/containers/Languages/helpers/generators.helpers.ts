@@ -45,13 +45,10 @@ export function spellPhonemeStringArray(language: ILanguage, phonemes: PhonemeSt
     return str;
   }).join('');
 
-  // console.log(language.spelling);
   if (language.spelling) {
     const spellingRules = language.spelling?.spellingRules.split('\n');
-    // console.log(spellingRules);
     spellingRules.forEach(spellingRule => {
       environment = applyPhonologicalRule(environment, spellingRule);
-      // environment = environment.replace(new RegExp(target, 'g'), result);
     });
   }
   return environment;

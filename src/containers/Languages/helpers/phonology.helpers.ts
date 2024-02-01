@@ -1,3 +1,4 @@
+import { CONSONANTS } from "../data/consonants";
 import { VOWELS } from "../data/vowels";
 import { ILanguage } from "../models/language.model";
 import { BOUNDARY_MARKERS, IPhonologicalRule, IPhonologicalToken, IPhonotactic, ISoundRules, PhonologicalTokenCollectionTypes, PhonologicalTokens, SoundPositions } from "../models/phonology.model";
@@ -51,8 +52,13 @@ export function getSoundChanges(language: ILanguage): string[] {
   return language.phonology.soundChanges.split('\n').filter(x => x.trim().length > 0);
 }
 
+const REGEX_ALL_CONSONANTS = `(${CONSONANTS.map(x => x.phoneme).join('|')})`;
+const REGEX_ALL_VOWELS = `(${VOWELS.map(x => x.phoneme).join('|')})`;
+
 export function applyPhonologicalRule(environment: string, changeRule: string) {
-  changeRule = changeRule.replace(/#/g, '\\b');
+  changeRule = changeRule.replace(/#/g, '\\b')
+                         .replace(new RegExp('C', 'g'), REGEX_ALL_CONSONANTS)
+                         .replace(new RegExp('V', 'g'), REGEX_ALL_VOWELS);
   // console.log(changeRule);
   let instruction = changeRule;
   let inEnvironmentOf = '';
