@@ -44,13 +44,14 @@ export function spellPhonemeStringArray(language: ILanguage, phonemes: PhonemeSt
     }
     return str;
   }).join('');
-
+  const original = environment;
   if (language.spelling) {
     const spellingRules = language.spelling?.spellingRules.split('\n');
     spellingRules.forEach(spellingRule => {
       environment = applyPhonologicalRule(environment, spellingRule);
     });
   }
+  console.log(original, environment);
   return environment;
 }
 

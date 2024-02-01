@@ -57,9 +57,10 @@ const REGEX_ALL_VOWELS = `(${VOWELS.map(x => x.phoneme).join('|')})`;
 
 export function applyPhonologicalRule(environment: string, changeRule: string) {
   changeRule = changeRule.replace(/#/g, '\\b')
+                         .replace(/(\((.*?)\))/g, `($2?)`)
                          .replace(new RegExp('C', 'g'), REGEX_ALL_CONSONANTS)
-                         .replace(new RegExp('V', 'g'), REGEX_ALL_VOWELS);
-  // console.log(changeRule);
+                         .replace(new RegExp('V', 'g'), REGEX_ALL_VOWELS)
+
   let instruction = changeRule;
   let inEnvironmentOf = '';
 
@@ -71,14 +72,34 @@ export function applyPhonologicalRule(environment: string, changeRule: string) {
   }
   let [target, result] = instruction.split('>').map(x => x.trim());
 
-  let matchFor = `(${splitVariableToken(target).join('|')})`;
+  let isNegated = false;
+  if (inEnvironmentOf.startsWith('!')) {
+    isNegated = true;
+    inEnvironmentOf = inEnvironmentOf.slice(1);
+  }
+
+  // TODO: PRESERVE THE STARTING AND ENDING TAGS NUMBNUTS!!!!
+  const openingBracket = target.indexOf('(');
+  const closingBracket = target.indexOf(')');
+  let matchFor = target;
+  if (openingBracket !== -1 && closingBracket !== -1) {
+    matchFor = `${target.slice(0, openingBracket + 1)}(${splitVariableToken(target).join('|')})${target.slice(closingBracket)}`;
+  }
   const test = inEnvironmentOf
     ? new RegExp(inEnvironmentOf.replace('_', matchFor), 'g')
     : new RegExp(matchFor, 'g');
-  const matches: RegExpMatchArray | null = environment.match(test);
-  if (matches) {
+
+  let matches: RegExpMatchArray | null = environment.match(test);
+  let contramatches: RegExpMatchArray | null = null;
+
+  if (isNegated) {
+    contramatches = matches;
+    matches = environment.match(new RegExp(matchFor, 'g'));
+    // TODO: Contramatches, negated matches, aren't implemented yet.
+  }
+
+  if (matches && matches.length > 0) {
     // console.log(environment, target, inEnvironmentOf, matchFor, environment.match(new RegExp(matchFor, 'g')), matches, '>', result);
-    // console.log(matches.index);
     matches.forEach((match: string) => {
       const realTarget = match.match(matchFor)?.[0];
       if (!realTarget) { console.error(`couldn't find a real target`, match, matchFor); return; }
