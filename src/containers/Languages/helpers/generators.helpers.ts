@@ -51,7 +51,7 @@ export function spellPhonemeStringArray(language: ILanguage, phonemes: PhonemeSt
       environment = applyPhonologicalRule(environment, spellingRule);
     });
   }
-  console.log(original, environment);
+  // console.log(original, environment);
   return environment;
 }
 

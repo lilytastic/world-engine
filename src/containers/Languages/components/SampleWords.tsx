@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { ILanguage, IWord } from '../models/language.model';
+import './SampleWords.scss';
 
 import { useParams } from 'react-router';
 
@@ -49,8 +50,8 @@ export function SampleWords(props: {children?: any, amount?: number, language: I
         Samples
         <button className='btn btn-link' onClick={() => setSampleWords(getSampleWords(language))}><i className='fas fa-rotate-right'></i></button>
       </h3>
-      <div>
-        <i>{currentSampleWords.map(x => x.transcription).join(', ')}</i>
+      <div className='word-grid'>
+        {currentSampleWords.map((x, i) => (<div className='word'>{x.transcription} <small className='text-secondary'>/{x.sounds.map(s => s.phoneme).join('')}/</small></div>))}
       </div>
     </div>
   );

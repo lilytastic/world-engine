@@ -116,9 +116,9 @@ export function applyPhonologicalRule(environment: string, changeRule: string) {
   if (matches && matches.length > 0) {
     //console.log(changeRule, matches, matchFor, inEnvironmentOf, matches);
     // console.log(environment, target, inEnvironmentOf, matchFor, environment.match(new RegExp(matchFor, 'g')), matches, '>', result);
-    matches.forEach((match: string) => {
+    matches.filter(match => match !== '').forEach((match: string) => {
       const realTarget = match.match(matchFor)?.[0];
-      if (!realTarget) { console.error(`couldn't find a real target`, match, matchFor); return; }
+      if (!realTarget) { console.error(`couldn't find a real target`, match, matchFor, isNegated); return; }
       const index = environment.indexOf(realTarget, environment.indexOf(match));
       // console.log(environment, match, result, realTarget, index);
       const finalResult = getRandomArrayItem(splitVariableToken(result));

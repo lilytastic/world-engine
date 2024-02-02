@@ -72,6 +72,14 @@ export function WordDictionary<T>(props: {item: AutoFormItem<T>, value: any, gen
           <Button variant='link' onClick={() => blur(word, generateWord?.().transcription || '')}><i className={`fas fa-dice`}></i></Button>
         </InputGroup>
       ))}
+      <Row className="mt-3">
+        <Col lg={9}></Col>
+        <Col lg={3} className="d-flex align-items-center">
+          <Button variant='link' disabled={page <= 0} onClick={() => setPage(page - 1)}><i className="fas fa-chevron-left"></i></Button>
+          <div className="w-100 text-center">{page + 1} / {Math.max(1, pages)}</div>
+          <Button variant='link' disabled={page >= pages - 1} onClick={() => setPage(page + 1)}><i className="fas fa-chevron-right"></i></Button>
+        </Col>
+      </Row>
     </div>
   );
 }
