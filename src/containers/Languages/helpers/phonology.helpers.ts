@@ -55,6 +55,16 @@ export function getSoundChanges(language: ILanguage): string[] {
 const REGEX_ALL_CONSONANTS = `(${CONSONANTS.map(x => x.phoneme).join('|')})`;
 const REGEX_ALL_VOWELS = `(${VOWELS.map(x => x.phoneme).join('|')})`;
 
+export function regexifyVariableToken(token: string) {
+  const openingBracket = token.indexOf('{');
+  const closingBracket = token.indexOf('}');
+  if (openingBracket !== -1 && closingBracket !== -1) {
+    return`(${token.slice(0, openingBracket)}(${splitVariableToken(token).join('|')})${token.slice(closingBracket + 1)})`;
+    // console.log(inEnvironmentOf);
+  }
+  return token;
+}
+
 export function applyPhonologicalRule(environment: string, changeRule: string) {
   changeRule = changeRule
                         .replace(/_#/g, '_$')
@@ -75,22 +85,13 @@ export function applyPhonologicalRule(environment: string, changeRule: string) {
   }
 
   // NOTE: Conflicts with regex on line 60. And do it for instruction too.
-  const openingBracket = inEnvironmentOf.indexOf('{');
-  const closingBracket = inEnvironmentOf.indexOf('}');
-  if (openingBracket !== -1 && closingBracket !== -1) {
-    inEnvironmentOf = `(${inEnvironmentOf.slice(0, openingBracket)}(${splitVariableToken(inEnvironmentOf).join('|')})${inEnvironmentOf.slice(closingBracket + 1)})`;
-    // console.log(inEnvironmentOf);
-  }
+  inEnvironmentOf = regexifyVariableToken(inEnvironmentOf);
   let [target, result] = instruction.split('>').map(x => x.trim());
-
-  const _openingBracket = target.indexOf('{');
-  const _closingBracket = target.indexOf('}');
-  if (_openingBracket !== -1 && _closingBracket !== -1) {
-    target = `(${target.slice(0, _openingBracket)}(${splitVariableToken(target).join('|')})${target.slice(_closingBracket + 1)})`;
-    // console.log(target, instruction);
-  }
+  instruction = regexifyVariableToken(instruction);
+  target = regexifyVariableToken(target);
 
   let isNegated = false;
+  
   if (inEnvironmentOf.startsWith('!')) {
     isNegated = true;
     inEnvironmentOf = inEnvironmentOf.slice(1);
