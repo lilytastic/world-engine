@@ -1,6 +1,15 @@
-# Getting Started with Create React App
+# World Engine
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+An attempt to put several worldbuilding tools into one monorepo.
+
+## Language
+
+Currently the only real feature. World Engine has the following tools:
+- Select sounds (phonemes) to make up a language
+- Word patterns: Specify which combinations of sounds are appropriate or forbidden.
+- Sound changes: Rules for automatically mutating sounds based on their environment, akin to natural speech.
+- Spelling rules: Rules for spelling, i.e. how to spell out phonemes or clusters of phonemes.
+- Generate Dictionary: Generate an entire dictionary of words.
 
 ## Available Scripts
 
