@@ -101,13 +101,13 @@ export function applyPhonologicalRule(environment: string, changeRule: string) {
     ? new RegExp(inEnvironmentOf.replace('_', matchFor), 'g')
     : new RegExp(matchFor, 'g');
 
-  let matches: RegExpMatchArray | null = environment.match(test);
-  let contramatches: RegExpMatchArray | null = null;
+  let matches = [...environment.matchAll(test)];
+  let contramatches: RegExpMatchArray[] | null = null;
   // console.log(matches, matchFor, inEnvironmentOf, environment);
 
   if (isNegated) {
     contramatches = matches;
-    matches = environment.match(new RegExp(matchFor, 'g'));
+    matches = [...environment.matchAll(new RegExp(matchFor, 'g'))];
     // TODO: Contramatches, negated matches, aren't implemented yet.
     //console.log(contramatches, changeRule);
   }
@@ -116,10 +116,11 @@ export function applyPhonologicalRule(environment: string, changeRule: string) {
   if (matches && matches.length > 0) {
     //console.log(changeRule, matches, matchFor, inEnvironmentOf, matches);
     // console.log(environment, target, inEnvironmentOf, matchFor, environment.match(new RegExp(matchFor, 'g')), matches, '>', result);
-    matches.filter(match => match !== '').forEach((match: string) => {
-      const realTarget = match.match(matchFor)?.[0];
+    matches.filter(match => match.values()).forEach(match => {
+      const realTarget = match[0].match(matchFor)?.[0];
+      // TODO: Seems to get confused sometimes, and catches an earlier match, even if it's invalid :C
       if (!realTarget) { console.error(`couldn't find a real target`, match, matchFor, isNegated); return; }
-      const index = environment.indexOf(realTarget, environment.indexOf(match));
+      const index = environment.indexOf(realTarget, match.index || 0);
       // console.log(environment, match, result, realTarget, index);
       const finalResult = getRandomArrayItem(splitVariableToken(result));
       environment = insertString(environment, finalResult, index, realTarget.length - 1);

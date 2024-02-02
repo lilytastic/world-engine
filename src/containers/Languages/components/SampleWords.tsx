@@ -51,7 +51,7 @@ export function SampleWords(props: {children?: any, amount?: number, language: I
         <button className='btn btn-link' onClick={() => setSampleWords(getSampleWords(language))}><i className='fas fa-rotate-right'></i></button>
       </h3>
       <div className='word-grid'>
-        {currentSampleWords.map((x, i) => (<div className='word'>{x.transcription} <small className='text-secondary'>/{x.sounds.map(s => s.phoneme).join('')}/</small></div>))}
+        {currentSampleWords.map((x, i) => (<div key={i} className='word'>{x.transcription} <small className='text-secondary'>/{x.sounds.map(s => s.phoneme).join('')}/</small></div>))}
       </div>
     </div>
   );
