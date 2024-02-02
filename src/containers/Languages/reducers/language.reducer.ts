@@ -1,5 +1,5 @@
 import { createSlice, createEntityAdapter, EntityState } from '@reduxjs/toolkit'
-import type { RootState } from '../../Root/store'
+import type { RootState } from '../../App/store'
 import { createSelector } from 'reselect'
 import { ILanguage } from '../models/language.model';
 import { NavigateFunction, Navigation } from 'react-router';

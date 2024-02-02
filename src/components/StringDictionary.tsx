@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button, Form, InputGroup } from "react-bootstrap";
-import { AutoFormItem } from "../containers/Root/models/form.model";
+import { AutoFormItem } from "../containers/App/models/form.model";
 
 export function StringDictionary<T>(props: {item: AutoFormItem<T>, value: any, add: (key: string, value: string) => void, change: (key: string, value: string) => void, blur: (key: string, value: string) => void}) {
   const { value, add, change, blur, item } = props;

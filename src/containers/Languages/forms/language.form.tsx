@@ -1,5 +1,5 @@
 import { Popover } from "react-bootstrap";
-import { AutoForm, AutoFormField } from "../../Root/models/form.model";
+import { AutoForm, AutoFormField } from "../../App/models/form.model";
 import { ILanguage } from "../models/language.model";
 import { ProbabilityType } from "../helpers/logic.helpers";
 import { generateWord } from "../helpers/generators.helpers";

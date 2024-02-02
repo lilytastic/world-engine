@@ -5,7 +5,7 @@ import Container from 'react-bootstrap/Container';
 
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
-import { ROUTES } from '../App/App.routes';
+import { ROUTES } from './App.routes';
 import { NavLink } from 'react-router-dom';
 
 export function Root(props: {children?: any}) {

@@ -1,6 +1,6 @@
 import { createSlice, createEntityAdapter, EntityState, Update } from '@reduxjs/toolkit'
 import { createSelector } from 'reselect'
-import { RootState } from '../Root/store';
+import { RootState } from '../App/store';
 import { DEFAULT_ENTITY, Vector2, MapData } from './Simulator.helpers';
 
 export interface IGameEntity {

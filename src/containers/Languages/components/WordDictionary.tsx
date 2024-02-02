@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Button, Col, Form, InputGroup, Row } from "react-bootstrap";
-import { AutoFormItem } from "../../Root/models/form.model";
+import { AutoFormItem } from "../../App/models/form.model";
 import { IWord } from "../models/language.model";
 
 // add: (key: string, value: string) => void,

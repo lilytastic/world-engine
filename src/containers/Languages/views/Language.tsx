@@ -11,7 +11,7 @@ import { LanguageOptions } from '../components/LanguageOptions';
 import { NavLink } from 'react-router-dom';
 import { PhoneticKeyboard } from '../components/PhoneticKeyboard';
 import { AutoFormer, mergeDeep } from '../../../components/AutoForm';
-import { AutoForm } from '../../Root/models/form.model';
+import { AutoForm } from '../../App/models/form.model';
 import { processWordFromDictionary } from '../components/WordDictionary';
 import { universalWords } from '../../../assets/universaldictionary';
 import { compileLanguageForm } from '../forms/language.form';
