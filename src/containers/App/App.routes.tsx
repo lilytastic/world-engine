@@ -16,13 +16,6 @@ export const ROUTES = [
     path: '/geography',
     title: 'Geography',
     icon: 'mountain',
-    showInNav: false,
-    element: <div></div>
-  },
-  { 
-    path: '/cultures',
-    title: 'Cultures',
-    icon: 'landmark',
     showInNav: true,
     element: <div></div>
   },
@@ -46,6 +39,13 @@ export const ROUTES = [
     ]
   },
   { 
+    path: '/cultures',
+    title: 'Cultures',
+    icon: 'landmark',
+    showInNav: true,
+    element: <div></div>
+  },
+  { 
     path: '/characters',
     title: 'Characters',
     icon: 'users',
@@ -63,6 +63,13 @@ export const ROUTES = [
         element: <Character />
       }
     ]
+  },
+  { 
+    path: '/history',
+    title: 'History',
+    icon: 'newspaper',
+    showInNav: true,
+    element: <div></div>
   },
   /*
   { 

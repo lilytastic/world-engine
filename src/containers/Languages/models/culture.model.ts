@@ -1,3 +1,7 @@
+export type TopicId = number;
+export type OpinionId = number;
+
+
 export interface ICulture {
   name: string;
   languages: number[]; // reference ids.
@@ -11,9 +15,6 @@ export interface ITopic {
   topic: string;
   potentialOpinions: {[id: OpinionId]: IOpinion};
 }
-
-export type TopicId = number;
-export type OpinionId = number;
 
 export interface IOpinion {
   id: OpinionId;
