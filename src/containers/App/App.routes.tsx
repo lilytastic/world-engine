@@ -22,7 +22,7 @@ export const ROUTES = [
   { 
     path: '/languages',
     title: 'Languages',
-    icon: 'book',
+    icon: 'language',
     showInNav: true,
     element: <Languages />,
     routes: [
@@ -46,9 +46,16 @@ export const ROUTES = [
     element: <div></div>
   },
   { 
+    path: '/factions',
+    title: 'Factions',
+    icon: 'users',
+    showInNav: true,
+    element: <div></div>
+  },
+  { 
     path: '/characters',
     title: 'Characters',
-    icon: 'users',
+    icon: 'circle-user',
     showInNav: true,
     element: <Characters></Characters>,
     routes: [
@@ -67,7 +74,7 @@ export const ROUTES = [
   { 
     path: '/history',
     title: 'History',
-    icon: 'newspaper',
+    icon: 'book',
     showInNav: true,
     element: <div></div>
   },

@@ -14,6 +14,7 @@ export enum GeographicalFeatureType {
   Satellite, // moons, asteroid belts
   Ocean,
   Continent,
+  Island,
   Biome, // Desert, tundra, etc.
   Region,
   Cluster, // Forest, delta, etc.

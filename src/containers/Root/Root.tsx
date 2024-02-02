@@ -38,7 +38,7 @@ export function Root(props: {children?: any}) {
               {ROUTES.filter(route => route.showInNav).map(route => (
                 <Nav.Item key={route.path} className="ms-3">
                   <Nav.Link as={NavLink} to={route.path}>
-                    <i className={`d-none fas fa-${route.icon} me-2`}></i>
+                    <i className={`fas fa-${route.icon} me-2`}></i>
                     <span>{route.title}</span>
                   </Nav.Link>
                 </Nav.Item>

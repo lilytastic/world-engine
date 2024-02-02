@@ -1,8 +1,12 @@
+import { ICharacter } from "../../Characters/models/character.model";
+
+export type CultureId = number;
 export type TopicId = number;
 export type OpinionId = number;
 
 
 export interface ICulture {
+  id: CultureId;
   name: string;
   languages: number[]; // reference ids.
   symbols: any; // associations between different objects/concepts/whatever.
@@ -20,4 +24,9 @@ export interface IOpinion {
   id: OpinionId;
   label: string;
   importance: number; // Will make it more resistant to change. Affects character's reactions -- how much they like or dislike another's actions, for example.
+}
+
+export interface IFaction {
+  characters: ICharacter[];
+  culture: CultureId;
 }
